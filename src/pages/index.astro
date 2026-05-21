@@ -1,15 +1,11 @@
 ---
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../lib/site';
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>XUGA Towel Tales</title>
-  </head>
-  <body>
-    <h1>XUGA Towel Tales</h1>
-  </body>
-</html>
+<BaseLayout title={SITE.name}>
+  <section class="mx-auto max-w-5xl px-5 py-20">
+    <h1 class="font-display text-4xl text-ink">XUGA Towel Tales</h1>
+    <p class="mt-4 text-ink-soft">Home page coming together.</p>
+  </section>
+</BaseLayout>

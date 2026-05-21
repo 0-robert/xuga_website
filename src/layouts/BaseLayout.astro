@@ -1,0 +1,74 @@
+---
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { SITE } from '../lib/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Per-garment accent in OKLCH; overrides --accent for the page. */
+  accent?: string;
+  /** Absolute or site-relative URL for the social share image. */
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = SITE.description,
+  accent,
+  ogImage,
+} = Astro.props;
+
+const fullTitle =
+  title === SITE.name ? title : `${title} — ${SITE.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImageUrl = ogImage
+  ? new URL(ogImage, Astro.site).href
+  : undefined;
+---
+
+<!doctype html>
+<html lang="en" style={accent ? `--accent:${accent};` : undefined}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="theme-color" content="#fdf4e3" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+    <meta
+      name="twitter:card"
+      content={ogImageUrl ? 'summary_large_image' : 'summary'}
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Cabin:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap"
+    />
+  </head>
+  <body class="min-h-dvh">
+    <a
+      href="#main"
+      class="sr-only rounded-full bg-ink px-4 py-2 text-sand focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100]"
+    >
+      Skip to content
+    </a>
+    <SiteHeader />
+    <main id="main"><slot /></main>
+    <SiteFooter />
+  </body>
+</html>

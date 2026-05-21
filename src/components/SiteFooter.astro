@@ -1,0 +1,49 @@
+---
+import { SITE } from '../lib/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24 bg-ink text-sand">
+  <div class="mx-auto max-w-5xl px-5 py-14">
+    <p class="max-w-md font-display text-2xl leading-snug text-sand">
+      {SITE.tagline}
+    </p>
+
+    <div
+      class="mt-10 flex flex-col gap-8 border-t border-sand/15 pt-8 sm:flex-row sm:justify-between"
+    >
+      <p class="max-w-xs text-sm leading-relaxed text-sand/70">
+        XUGA is a student-led island-wear brand in {SITE.place}, sewing
+        worn-out beach towels into clothing that lasts.
+      </p>
+
+      <nav aria-label="Footer">
+        <ul class="flex flex-col gap-2 text-sm sm:text-right">
+          <li>
+            <a
+              class="text-sand/80 underline-offset-4 hover:text-sand hover:underline"
+              href={SITE.shopUrl}>Visit the XUGA shop</a
+            >
+          </li>
+          <li>
+            <a
+              class="text-sand/80 underline-offset-4 hover:text-sand hover:underline"
+              href={SITE.instagram.url}
+              rel="me">Instagram {SITE.instagram.handle}</a
+            >
+          </li>
+          <li>
+            <a
+              class="text-sand/80 underline-offset-4 hover:text-sand hover:underline"
+              href={`mailto:${SITE.email}`}>{SITE.email}</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <p class="mt-10 text-xs text-sand/45">
+      &copy; {year} XUGA. Each tale belongs to one towel and one towel only.
+    </p>
+  </div>
+</footer>

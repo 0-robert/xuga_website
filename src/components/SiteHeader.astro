@@ -1,0 +1,55 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/xuga-logo.png';
+import { NAV } from '../lib/site';
+
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href);
+---
+
+<header
+  class="sticky top-0 z-50 border-b border-ink/10 bg-sand/85 backdrop-blur-md"
+>
+  <div
+    class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-3"
+  >
+    <a
+      href="/"
+      class="group flex items-center gap-2.5"
+      aria-label="XUGA Towel Tales, home"
+    >
+      <Image
+        src={logo}
+        alt=""
+        width={88}
+        height={88}
+        class="h-11 w-11 transition-transform duration-300 ease-soft group-hover:rotate-[-6deg]"
+      />
+      <span class="font-display text-xl leading-none font-semibold text-ink">
+        Towel Tales
+      </span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul class="flex items-center gap-1 sm:gap-2">
+        {
+          NAV.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isActive(item.href) ? 'page' : undefined}
+                class="relative rounded-full px-3 py-1.5 text-sm font-medium text-ink-soft transition-colors duration-200 hover:text-ink aria-[current=page]:text-ink"
+              >
+                {item.label}
+                {isActive(item.href) && (
+                  <span class="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-[var(--accent)]" />
+                )}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
