@@ -4,6 +4,9 @@
  * in as the chapter scrolls into view. The reveal observer below runs once
  * for the whole page however many chapters there are.
  */
+import Doodle from './Doodle.astro';
+import type { DoodleName } from '../lib/doodles';
+
 interface Props {
   /** Small label above the heading, e.g. "Chapter one". */
   eyebrow?: string;
@@ -11,10 +14,19 @@ interface Props {
   id?: string;
   /** Background treatment; lets a story build colour as it is read. */
   tone?: 'sand' | 'sand-deep' | 'paper' | 'accent' | 'ink';
+  /** Optional hand-drawn doodle shown beside the eyebrow. */
+  doodle?: DoodleName;
   class?: string;
 }
 
-const { eyebrow, heading, id, tone = 'sand', class: cls = '' } = Astro.props;
+const {
+  eyebrow,
+  heading,
+  id,
+  tone = 'sand',
+  doodle,
+  class: cls = '',
+} = Astro.props;
 
 const toneClass = {
   sand: 'bg-sand text-ink',
@@ -38,8 +50,9 @@ const toneClass = {
       eyebrow && (
         <p
           data-reveal
-          class="font-hand text-2xl leading-none text-[var(--accent)]"
+          class="flex items-center gap-2 font-hand text-2xl leading-none text-[var(--accent)]"
         >
+          {doodle && <Doodle name={doodle} class="h-7 w-7 shrink-0" />}
           {eyebrow}
         </p>
       )

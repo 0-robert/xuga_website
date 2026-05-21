@@ -1,49 +1,256 @@
 ---
 import { SITE } from '../lib/site';
+import Doodle from './Doodle.astro';
+import type { DoodleName } from '../lib/doodles';
+
 const year = new Date().getFullYear();
+
+const links: { label: string; href: string; doodle: DoodleName; tone: string }[] =
+  [
+    { label: 'The XUGA shop', href: SITE.shopUrl, doodle: 'shell', tone: 'sun' },
+    {
+      label: `Instagram ${SITE.instagram.handle}`,
+      href: SITE.instagram.url,
+      doodle: 'flower',
+      tone: 'shell',
+    },
+    {
+      label: 'Say hello',
+      href: `mailto:${SITE.email}`,
+      doodle: 'wave',
+      tone: 'sea',
+    },
+  ];
 ---
 
-<footer class="mt-24 bg-ink text-sand">
-  <div class="mx-auto max-w-5xl px-5 py-14">
-    <p class="max-w-md font-display text-2xl leading-snug text-sand">
-      {SITE.tagline}
+<footer class="footer">
+  <span class="footer__wave" aria-hidden="true">
+    <svg viewBox="0 0 1200 46" preserveAspectRatio="none">
+      <path
+        d="M0 46V24Q150 0 300 24T600 24T900 24T1200 24V46Z"
+        fill="currentColor"></path>
+    </svg>
+  </span>
+
+  <!-- decorative doodles -->
+  <span class="fd fd--sun"><Doodle name="sun" class="h-full w-full" /></span>
+  <span class="fd fd--star"
+    ><Doodle name="starfish" class="h-full w-full" /></span
+  >
+  <span class="fd fd--shell"><Doodle name="shell" class="h-full w-full" /></span>
+  <span class="fd fd--sprout"
+    ><Doodle name="sprout" class="h-full w-full" /></span
+  >
+  <span class="fd fd--spark1"
+    ><Doodle name="sparkle" class="h-full w-full" /></span
+  >
+  <span class="fd fd--spark2"
+    ><Doodle name="sparkle" class="h-full w-full" /></span
+  >
+
+  <div class="footer__inner">
+    <span class="footer__crest"><Doodle name="sun" class="h-9 w-9" /></span>
+    <p class="footer__tagline">Every XUGA piece has a tale.</p>
+    <p class="footer__blurb">
+      XUGA is a student-led island-wear brand in {SITE.place}, stitching tired
+      beach towels into clothes worth keeping.
     </p>
 
-    <div
-      class="mt-10 flex flex-col gap-8 border-t border-sand/15 pt-8 sm:flex-row sm:justify-between"
-    >
-      <p class="max-w-xs text-sm leading-relaxed text-sand/70">
-        XUGA is a student-led island-wear brand in {SITE.place}, sewing
-        worn-out beach towels into clothing that lasts.
-      </p>
+    <ul class="footer__links">
+      {
+        links.map((l) => (
+          <li>
+            <a class={`chip chip--${l.tone}`} href={l.href}>
+              <span class="chip__icon">
+                <Doodle name={l.doodle} class="h-4 w-4" />
+              </span>
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
 
-      <nav aria-label="Footer">
-        <ul class="flex flex-col gap-2 text-sm sm:text-right">
-          <li>
-            <a
-              class="text-sand/80 underline-offset-4 hover:text-sand hover:underline"
-              href={SITE.shopUrl}>Visit the XUGA shop</a
-            >
-          </li>
-          <li>
-            <a
-              class="text-sand/80 underline-offset-4 hover:text-sand hover:underline"
-              href={SITE.instagram.url}
-              rel="me">Instagram {SITE.instagram.handle}</a
-            >
-          </li>
-          <li>
-            <a
-              class="text-sand/80 underline-offset-4 hover:text-sand hover:underline"
-              href={`mailto:${SITE.email}`}>{SITE.email}</a
-            >
-          </li>
-        </ul>
-      </nav>
-    </div>
-
-    <p class="mt-10 text-xs text-sand/45">
-      &copy; {year} XUGA. Each tale belongs to one towel and one towel only.
+    <p class="footer__legal">
+      &copy; {year} XUGA &middot; {SITE.place}. Each tale belongs to one towel,
+      and one towel only.
     </p>
   </div>
 </footer>
+
+<style>
+  .footer {
+    position: relative;
+    margin-top: 6rem;
+    background: var(--color-sand-deep);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .footer__wave {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    width: 100%;
+    height: 46px;
+    color: var(--color-sand-deep);
+    line-height: 0;
+  }
+  .footer__wave svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .footer__inner {
+    position: relative;
+    z-index: 2;
+    margin: 0 auto;
+    max-width: 40rem;
+    padding: 4.5rem 1.25rem 3rem;
+    text-align: center;
+  }
+  .footer__crest {
+    display: inline-flex;
+    color: var(--color-sun-deep);
+    rotate: -8deg;
+  }
+  .footer__tagline {
+    margin-top: 0.25rem;
+    font-family: var(--font-hand);
+    font-size: clamp(2.4rem, 8vw, 3.6rem);
+    line-height: 1;
+    color: var(--color-ink);
+  }
+  .footer__blurb {
+    margin: 1rem auto 0;
+    max-width: 26rem;
+    color: var(--color-ink-soft);
+  }
+
+  .footer__links {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.625rem;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    border: 2.5px solid var(--color-ink);
+    padding: 0.5rem 1rem 0.5rem 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    box-shadow: 3px 3px 0 var(--color-ink);
+    transition:
+      translate 0.18s var(--ease),
+      rotate 0.18s var(--ease),
+      box-shadow 0.18s var(--ease);
+  }
+  .chip:hover {
+    translate: 0 -2px;
+    rotate: -2deg;
+    box-shadow: 4px 6px 0 var(--color-ink);
+  }
+  .chip--sun {
+    background: var(--color-sun);
+  }
+  .chip--shell {
+    background: var(--color-shell);
+  }
+  .chip--sea {
+    background: var(--color-sea);
+  }
+  .chip__icon {
+    display: grid;
+    height: 1.6rem;
+    width: 1.6rem;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--color-sand);
+  }
+
+  .footer__legal {
+    margin-top: 2rem;
+    font-size: 0.78rem;
+    color: var(--color-ink-soft);
+  }
+
+  /* Decorative doodles scattered around the footer. */
+  .fd {
+    position: absolute;
+    z-index: 1;
+    display: none;
+  }
+  .fd--sun {
+    top: 16%;
+    left: 7%;
+    height: 60px;
+    width: 60px;
+    color: var(--color-sun);
+    rotate: -14deg;
+  }
+  .fd--star {
+    top: 30%;
+    right: 9%;
+    height: 52px;
+    width: 52px;
+    color: var(--color-shell);
+    rotate: 14deg;
+  }
+  .fd--shell {
+    bottom: 16%;
+    left: 11%;
+    height: 46px;
+    width: 46px;
+    color: var(--color-sea);
+    rotate: -10deg;
+  }
+  .fd--sprout {
+    bottom: 20%;
+    right: 12%;
+    height: 46px;
+    width: 46px;
+    color: var(--color-lime);
+  }
+  .fd--spark1 {
+    top: 14%;
+    right: 28%;
+    height: 26px;
+    width: 26px;
+    color: var(--color-grape);
+  }
+  .fd--spark2 {
+    bottom: 30%;
+    left: 30%;
+    height: 22px;
+    width: 22px;
+    color: var(--color-sun-deep);
+  }
+  @media (min-width: 720px) {
+    .fd {
+      display: block;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .fd {
+      animation: fd-float 6s ease-in-out infinite;
+    }
+    .fd--star {
+      animation-duration: 7.5s;
+    }
+    .fd--shell {
+      animation-duration: 8s;
+    }
+    .fd--sprout {
+      animation-duration: 6.8s;
+    }
+  }
+  @keyframes fd-float {
+    50% {
+      translate: 0 -9px;
+    }
+  }
+</style>

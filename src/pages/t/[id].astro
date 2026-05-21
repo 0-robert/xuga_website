@@ -123,7 +123,12 @@ const heroGlow = `radial-gradient(120% 70% at 50% -8%, color-mix(in oklch, var(-
     </header>
 
     <!-- Chapter one — my first life -->
-    <Chapter eyebrow="Chapter one" heading="My first life" tone="sand">
+    <Chapter
+      eyebrow="Chapter one"
+      heading="My first life"
+      tone="sand"
+      doodle="shell"
+    >
       {
         facts.length > 0 && (
           <dl class="mb-8 flex flex-wrap gap-x-10 gap-y-4">
@@ -150,6 +155,7 @@ const heroGlow = `radial-gradient(120% 70% at 50% -8%, color-mix(in oklch, var(-
       eyebrow="Chapter two"
       heading="Becoming something new"
       tone="sand-deep"
+      doodle="sparkle"
     >
       {
         beforeImg && (
@@ -173,7 +179,12 @@ const heroGlow = `radial-gradient(120% 70% at 50% -8%, color-mix(in oklch, var(-
     <!-- Chapter three — what I saved -->
     {
       eco && (
-        <Chapter eyebrow="Chapter three" heading="What I saved" tone="accent">
+        <Chapter
+          eyebrow="Chapter three"
+          heading="What I saved"
+          tone="accent"
+          doodle="sprout"
+        >
           <p class="max-w-xl text-ink">
             Choosing this towel over new fabric kept real weight out of the
             world's water and air. The figures are estimated from the towel's
@@ -208,7 +219,12 @@ const heroGlow = `radial-gradient(120% 70% at 50% -8%, color-mix(in oklch, var(-
     }
 
     <!-- Chapter four — one of one -->
-    <Chapter eyebrow="Chapter four" heading="One of one" tone="ink">
+    <Chapter
+      eyebrow="Chapter four"
+      heading="One of one"
+      tone="ink"
+      doodle="starfish"
+    >
       <div class="grid gap-8 sm:grid-cols-[1.1fr_1fr] sm:items-center">
         <img
           src={d.garmentPhoto.src}
