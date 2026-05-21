@@ -128,3 +128,15 @@
     transform: none;
   }
 }
+
+/* Rendered Markdown body of a towel's story. */
+.story-prose {
+  font-size: var(--text-lg);
+  line-height: 1.7;
+}
+.story-prose p {
+  margin: 0;
+}
+.story-prose p + p {
+  margin-top: 1.1em;
+}

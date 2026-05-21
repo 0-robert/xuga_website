@@ -30,6 +30,8 @@ const towels = defineCollection({
       garmentPhoto: image(),
       towelName: z.string(),
       madeDate: z.coerce.date(),
+      /** The towel's opening line, shown handwritten in the hero. */
+      greeting: z.string().optional(),
 
       // --- Towel character (optional; drives the tier system) ---
       towelPersonality: z.string().optional(),

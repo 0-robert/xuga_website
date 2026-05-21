@@ -8,6 +8,7 @@ towelPhoto: ../../assets/garments/rainbow-shorts--towel.png
 beforePhoto: ../../assets/garments/rainbow-shorts--towel.png
 afterPhoto: ../../assets/garments/rainbow-shorts--garment.png
 madeDate: 2026-02-02
+greeting: My name's Mabel. I'm the striped one, every colour, top to bottom.
 originPlace: Valletta, Malta
 originType: thrift
 originYearApprox: the early 2000s
@@ -17,8 +18,6 @@ featured: true
 editionNote: 1 of 1
 ecoTowelWeightGrams: 680
 ---
-
-My name's Mabel. I'm the striped one, every colour, top to bottom.
 
 The person who first bought me could not choose just one shade, and I have always loved that about them. I spent my summers on a roof terrace in Valletta, drying swimsuits on a line and watching the harbour. I was a picnic blanket more than once. A dog slept on me for most of one August.
 

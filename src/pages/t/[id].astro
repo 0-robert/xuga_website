@@ -1,0 +1,345 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TowelCharacter from '../../components/TowelCharacter.astro';
+import Chapter from '../../components/Chapter.astro';
+import BeforeAfter from '../../components/BeforeAfter.astro';
+import EcoCounter from '../../components/EcoCounter.astro';
+import StickyTowel from '../../components/StickyTowel.astro';
+import { computeEco } from '../../lib/eco';
+import { SITE } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const towels = await getCollection('towels');
+  return towels.map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+
+const eco = computeEco({
+  towelWeightGrams: d.ecoTowelWeightGrams,
+  waterSavedLitres: d.ecoWaterSavedLitres,
+  co2SavedKg: d.ecoCo2SavedKg,
+  textileSavedGrams: d.ecoTextileSavedGrams,
+});
+
+const madeMonth = d.madeDate.toLocaleDateString('en-GB', {
+  month: 'long',
+  year: 'numeric',
+});
+
+const originLabels: Record<string, string> = {
+  donated: 'A donated towel',
+  hotel: 'A hotel pool towel',
+  thrift: 'A second-hand find',
+  family: 'A family beach towel',
+  found: 'A rescued towel',
+  unknown: 'An origin half-remembered',
+};
+
+const facts = [
+  d.originType && { term: 'Past life', value: originLabels[d.originType] },
+  d.originPlace && { term: 'From', value: d.originPlace },
+  d.originYearApprox && { term: 'Era', value: d.originYearApprox },
+].filter((f): f is { term: string; value: string } => Boolean(f));
+
+const beforeImg = d.beforePhoto ?? d.towelPhoto;
+const afterImg = d.afterPhoto ?? d.garmentPhoto;
+const madeLine = d.maker
+  ? `Cut, sewn and finished by ${d.maker} in ${madeMonth}.`
+  : `Cut, sewn and finished in the XUGA workshop in ${madeMonth}.`;
+
+const pieceCode = entry.id.toUpperCase();
+const greeting = d.greeting ?? `Hello. I'm ${d.towelName}.`;
+const heroGlow = `radial-gradient(120% 70% at 50% -8%, color-mix(in oklch, var(--accent) 26%, var(--color-sand)), var(--color-sand) 62%)`;
+---
+
+<BaseLayout
+  title={d.garmentName}
+  description={`${d.towelName} was a beach towel. Now it is ${d.garmentName}. Hear the whole tale.`}
+  accent={d.accent}
+  ogImage={d.garmentPhoto.src}
+>
+  <article>
+    <!-- Hero — meet the towel -->
+    <header class="relative overflow-hidden" style={`background:${heroGlow}`}>
+      <div class="mx-auto max-w-3xl px-5 pt-12 pb-10 sm:pt-16">
+        <p
+          class="text-sm font-semibold tracking-[0.14em] text-ink-soft uppercase"
+        >
+          Towel Tales &middot; {d.garmentType}
+        </p>
+        <h1 class="mt-2 font-display text-4xl leading-[1.04] sm:text-6xl">
+          {d.garmentName}
+        </h1>
+        <p class="mt-3 max-w-md text-ink-soft">
+          Sewn from a single beach towel. This is the towel's own account of
+          how that happened.
+        </p>
+
+        <div class="relative mt-9 mb-20 sm:mb-16">
+          <TowelCharacter
+            towelName={d.towelName}
+            photo={d.towelPhoto}
+            video={d.towelVideo}
+            rive={d.towelRive}
+            eyes={d.eyes}
+            class="aspect-[4/5] w-full rounded-[28px] shadow-[var(--shadow-lift-3)] sm:aspect-[16/11]"
+          />
+          <figure
+            class="absolute -bottom-14 left-3 right-3 rotate-[-1.6deg] rounded-2xl bg-paper p-5 shadow-[var(--shadow-lift-2)] sm:left-7 sm:right-auto sm:max-w-sm"
+          >
+            <p class="font-hand text-[1.7rem] leading-[1.15] text-ink">
+              &ldquo;{greeting}&rdquo;
+            </p>
+            <figcaption class="mt-2 text-sm text-ink-soft">
+              {d.towelName}, the towel behind this piece
+            </figcaption>
+          </figure>
+        </div>
+
+        <p class="scroll-cue text-sm text-ink-soft">
+          <span>Scroll to hear the rest</span>
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M6 9l6 6 6-6"></path>
+          </svg>
+        </p>
+      </div>
+    </header>
+
+    <!-- Chapter one — my first life -->
+    <Chapter eyebrow="Chapter one" heading="My first life" tone="sand">
+      {
+        facts.length > 0 && (
+          <dl class="mb-8 flex flex-wrap gap-x-10 gap-y-4">
+            {facts.map((fact) => (
+              <div>
+                <dt class="text-xs font-semibold tracking-[0.12em] text-ink-soft uppercase">
+                  {fact.term}
+                </dt>
+                <dd class="mt-1 font-display text-xl text-ink">
+                  {fact.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+      <div class="story-prose text-ink">
+        <Content />
+      </div>
+    </Chapter>
+
+    <!-- Chapter two — the transformation -->
+    <Chapter
+      eyebrow="Chapter two"
+      heading="Becoming something new"
+      tone="sand-deep"
+    >
+      {
+        beforeImg && (
+          <BeforeAfter
+            before={beforeImg}
+            after={afterImg}
+            beforeAlt={`${d.towelName} as a beach towel, before`}
+            afterAlt={`${d.garmentName}, the finished piece`}
+            beforeLabel="The towel"
+            afterLabel="The piece"
+          />
+        )
+      }
+      <p class="mt-6 font-hand text-2xl text-ink">{madeLine}</p>
+      <p class="mt-1 text-ink-soft">
+        Nothing was thrown away that still had use left in it. Drag the handle
+        to see the towel become the piece.
+      </p>
+    </Chapter>
+
+    <!-- Chapter three — what I saved -->
+    {
+      eco && (
+        <Chapter eyebrow="Chapter three" heading="What I saved" tone="accent">
+          <p class="max-w-xl text-ink">
+            Choosing this towel over new fabric kept real weight out of the
+            world's water and air. The figures are estimated from the towel's
+            weight and average new-cotton production, and labelled honestly.
+          </p>
+          <div class="mt-8 grid gap-4 sm:grid-cols-3">
+            <EcoCounter
+              value={eco.textileSavedGrams}
+              unit="g"
+              label="of textile kept out of landfill"
+              icon="textile"
+            />
+            <EcoCounter
+              value={eco.waterSavedLitres}
+              unit="L"
+              label="of water not spent making new cotton"
+              icon="water"
+            />
+            <EcoCounter
+              value={eco.co2SavedKg}
+              unit="kg"
+              label="of CO₂e kept out of the air"
+              icon="co2"
+            />
+          </div>
+          <p class="mt-5 text-sm text-ink-soft">
+            Estimated impact, not a precise measurement. Honest numbers beat
+            tidy ones.
+          </p>
+        </Chapter>
+      )
+    }
+
+    <!-- Chapter four — one of one -->
+    <Chapter eyebrow="Chapter four" heading="One of one" tone="ink">
+      <div class="grid gap-8 sm:grid-cols-[1.1fr_1fr] sm:items-center">
+        <img
+          src={d.garmentPhoto.src}
+          width={d.garmentPhoto.width}
+          height={d.garmentPhoto.height}
+          alt={`${d.garmentName}, the finished piece`}
+          class="w-full rounded-2xl shadow-[var(--shadow-lift-2)]"
+          loading="lazy"
+        />
+        <div>
+          <p class="font-hand text-3xl text-[var(--accent)]">
+            There is exactly one of me.
+          </p>
+          <dl class="mt-5 space-y-3 border-t border-sand/20 pt-5 text-sm">
+            <div class="flex justify-between gap-4">
+              <dt class="text-sand/55">Piece</dt>
+              <dd class="font-mono text-sand">{pieceCode}</dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="text-sand/55">Edition</dt>
+              <dd class="text-sand">{d.editionNote}</dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="text-sand/55">Finished</dt>
+              <dd class="text-sand">{madeMonth}</dd>
+            </div>
+            {
+              d.maker && (
+                <div class="flex justify-between gap-4">
+                  <dt class="text-sand/55">Made by</dt>
+                  <dd class="text-sand">{d.maker}</dd>
+                </div>
+              )
+            }
+          </dl>
+
+          <button
+            type="button"
+            class="mt-7 inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-5 py-2.5 text-sm font-semibold text-ink transition-transform duration-200 ease-soft hover:scale-[1.03]"
+            data-share
+            data-share-title={`${d.garmentName} — XUGA Towel Tales`}
+          >
+            <svg
+              width="17"
+              height="17"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"></path>
+              <path d="M12 16V4M8 8l4-4 4 4"></path>
+            </svg>
+            <span data-share-label>Share this tale</span>
+          </button>
+
+          <p class="mt-7 text-sm text-sand/60">
+            You reached this page through the tag sewn into your piece. Every
+            XUGA garment carries one.
+          </p>
+          <p class="mt-4 flex gap-5 text-sm">
+            <a
+              href="/tales/"
+              class="text-sand underline-offset-4 hover:underline">All the tales</a
+            >
+            <a
+              href={SITE.shopUrl}
+              class="text-sand underline-offset-4 hover:underline">The XUGA shop</a
+            >
+          </p>
+        </div>
+      </div>
+    </Chapter>
+  </article>
+
+  <StickyTowel
+    towelName={d.towelName}
+    photo={d.towelPhoto}
+    video={d.towelVideo}
+    rive={d.towelRive}
+    eyes={d.eyes}
+  />
+</BaseLayout>
+
+<style>
+  .scroll-cue {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-cue svg {
+      animation: nudge 1.8s var(--ease) infinite;
+    }
+  }
+  @keyframes nudge {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(4px);
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-share]').forEach((btn) => {
+    const label = btn.querySelector<HTMLElement>('[data-share-label]');
+    btn.addEventListener('click', async () => {
+      const url = window.location.href;
+      const title = btn.dataset.shareTitle ?? document.title;
+      try {
+        if (navigator.share) {
+          await navigator.share({ title, url });
+          return;
+        }
+        await navigator.clipboard.writeText(url);
+        if (label) {
+          const original = label.textContent;
+          label.textContent = 'Link copied';
+          window.setTimeout(() => {
+            label.textContent = original;
+          }, 2200);
+        }
+      } catch {
+        /* The reader dismissed the share sheet; nothing to do. */
+      }
+    });
+  });
+</script>
