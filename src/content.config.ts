@@ -59,6 +59,16 @@ const towels = defineCollection({
       accent: z.string().optional(),
       featured: z.boolean().default(false),
 
+      // Where the towel-character eyes sit on the towel photo, as
+      // percentages of the photo, plus a size multiplier.
+      eyes: z
+        .object({
+          x: z.number().default(50),
+          y: z.number().default(40),
+          scale: z.number().default(1),
+        })
+        .default({}),
+
       // --- Eco impact (optional) ---
       ecoTowelWeightGrams: z.number().optional(),
       ecoWaterSavedLitres: z.number().optional(),

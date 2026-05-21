@@ -1,0 +1,110 @@
+---
+/**
+ * Media-agnostic towel character. Picks the richest tier a garment supplies:
+ *   tier 1  eyes   towel photo + SVG eyes        (TowelEyes.astro)
+ *   tier 2  video  a looping clip                (e.g. from Higgsfield)
+ *   tier 3  rive   a Rive interactive asset       (runtime added per docs)
+ * See docs/towel-character-upgrade.md.
+ */
+import { Image } from 'astro:assets';
+import { selectTier, type CharacterAssets } from '../lib/character-tier';
+import TowelEyes from './TowelEyes.astro';
+
+interface Props {
+  towelName: string;
+  photo?: ImageMetadata;
+  video?: { src: string; poster?: ImageMetadata };
+  rive?: { src: string; stateMachine?: string };
+  eyes?: { x: number; y: number; scale: number };
+  class?: string;
+  decorative?: boolean;
+}
+
+const {
+  towelName,
+  photo,
+  video,
+  rive,
+  eyes = { x: 50, y: 40, scale: 1 },
+  class: cls = '',
+  decorative = false,
+} = Astro.props;
+
+const assets: CharacterAssets = {
+  towelPhoto: photo,
+  towelVideo: video,
+  towelRive: rive,
+};
+const tier = selectTier(assets);
+const label = `${towelName}, the towel this piece was made from`;
+---
+
+{
+  tier === 'eyes' && photo && (
+    <TowelEyes
+      photo={photo}
+      towelName={towelName}
+      x={eyes.x}
+      y={eyes.y}
+      scale={eyes.scale}
+      class={cls}
+      decorative={decorative}
+    />
+  )
+}
+
+{
+  tier === 'video' && video && (
+    <figure class={`towel-character ${cls}`}>
+      <video
+        class="towel-character__media"
+        src={video.src}
+        poster={video.poster?.src}
+        autoplay
+        loop
+        muted
+        playsinline
+        aria-label={label}
+      />
+    </figure>
+  )
+}
+
+{
+  tier === 'rive' && rive && (
+    <figure
+      class={`towel-character ${cls}`}
+      data-towel-rive={rive.src}
+      data-rive-state-machine={rive.stateMachine}
+      aria-label={label}
+    >
+      {photo && (
+        <Image
+          src={photo}
+          alt=""
+          class="towel-character__media towel-character__rive-fallback"
+        />
+      )}
+      <canvas class="towel-character__media towel-character__rive-canvas" />
+    </figure>
+  )
+}
+
+<style>
+  .towel-character {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: var(--color-sand-deep);
+  }
+  .towel-character__media {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .towel-character__rive-canvas {
+    position: absolute;
+    inset: 0;
+  }
+</style>

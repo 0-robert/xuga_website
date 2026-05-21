@@ -1,11 +1,23 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import TowelCharacter from '../components/TowelCharacter.astro';
 import { SITE } from '../lib/site';
+import { getCollection } from 'astro:content';
+
+const finn = (await getCollection('towels')).find(
+  (t) => t.id === 'dolphin-belt-001',
+)!;
 ---
 
 <BaseLayout title={SITE.name}>
   <section class="mx-auto max-w-5xl px-5 py-20">
     <h1 class="font-display text-4xl text-ink">XUGA Towel Tales</h1>
     <p class="mt-4 text-ink-soft">Home page coming together.</p>
+    <TowelCharacter
+      towelName={finn.data.towelName}
+      photo={finn.data.towelPhoto}
+      eyes={finn.data.eyes}
+      class="mt-8 aspect-[4/3] w-full max-w-md rounded-3xl"
+    />
   </section>
 </BaseLayout>

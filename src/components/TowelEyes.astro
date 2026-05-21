@@ -1,0 +1,228 @@
+---
+/**
+ * Tier 1 towel character: the real towel photo with code-drawn SVG eyes.
+ * The eyes blink on their own, drift while idle, follow the pointer, and
+ * breathe gently. All motion is disabled under prefers-reduced-motion.
+ */
+import { Image } from 'astro:assets';
+
+interface Props {
+  photo: ImageMetadata;
+  towelName: string;
+  /** Eye-pair centre as a percentage of the photo. */
+  x?: number;
+  y?: number;
+  /** Size multiplier for the eyes. */
+  scale?: number;
+  /** Extra classes for the figure (sizing, radius). */
+  class?: string;
+  /** Decorative use: photo gets empty alt, story tells the rest. */
+  decorative?: boolean;
+}
+
+const {
+  photo,
+  towelName,
+  x = 50,
+  y = 40,
+  scale = 1,
+  class: cls = '',
+  decorative = false,
+} = Astro.props;
+---
+
+<figure class={`towel-eyes ${cls}`} data-towel-eyes>
+  <Image
+    src={photo}
+    alt={decorative ? '' : `${towelName}, the towel this piece was made from`}
+    class="towel-eyes__photo"
+    widths={[480, 768, 1200]}
+    sizes="(max-width: 768px) 100vw, 768px"
+  />
+  <div
+    class="towel-eyes__face"
+    style={`left:${x}%;top:${y}%;--eye-scale:${scale}`}
+    aria-hidden="true"
+  >
+    <div class="towel-eyes__breath">
+      <svg viewBox="0 0 124 66" class="towel-eyes__svg">
+        <g class="eye eye--left">
+          <g class="eye__shape">
+            <ellipse class="sclera" cx="34" cy="33" rx="25" ry="27"></ellipse>
+            <circle class="pupil" cx="34" cy="34" r="11.5"></circle>
+            <circle class="glint" cx="29" cy="28" r="3.6"></circle>
+          </g>
+        </g>
+        <g class="eye eye--right">
+          <g class="eye__shape">
+            <ellipse class="sclera" cx="90" cy="33" rx="25" ry="27"></ellipse>
+            <circle class="pupil" cx="90" cy="34" r="11.5"></circle>
+            <circle class="glint" cx="85" cy="28" r="3.6"></circle>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .towel-eyes {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: var(--color-sand-deep);
+  }
+  .towel-eyes__photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .towel-eyes__face {
+    position: absolute;
+    width: clamp(74px, 21%, 188px);
+    transform: translate(-50%, -50%) scale(var(--eye-scale, 1));
+    will-change: transform;
+    pointer-events: none;
+  }
+  .towel-eyes__breath {
+    transform-origin: center bottom;
+  }
+  .towel-eyes__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 4px 8px oklch(0.3 0.07 256 / 0.28));
+  }
+  .sclera {
+    fill: oklch(0.99 0.012 90);
+    stroke: var(--color-ink);
+    stroke-width: 3;
+  }
+  .pupil {
+    fill: var(--color-ink);
+    transform: translate(
+      calc(var(--look-x, 0) * 9px),
+      calc(var(--look-y, 0) * 7px)
+    );
+  }
+  .glint {
+    fill: oklch(0.99 0.012 90);
+    transform: translate(
+      calc(var(--look-x, 0) * 9px),
+      calc(var(--look-y, 0) * 7px)
+    );
+  }
+  .eye__shape {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 0.08s var(--ease);
+  }
+  .is-blinking .eye__shape {
+    transform: scaleY(0.07);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .towel-eyes__breath {
+      animation: towel-breathe 5.5s ease-in-out infinite;
+    }
+    .is-speaking .towel-eyes__breath {
+      animation:
+        towel-breathe 5.5s ease-in-out infinite,
+        towel-speak 0.42s var(--ease);
+    }
+  }
+
+  @keyframes towel-breathe {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.022);
+    }
+  }
+  @keyframes towel-speak {
+    0%,
+    100% {
+      transform: scale(1, 1);
+    }
+    35% {
+      transform: scale(1.07, 0.92);
+    }
+    70% {
+      transform: scale(0.97, 1.04);
+    }
+  }
+</style>
+
+<script>
+  const reduced = window.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  ).matches;
+
+  document.querySelectorAll<HTMLElement>('[data-towel-eyes]').forEach((root) => {
+    const face = root.querySelector<HTMLElement>('.towel-eyes__face');
+    if (!face) return;
+
+    let lookX = 0;
+    let lookY = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let pointerUntil = 0;
+
+    if (reduced) {
+      face.style.setProperty('--look-x', '0');
+      face.style.setProperty('--look-y', '0');
+      return;
+    }
+
+    window.addEventListener(
+      'pointermove',
+      (e) => {
+        const r = face.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width / 2);
+        const dy = e.clientY - (r.top + r.height / 2);
+        targetX = Math.max(-1, Math.min(1, dx / (window.innerWidth * 0.45)));
+        targetY = Math.max(-1, Math.min(1, dy / (window.innerHeight * 0.5)));
+        pointerUntil = performance.now() + 2200;
+      },
+      { passive: true },
+    );
+
+    const tick = (now: number) => {
+      // When the pointer is quiet, the eyes wander gently on their own.
+      if (now > pointerUntil) {
+        targetX = Math.sin(now / 1700) * 0.5;
+        targetY = Math.sin(now / 2300 + 1) * 0.32;
+      }
+      lookX += (targetX - lookX) * 0.09;
+      lookY += (targetY - lookY) * 0.09;
+      face.style.setProperty('--look-x', lookX.toFixed(3));
+      face.style.setProperty('--look-y', lookY.toFixed(3));
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+
+    const blink = () => {
+      face.classList.add('is-blinking');
+      window.setTimeout(() => face.classList.remove('is-blinking'), 135);
+      window.setTimeout(blink, 2800 + Math.random() * 4200);
+    };
+    window.setTimeout(blink, 1100 + Math.random() * 2000);
+
+    // A small "speaking" squash the first time the towel scrolls into view.
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          face.classList.add('is-speaking');
+          window.setTimeout(() => face.classList.remove('is-speaking'), 460);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.55 },
+    );
+    io.observe(root);
+  });
+</script>
