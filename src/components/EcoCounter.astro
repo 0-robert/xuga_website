@@ -1,0 +1,113 @@
+---
+/**
+ * A single eco-impact figure that counts up from zero when scrolled into view.
+ * Under reduced-motion it shows the final figure immediately.
+ */
+interface Props {
+  value: number;
+  label: string;
+  unit?: string;
+  icon?: 'water' | 'co2' | 'textile';
+}
+
+const { value, label, unit = '', icon } = Astro.props;
+---
+
+<figure
+  class="flex flex-col items-center gap-3 rounded-2xl bg-paper px-5 py-8 text-center shadow-[var(--shadow-lift-1)]"
+  data-eco-counter
+  data-eco-value={value}
+>
+  {
+    icon && (
+      <span
+        class="grid h-12 w-12 place-items-center rounded-full text-[var(--accent)]"
+        style="background-color: color-mix(in oklch, var(--accent) 16%, var(--color-paper));"
+        aria-hidden="true"
+      >
+        {icon === 'water' && (
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2.5c4 4.8 6.5 8.3 6.5 11.4A6.5 6.5 0 0 1 12 20.4a6.5 6.5 0 0 1-6.5-6.5C5.5 10.8 8 7.3 12 2.5Z" />
+          </svg>
+        )}
+        {icon === 'co2' && (
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <path d="M7 18h9a4 4 0 0 0 .5-7.97A6 6 0 0 0 5.2 9.2 3.8 3.8 0 0 0 7 18Z" />
+          </svg>
+        )}
+        {icon === 'textile' && (
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M5 4h14M5 4v16M19 4v16M5 20h14M9 4v16M13 4v16" />
+          </svg>
+        )}
+      </span>
+    )
+  }
+  <div class="font-display text-4xl leading-none font-semibold text-ink sm:text-5xl">
+    <span data-eco-display>0</span>{
+      unit && <span class="ml-1 text-2xl text-ink-soft">{unit}</span>
+    }
+  </div>
+  <figcaption class="text-sm leading-snug text-ink-soft">{label}</figcaption>
+</figure>
+
+<script>
+  const reduced = window.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  ).matches;
+  const fmt = (n: number) => Math.round(n).toLocaleString('en-GB');
+
+  document
+    .querySelectorAll<HTMLElement>('[data-eco-counter]')
+    .forEach((el) => {
+      const out = el.querySelector<HTMLElement>('[data-eco-display]');
+      const target = Number(el.dataset.ecoValue ?? '0');
+      if (!out) return;
+
+      if (reduced) {
+        out.textContent = fmt(target);
+        return;
+      }
+
+      const run = () => {
+        const duration = 1500;
+        const start = performance.now();
+        const step = (now: number) => {
+          const t = Math.min(1, (now - start) / duration);
+          const eased = 1 - Math.pow(1 - t, 3);
+          out.textContent = fmt(target * eased);
+          if (t < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      };
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            run();
+            io.disconnect();
+          }
+        },
+        { threshold: 0.5 },
+      );
+      io.observe(el);
+    });
+</script>

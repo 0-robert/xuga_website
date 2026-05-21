@@ -1,0 +1,119 @@
+---
+/**
+ * A small fixed-corner towel companion that follows the reader down a story
+ * page. It appears once the hero is scrolled past, tucks away near the footer,
+ * and scrolls back to the top when tapped.
+ */
+import TowelCharacter from './TowelCharacter.astro';
+
+interface Props {
+  towelName: string;
+  photo?: ImageMetadata;
+  video?: { src: string; poster?: ImageMetadata };
+  rive?: { src: string; stateMachine?: string };
+  eyes?: { x: number; y: number; scale: number };
+}
+
+const { towelName, photo, video, rive, eyes } = Astro.props;
+---
+
+<button
+  type="button"
+  class="sticky-towel"
+  data-sticky-towel
+  aria-label={`Back to the start of ${towelName}'s tale`}
+>
+  <TowelCharacter
+    towelName={towelName}
+    photo={photo}
+    video={video}
+    rive={rive}
+    eyes={eyes}
+    decorative
+    class="sticky-towel__media"
+  />
+  <span class="sticky-towel__hint">Top</span>
+</button>
+
+<style>
+  .sticky-towel {
+    position: fixed;
+    right: clamp(14px, 4vw, 28px);
+    bottom: clamp(14px, 4vw, 28px);
+    z-index: 40;
+    display: grid;
+    height: 76px;
+    width: 76px;
+    place-items: center;
+    border: 3px solid var(--color-sand);
+    border-radius: 999px;
+    background: var(--color-sand);
+    box-shadow: var(--shadow-lift-2);
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(16px) scale(0.86);
+    transition:
+      opacity 0.4s var(--ease),
+      transform 0.4s var(--ease);
+  }
+  .sticky-towel.is-shown {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  .sticky-towel:hover {
+    transform: translateY(-3px) scale(1.04);
+  }
+  .sticky-towel :global(.sticky-towel__media) {
+    height: 100%;
+    width: 100%;
+    border-radius: 999px;
+  }
+  .sticky-towel__hint {
+    position: absolute;
+    inset-inline: 0;
+    bottom: -6px;
+    margin-inline: auto;
+    width: max-content;
+    border-radius: 999px;
+    background: var(--color-ink);
+    padding: 2px 9px;
+    font-family: var(--font-body);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-sand);
+  }
+</style>
+
+<script>
+  const reduced = window.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  ).matches;
+
+  document
+    .querySelectorAll<HTMLButtonElement>('[data-sticky-towel]')
+    .forEach((btn) => {
+      const footer = document.querySelector('footer');
+
+      const update = () => {
+        const pastHero = window.scrollY > window.innerHeight * 0.7;
+        let nearFooter = false;
+        if (footer) {
+          nearFooter =
+            footer.getBoundingClientRect().top < window.innerHeight - 40;
+        }
+        btn.classList.toggle('is-shown', pastHero && !nearFooter);
+      };
+
+      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      update();
+
+      btn.addEventListener('click', () => {
+        window.scrollTo({
+          top: 0,
+          behavior: reduced ? 'auto' : 'smooth',
+        });
+      });
+    });
+</script>

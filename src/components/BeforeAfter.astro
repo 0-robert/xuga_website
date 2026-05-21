@@ -1,0 +1,162 @@
+---
+/**
+ * Drag-to-compare reveal between the original towel and the finished garment.
+ * Driven by a real range input, so it works with pointer, touch and keyboard.
+ */
+import { Image } from 'astro:assets';
+
+interface Props {
+  before: ImageMetadata;
+  after: ImageMetadata;
+  beforeAlt: string;
+  afterAlt: string;
+  beforeLabel?: string;
+  afterLabel?: string;
+  class?: string;
+}
+
+const {
+  before,
+  after,
+  beforeAlt,
+  afterAlt,
+  beforeLabel = 'The towel',
+  afterLabel = 'The piece',
+  class: cls = '',
+} = Astro.props;
+---
+
+<figure class={`ba ${cls}`} data-before-after style="--pos: 52%">
+  <Image
+    src={after}
+    alt={afterAlt}
+    class="ba__img"
+    widths={[480, 768, 1100]}
+    sizes="(max-width: 768px) 100vw, 720px"
+  />
+  <Image
+    src={before}
+    alt={beforeAlt}
+    class="ba__img ba__img--before"
+    widths={[480, 768, 1100]}
+    sizes="(max-width: 768px) 100vw, 720px"
+  />
+
+  <span class="ba__tag ba__tag--before">{beforeLabel}</span>
+  <span class="ba__tag ba__tag--after">{afterLabel}</span>
+
+  <input
+    class="ba__range"
+    type="range"
+    min="0"
+    max="100"
+    value="52"
+    step="0.5"
+    aria-label="Drag to compare the original towel with the finished piece"
+  />
+  <div class="ba__handle" aria-hidden="true">
+    <span class="ba__grip">
+      <svg viewBox="0 0 28 16" width="28" height="16">
+        <path
+          d="M11 2 5 8l6 6M17 2l6 6-6 6"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+    </span>
+  </div>
+</figure>
+
+<style>
+  .ba {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    background: var(--color-sand-deep);
+    box-shadow: var(--shadow-lift-2);
+    aspect-ratio: 4 / 3;
+    isolation: isolate;
+  }
+  .ba__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .ba__img--before {
+    clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+  }
+  .ba__tag {
+    position: absolute;
+    bottom: 14px;
+    z-index: 2;
+    border-radius: 999px;
+    background: oklch(0.3 0.07 256 / 0.78);
+    padding: 5px 13px;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-sand);
+  }
+  .ba__tag--before {
+    left: 14px;
+  }
+  .ba__tag--after {
+    right: 14px;
+  }
+  .ba__range {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: ew-resize;
+    opacity: 0;
+  }
+  .ba__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 3;
+    left: var(--pos);
+    width: 3px;
+    margin-left: -1.5px;
+    background: var(--color-sand);
+    pointer-events: none;
+  }
+  .ba__grip {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    height: 44px;
+    width: 44px;
+    translate: -50% -50%;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--color-sand);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-lift-2);
+  }
+  .ba__range:focus-visible ~ .ba__handle .ba__grip {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+</style>
+
+<script>
+  document
+    .querySelectorAll<HTMLElement>('[data-before-after]')
+    .forEach((el) => {
+      const range = el.querySelector<HTMLInputElement>('.ba__range');
+      if (!range) return;
+      const apply = () => el.style.setProperty('--pos', `${range.value}%`);
+      range.addEventListener('input', apply);
+      apply();
+    });
+</script>
