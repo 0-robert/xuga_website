@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TaleCard from '../components/TaleCard.astro';
+
+const towels = (await getCollection('towels')).sort(
+  (a, b) => b.data.madeDate.getTime() - a.data.madeDate.getTime(),
+);
+---
+
+<BaseLayout
+  title="The Tales"
+  description="Every towel XUGA has rescued, and the piece it became."
+>
+  <section class="px-5 pt-16 pb-8 sm:pt-20">
+    <div class="mx-auto max-w-5xl">
+      <p class="font-hand text-2xl text-[var(--accent)]">Every tale, so far</p>
+      <h1 class="mt-1 font-display text-4xl text-ink sm:text-5xl">
+        The Tales
+      </h1>
+      <p class="mt-4 max-w-lg text-lg text-ink-soft">
+        {towels.length} towels rescued and resewn. Each card opens the towel's
+        own account of where it has been.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-5 pb-8">
+    <div
+      class="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3"
+    >
+      {towels.map((entry) => <TaleCard entry={entry} />)}
+    </div>
+  </section>
+</BaseLayout>

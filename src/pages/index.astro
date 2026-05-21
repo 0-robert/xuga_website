@@ -1,23 +1,145 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TowelCharacter from '../components/TowelCharacter.astro';
+import TaleCard from '../components/TaleCard.astro';
 import { SITE } from '../lib/site';
-import { getCollection } from 'astro:content';
 
-const finn = (await getCollection('towels')).find(
-  (t) => t.id === 'dolphin-belt-001',
-)!;
+const towels = await getCollection('towels');
+const featured = towels.filter((t) => t.data.featured);
+const hero = towels.find((t) => t.id === 'dolphin-belt-001') ?? towels[0];
+
+const steps = [
+  {
+    title: 'You find a piece you love',
+    body: 'Each one is sewn by hand from a single retired beach towel. No two are alike, because no two towels are.',
+  },
+  {
+    title: 'It carries a small tag',
+    body: 'Sewn into every garment is a fabric tag with a code, the kind that brought you to this page.',
+  },
+  {
+    title: 'The towel tells its tale',
+    body: 'Scan it and you meet the towel: where it spent its summers, who rescued it, and what it became.',
+  },
+];
 ---
 
 <BaseLayout title={SITE.name}>
-  <section class="mx-auto max-w-5xl px-5 py-20">
-    <h1 class="font-display text-4xl text-ink">XUGA Towel Tales</h1>
-    <p class="mt-4 text-ink-soft">Home page coming together.</p>
-    <TowelCharacter
-      towelName={finn.data.towelName}
-      photo={finn.data.towelPhoto}
-      eyes={finn.data.eyes}
-      class="mt-8 aspect-[4/3] w-full max-w-md rounded-3xl"
-    />
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div
+      class="mx-auto grid max-w-5xl items-center gap-10 px-5 py-16 sm:py-24 md:grid-cols-[1.05fr_0.95fr]"
+    >
+      <div>
+        <p
+          class="font-hand text-2xl text-[var(--accent)]"
+        >
+          XUGA Towel Tales
+        </p>
+        <h1
+          class="mt-1 font-display text-[2.6rem] leading-[1.02] text-ink sm:text-6xl"
+        >
+          Your clothes used to be a beach towel.
+        </h1>
+        <p class="mt-5 max-w-md text-lg text-ink-soft">
+          XUGA sews worn-out beach towels into island wear made to last. Every
+          piece keeps a tag. Scan it, and the towel tells you, in its own
+          words, where it has been.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a
+            href="/tales/"
+            class="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-sand transition-transform duration-200 ease-soft hover:scale-[1.03]"
+          >
+            Read the tales
+          </a>
+          <a
+            href="#how"
+            class="rounded-full border border-ink/20 px-6 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-ink/5"
+          >
+            How it works
+          </a>
+        </div>
+      </div>
+
+      {
+        hero && (
+          <div class="relative">
+            <TowelCharacter
+              towelName={hero.data.towelName}
+              photo={hero.data.towelPhoto}
+              video={hero.data.towelVideo}
+              rive={hero.data.towelRive}
+              eyes={hero.data.eyes}
+              class="aspect-square w-full rounded-[28px] shadow-[var(--shadow-lift-3)]"
+            />
+            <p
+              class="absolute -bottom-5 left-4 right-4 rotate-[-2deg] rounded-2xl bg-paper px-4 py-3 text-center font-hand text-xl text-ink shadow-[var(--shadow-lift-2)] sm:right-auto"
+            >
+              Every towel here has somewhere it has been.
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how" class="bg-sand-deep px-5 py-20 sm:py-24">
+    <div class="mx-auto max-w-5xl">
+      <h2 class="font-display text-3xl text-ink sm:text-4xl">
+        How a tale works
+      </h2>
+      <ol class="mt-10 grid gap-10 sm:grid-cols-3">
+        {
+          steps.map((step, i) => (
+            <li>
+              <span
+                class="font-display text-5xl font-semibold text-[var(--accent)]"
+              >
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 class="mt-2 font-display text-xl text-ink">{step.title}</h3>
+              <p class="mt-2 text-ink-soft">{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- Meet the towels -->
+  <section class="px-5 py-20 sm:py-24">
+    <div class="mx-auto max-w-5xl">
+      <h2 class="font-display text-3xl text-ink sm:text-4xl">
+        Meet the towels
+      </h2>
+      <p class="mt-3 max-w-md text-ink-soft">
+        Three towels, three second lives. Pick one and hear it out.
+      </p>
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {featured.map((entry) => <TaleCard entry={entry} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing -->
+  <section class="bg-ink px-5 py-20 text-sand sm:py-24">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="font-display text-3xl sm:text-4xl">
+        Ready to find your own?
+      </h2>
+      <p class="mx-auto mt-3 max-w-md text-sand/70">
+        Each XUGA piece is one of one. When you buy it, the tale becomes
+        yours to carry.
+      </p>
+      <a
+        href={SITE.shopUrl}
+        class="mt-7 inline-block rounded-full bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-ink transition-transform duration-200 ease-soft hover:scale-[1.03]"
+      >
+        Visit the XUGA shop
+      </a>
+    </div>
   </section>
 </BaseLayout>

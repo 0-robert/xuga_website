@@ -1,0 +1,54 @@
+---
+/** A garment card linking to its story page. Used on the home and tales pages. */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'towels'>;
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+---
+
+<a
+  href={`/t/${entry.id}/`}
+  class="tale-card group flex flex-col overflow-hidden rounded-2xl bg-paper shadow-[var(--shadow-lift-1)] transition-[transform,box-shadow] duration-300 ease-soft hover:-translate-y-1.5 hover:shadow-[var(--shadow-lift-2)]"
+  style={d.accent ? `--accent:${d.accent}` : undefined}
+>
+  <div class="relative aspect-[5/4] overflow-hidden bg-sand-deep">
+    <Image
+      src={d.garmentPhoto}
+      alt={`${d.garmentName}, made from a beach towel`}
+      widths={[320, 520, 760]}
+      sizes="(max-width: 640px) 90vw, 360px"
+      class="h-full w-full object-cover transition-transform duration-500 ease-soft group-hover:scale-[1.05]"
+    />
+    <span
+      class="absolute left-3 top-3 rounded-full bg-sand/90 px-3 py-1 text-xs font-semibold tracking-wide text-ink"
+    >
+      {d.garmentType}
+    </span>
+  </div>
+  <div class="flex flex-1 flex-col p-5">
+    <h3 class="font-display text-2xl leading-tight text-ink">
+      {d.garmentName}
+    </h3>
+    {
+      d.greeting && (
+        <p class="mt-2 font-hand text-xl leading-snug text-ink-soft">
+          &ldquo;{d.greeting}&rdquo;
+        </p>
+      )
+    }
+    <span
+      class="mt-auto pt-4 text-sm font-semibold text-[var(--accent)]"
+    >
+      Meet {d.towelName}
+      <span
+        class="inline-block transition-transform duration-300 ease-soft group-hover:translate-x-1"
+        >&rarr;</span
+      >
+    </span>
+  </div>
+</a>
