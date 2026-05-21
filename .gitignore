@@ -1,0 +1,9 @@
+.claude/*
+node_modules/
+dist/
+.astro/
+public/qr/
+*.log
+.DS_Store
+.env
+.env.*
