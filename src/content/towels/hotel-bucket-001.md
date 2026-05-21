@@ -1,0 +1,27 @@
+---
+garmentType: Bucket hat
+garmentName: The Hotel Towel Bucket Hat
+garmentPhoto: ../../assets/garments/hotel-bucket--garment.png
+towelName: Rosa
+towelPersonality: dignified and fond; proud of a long career; warm
+towelPhoto: ../../assets/garments/hotel-bucket--towel.png
+beforePhoto: ../../assets/garments/hotel-bucket--towel.png
+afterPhoto: ../../assets/garments/hotel-bucket--garment.png
+madeDate: 2026-04-09
+originPlace: a seafront hotel in Sliema, Malta
+originType: hotel
+originYearApprox: around 1999
+maker: Yana
+accent: oklch(0.56 0.16 25)
+featured: true
+editionNote: 1 of 1
+ecoTowelWeightGrams: 430
+---
+
+They called me Rosa, after the colour, though I have faded to something closer to a sunset now.
+
+For most of my life I belonged to a hotel by the sea. There was lettering across me once, white and proud, the hotel's name. You can still half-read it if you hold me up to the light. Every morning I was stacked by the pool, warm from the dryer, and handed to people who had travelled a long way to do nothing for a week. I liked that work. I was good at it.
+
+Hotels retire their towels eventually, too thin and too soft for a paying guest. I expected the rag bin. Instead a box of us was given away, and a student in Malta went through it slowly, looking for the ones with stories still in them.
+
+I am a bucket hat now. I still go out in the sun every day, and I still shade someone who has travelled somewhere to do very little. Not so different, in the end.
