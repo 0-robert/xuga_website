@@ -1,0 +1,33 @@
+---
+# TEMPLATE — copy this file, rename it to <piece-id>.md (lowercase, hyphens,
+# ending in a number), and replace every value. The .example extension keeps
+# this file out of the live site. Full field reference: docs/adding-a-story.md
+garmentType: Belt bag
+garmentName: The Placeholder Piece
+garmentPhoto: ../../assets/garments/REPLACE--garment.png
+towelName: Lorem
+madeDate: 2026-01-01
+greeting: My name is Lorem, and I have a story to tell you.
+towelPhoto: ../../assets/garments/REPLACE--towel.png
+towelPersonality: warm, sentimental, unhurried
+originPlace: Somewhere, Malta
+originType: donated
+originYearApprox: the placeholder years
+beforePhoto: ../../assets/garments/REPLACE--towel.png
+afterPhoto: ../../assets/garments/REPLACE--garment.png
+maker: A XUGA student
+accent: oklch(0.74 0.155 58)
+featured: false
+editionNote: 1 of 1
+eyes:
+  x: 50
+  y: 40
+  scale: 1
+ecoTowelWeightGrams: 600
+---
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, nisi ut aliquip ex ea commodo.
+
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore. Replace every word here with the towel's real story, written in the warm and sentimental voice described in docs/towel-voice-guide.md.
+
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia. Run the finished draft through the humanizer skill before this piece goes live.

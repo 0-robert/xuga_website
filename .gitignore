@@ -6,4 +6,5 @@ public/qr/
 *.log
 .DS_Store
 .env
-.env.*
+.env.*screenshots/
+new-images/
