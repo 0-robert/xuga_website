@@ -124,16 +124,18 @@ collections:
           - { name: ctaPrimaryHref, label: Primary CTA link, widget: string }
           - { name: ctaSecondaryLabel, label: Secondary CTA label, widget: string }
           - { name: ctaSecondaryHref, label: Secondary CTA link, widget: string }
-          - { name: howEyebrow, label: 'How section: eyebrow', widget: string }
-          - { name: howHeading, label: 'How section: heading', widget: string }
-          - name: howSteps
-            label: 'How section: steps'
+          - { name: teamEyebrow, label: 'Team section: eyebrow', widget: string }
+          - { name: teamHeading, label: 'Team section: heading', widget: string }
+          - { name: teamBody, label: 'Team section: body', widget: text }
+          - name: teamMembers
+            label: 'Team members'
             widget: list
             fields:
-              - { name: title, label: Title, widget: string }
-              - { name: body, label: Body, widget: text }
-              - { name: doodle, label: Doodle, widget: select,
-                  options: [shell, sparkle, sun, wave, starfish, sprout, flower] }
+              - { name: name, label: Name, widget: string }
+              - { name: role, label: Role, widget: string }
+              - { name: photo, label: Photo, widget: image,
+                  media_folder: '/public/images/team',
+                  public_folder: '/images/team' }
           - { name: meetEyebrow, label: 'Meet section: eyebrow', widget: string }
           - { name: meetHeading, label: 'Meet section: heading', widget: string }
           - { name: meetBody, label: 'Meet section: body', widget: text }

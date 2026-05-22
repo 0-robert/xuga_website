@@ -5,7 +5,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import TaleCard from '../components/TaleCard.astro';
 import Doodle from '../components/Doodle.astro';
 import WaveEdge from '../components/WaveEdge.astro';
-import type { DoodleName } from '../lib/doodles';
 import { SITE } from '../lib/site';
 import heroArt from '../assets/hero-home.png';
 import heroWide from '../assets/hero-wide.png';
@@ -14,11 +13,7 @@ const towels = await getCollection('towels');
 const featured = towels.filter((t) => t.data.featured);
 
 const page = (await getEntry('pages', 'home'))!.data;
-const steps = (page.howSteps ?? []) as {
-  title: string;
-  body: string;
-  doodle: DoodleName;
-}[];
+const team = page.teamMembers ?? [];
 ---
 
 <BaseLayout title={SITE.name}>
@@ -71,8 +66,6 @@ const steps = (page.howSteps ?? []) as {
       </div>
     </div>
 
-    <!-- The towel character on a beach. Wide crop overlaid on desktop,
-         taller crop stacked below the text on small screens. -->
     <Image
       src={heroWide}
       alt="A XUGA bucket hat on a stack of folded dolphin-print beach towels, with a friendly pair of eyes peeking out, on a sunny beach"
@@ -122,8 +115,8 @@ const steps = (page.howSteps ?? []) as {
     }
   </style>
 
-  <!-- How it works -->
-  <section id="how" class="grain-layer relative overflow-hidden bg-sand-deep px-5 py-20 sm:py-24">
+  <!-- Product first: what we are making right now -->
+  <section class="grain-layer relative overflow-hidden bg-sand-deep px-5 py-20 sm:py-24">
     <WaveEdge color="var(--color-sand)" />
     <span
       class="pointer-events-none absolute -right-6 top-8 hidden h-28 w-28 rotate-[8deg] text-shell sm:block"
@@ -131,44 +124,6 @@ const steps = (page.howSteps ?? []) as {
     >
       <Doodle name="flower" class="h-full w-full" />
     </span>
-    <div class="relative mx-auto max-w-5xl">
-      <p
-        data-reveal
-        class="font-hand text-2xl text-[var(--accent-ink)]"
-      >
-        {page.howEyebrow}
-      </p>
-      <h2
-        data-reveal
-        style="--reveal-delay:0.08s"
-        class="mt-1 font-display text-3xl text-ink sm:text-4xl"
-      >
-        {page.howHeading}
-      </h2>
-      <ol class="mt-10 grid gap-10 sm:grid-cols-3">
-        {
-          steps.map((step, i) => (
-            <li data-reveal style={`--reveal-delay:${0.08 + 0.08 * i}s`}>
-              <div class="flex items-center gap-3">
-                <span class="font-display text-5xl font-semibold text-[var(--accent-ink)]">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <span class="h-10 w-10 text-ink">
-                  <Doodle name={step.doodle} class="h-full w-full" />
-                </span>
-              </div>
-              <h3 class="mt-3 font-display text-xl text-ink">{step.title}</h3>
-              <p class="mt-2 text-ink-soft">{step.body}</p>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
-  </section>
-
-  <!-- Meet the towels -->
-  <section class="relative overflow-hidden px-5 py-20 sm:py-24">
-    <WaveEdge color="var(--color-sand-deep)" />
     <div class="relative mx-auto max-w-5xl">
       <p
         data-reveal
@@ -213,6 +168,75 @@ const steps = (page.howSteps ?? []) as {
     </div>
   </section>
 
+  <!-- The team -->
+  <section
+    id="team"
+    class="relative overflow-hidden px-5 py-20 sm:py-24"
+  >
+    <WaveEdge color="var(--color-sand-deep)" />
+    <span
+      class="pointer-events-none absolute -top-2 left-[5%] hidden h-24 w-24 rotate-[-12deg] text-sun sm:block"
+      aria-hidden="true"
+    >
+      <Doodle name="sun" class="h-full w-full" />
+    </span>
+    <div class="relative mx-auto max-w-5xl">
+      <p
+        data-reveal
+        class="flex items-center gap-2 font-hand text-2xl text-[var(--accent-ink)]"
+      >
+        <Doodle name="sprout" class="h-7 w-7" />
+        {page.teamEyebrow}
+      </p>
+      <h2
+        data-reveal
+        style="--reveal-delay:0.08s"
+        class="mt-1 font-display text-3xl text-ink sm:text-4xl"
+      >
+        {page.teamHeading}
+      </h2>
+      <p
+        data-reveal
+        style="--reveal-delay:0.14s"
+        class="mt-3 max-w-md text-ink-soft"
+      >
+        {page.teamBody}
+      </p>
+
+      <ul
+        class="mt-10 grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 lg:grid-cols-4"
+      >
+        {
+          team.map((member, i) => {
+            // Subtle alternating tilt so the row reads as hand-pinned polaroids
+            // rather than a rigid grid. Reset on hover for legibility.
+            const tilt = i % 2 === 0 ? '-1.2deg' : '1.4deg';
+            return (
+              <li
+                class="team-card"
+                data-reveal
+                style={`--reveal-delay:${0.05 + 0.04 * i}s; --tilt:${tilt}`}
+              >
+                <div class="team-card__frame">
+                  <img
+                    src={member.photo}
+                    alt={`${member.name}, ${member.role}`}
+                    width="320"
+                    height="320"
+                    loading="lazy"
+                    class="team-card__photo"
+                  />
+                </div>
+                <p class="team-card__name">{member.name}</p>
+                <p class="team-card__role">{member.role}</p>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </section>
+
   <!-- Closing -->
   <section class="grain-layer relative overflow-hidden bg-ink px-5 py-20 text-sand sm:py-24">
     <WaveEdge color="var(--color-sand)" />
@@ -250,3 +274,47 @@ const steps = (page.howSteps ?? []) as {
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .team-card {
+    text-align: center;
+    rotate: var(--tilt, 0deg);
+    transition:
+      rotate 0.3s var(--ease-soft),
+      translate 0.3s var(--ease-soft);
+  }
+  .team-card:hover {
+    rotate: 0deg;
+    translate: 0 -3px;
+  }
+  .team-card__frame {
+    overflow: hidden;
+    border: 3px solid var(--color-paper);
+    border-radius: 20px;
+    background: var(--color-paper);
+    box-shadow: var(--shadow-lift-2);
+    aspect-ratio: 1 / 1;
+  }
+  .team-card__photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .team-card__name {
+    margin-top: 0.85rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.25rem;
+    line-height: 1.1;
+    color: var(--color-ink);
+  }
+  .team-card__role {
+    margin-top: 0.15rem;
+    font-size: 0.92rem;
+    color: var(--color-ink-soft);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .team-card { rotate: 0deg; transition: none; }
+  }
+</style>

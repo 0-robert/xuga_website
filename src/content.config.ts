@@ -106,10 +106,25 @@ const pages = defineCollection({
       ctaPrimaryHref: z.string().optional(),
       ctaSecondaryLabel: z.string().optional(),
       ctaSecondaryHref: z.string().optional(),
+      // (Legacy 'how a tale works' fields, kept optional for backward
+      // compatibility with old home.json values; the section was replaced
+      // by the team block below.)
       howEyebrow: z.string().optional(),
       howHeading: z.string().optional(),
       howSteps: z
         .array(z.object({ title: z.string(), body: z.string(), doodle: z.string() }))
+        .optional(),
+      teamEyebrow: z.string().optional(),
+      teamHeading: z.string().optional(),
+      teamBody: z.string().optional(),
+      teamMembers: z
+        .array(
+          z.object({
+            name: z.string(),
+            role: z.string(),
+            photo: z.string(),
+          }),
+        )
         .optional(),
       meetEyebrow: z.string().optional(),
       meetHeading: z.string().optional(),
