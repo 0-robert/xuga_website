@@ -135,7 +135,7 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
   </style>
 
   <!-- How it works -->
-  <section id="how" class="relative overflow-hidden bg-sand-deep px-5 py-20 sm:py-24">
+  <section id="how" class="grain-layer relative overflow-hidden bg-sand-deep px-5 py-20 sm:py-24">
     <WaveEdge color="var(--color-sand)" />
     <span
       class="pointer-events-none absolute -right-6 top-8 hidden h-28 w-28 rotate-[8deg] text-shell sm:block"
@@ -144,13 +144,23 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
       <Doodle name="flower" class="h-full w-full" />
     </span>
     <div class="relative mx-auto max-w-5xl">
-      <h2 class="font-display text-3xl text-ink sm:text-4xl">
+      <p
+        data-reveal
+        class="font-hand text-2xl text-[var(--accent)]"
+      >
+        Three small steps
+      </p>
+      <h2
+        data-reveal
+        style="--reveal-delay:0.08s"
+        class="mt-1 font-display text-3xl text-ink sm:text-4xl"
+      >
         How a tale works
       </h2>
       <ol class="mt-10 grid gap-10 sm:grid-cols-3">
         {
           steps.map((step, i) => (
-            <li>
+            <li data-reveal style={`--reveal-delay:${0.08 + 0.08 * i}s`}>
               <div class="flex items-center gap-3">
                 <span class="font-display text-5xl font-semibold text-[var(--accent)]">
                   {String(i + 1).padStart(2, '0')}
@@ -169,23 +179,41 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
   </section>
 
   <!-- Meet the towels -->
-  <section class="px-5 py-20 sm:py-24">
-    <div class="mx-auto max-w-5xl">
-      <p class="flex items-center gap-2 font-hand text-2xl text-[var(--accent)]">
+  <section class="relative overflow-hidden px-5 py-20 sm:py-24">
+    <WaveEdge color="var(--color-sand-deep)" />
+    <div class="relative mx-auto max-w-5xl">
+      <p
+        data-reveal
+        class="flex items-center gap-2 font-hand text-2xl text-[var(--accent)]"
+      >
         <Doodle name="starfish" class="h-7 w-7" />
         Three second lives
       </p>
-      <h2 class="mt-1 font-display text-3xl text-ink sm:text-4xl">
+      <h2
+        data-reveal
+        style="--reveal-delay:0.08s"
+        class="mt-1 font-display text-3xl text-ink sm:text-4xl"
+      >
         Meet the towels
       </h2>
-      <p class="mt-3 max-w-md text-ink-soft">
+      <p
+        data-reveal
+        style="--reveal-delay:0.14s"
+        class="mt-3 max-w-md text-ink-soft"
+      >
         Three towels, three second lives. Pick one and hear it out.
       </p>
       <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {featured.map((entry) => <TaleCard entry={entry} />)}
+        {featured.map((entry, i) => (
+          <div data-reveal style={`--reveal-delay:${0.08 + 0.07 * i}s`}>
+            <TaleCard entry={entry} />
+          </div>
+        ))}
       </div>
       <a
         href="/gallery/"
+        data-reveal
+        style="--reveal-delay:0.28s"
         class="group mt-9 inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)]"
       >
         See the whole collection
@@ -198,7 +226,7 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
   </section>
 
   <!-- Closing -->
-  <section class="relative overflow-hidden bg-ink px-5 py-20 text-sand sm:py-24">
+  <section class="grain-layer relative overflow-hidden bg-ink px-5 py-20 text-sand sm:py-24">
     <WaveEdge color="var(--color-sand)" />
     <span
       class="pointer-events-none absolute left-[8%] top-10 hidden h-16 w-16 rotate-[-12deg] text-sun/70 sm:block"
@@ -213,15 +241,21 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
       <Doodle name="shell" class="h-full w-full" />
     </span>
     <div class="relative mx-auto max-w-3xl text-center">
-      <h2 class="font-display text-3xl sm:text-4xl">
+      <h2 data-reveal class="font-display text-3xl sm:text-4xl">
         Ready to find your own?
       </h2>
-      <p class="mx-auto mt-3 max-w-md text-sand/70">
+      <p
+        data-reveal
+        style="--reveal-delay:0.08s"
+        class="mx-auto mt-3 max-w-md text-sand/70"
+      >
         Each XUGA piece is one of one. When you buy it, the tale becomes
         yours to carry.
       </p>
       <a
         href="/gallery/"
+        data-reveal
+        style="--reveal-delay:0.16s"
         class="mt-7 inline-block rounded-full bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-ink shadow-[3px_3px_0_var(--color-sand)] transition-transform duration-200 ease-soft hover:scale-[1.03]"
       >
         See the collection

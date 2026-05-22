@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import WaveEdge from '../components/WaveEdge.astro';
+import Doodle from '../components/Doodle.astro';
 import { SITE } from '../lib/site';
 ---
 
@@ -8,10 +9,20 @@ import { SITE } from '../lib/site';
   title="About"
   description="XUGA gives worn-out beach towels a second life as island wear, and a voice through Towel Tales."
 >
-  <section class="px-5 pt-16 pb-10 sm:pt-20">
-    <div class="mx-auto max-w-3xl">
-      <p class="font-hand text-2xl text-[var(--accent)]">About</p>
-      <h1 class="mt-1 font-display text-4xl leading-tight text-ink sm:text-5xl">
+  <section class="relative overflow-hidden px-5 pt-16 pb-10 sm:pt-20">
+    <span
+      class="pointer-events-none absolute -top-3 right-[5%] hidden h-28 w-28 rotate-[-10deg] text-shell sm:block"
+      aria-hidden="true"
+    >
+      <Doodle name="flower" class="h-full w-full" />
+    </span>
+    <div class="relative mx-auto max-w-3xl">
+      <p data-reveal class="font-hand text-2xl text-[var(--accent)]">About</p>
+      <h1
+        data-reveal
+        style="--reveal-delay:0.08s"
+        class="mt-1 font-display text-4xl leading-tight text-ink sm:text-5xl"
+      >
         We give beach towels a second life, and a voice.
       </h1>
     </div>
@@ -19,42 +30,44 @@ import { SITE } from '../lib/site';
 
   <section class="px-5 py-12">
     <div class="mx-auto max-w-3xl space-y-5 text-lg leading-relaxed text-ink">
-      <h2 class="font-display text-2xl text-ink">Why towels</h2>
-      <p>
+      <h2 data-reveal class="font-display text-2xl text-ink">Why towels</h2>
+      <p data-reveal style="--reveal-delay:0.08s">
         Beach towels wear out quickly. They go thin in the middle, the colours
         fade, the edges fray, and most are thrown away while the fabric still
         has years of life left in it. XUGA is a student-led island-wear brand
         in {SITE.place}. We take those towels and sew them, by hand and one at
         a time, into bucket hats, shorts, belt bags and pouches.
       </p>
-      <p>
+      <p data-reveal style="--reveal-delay:0.14s">
         Because every towel is different, every piece is different. There is
         no second copy. There cannot be.
       </p>
     </div>
   </section>
 
-  <section class="bg-sand-deep px-5 py-14">
-    <div class="mx-auto max-w-3xl space-y-5 text-lg leading-relaxed text-ink">
-      <h2 class="font-display text-2xl text-ink">Why a tale</h2>
-      <p>
+  <section class="grain-layer relative overflow-hidden bg-sand-deep px-5 py-14">
+    <WaveEdge color="var(--color-sand)" />
+    <div class="relative mx-auto max-w-3xl space-y-5 text-lg leading-relaxed text-ink">
+      <h2 data-reveal class="font-display text-2xl text-ink">Why a tale</h2>
+      <p data-reveal style="--reveal-delay:0.08s">
         A second-hand towel carries a history that most upcycled fashion
         quietly throws away. We thought that history was worth keeping. So
         every XUGA piece is sewn with a small tag, and every tag opens a page
         where the towel itself tells you where it has been: the summers, the
         beaches, the hotel by the sea, the person who decided not to bin it.
       </p>
-      <p>
+      <p data-reveal style="--reveal-delay:0.14s">
         It makes the piece feel like yours, because it is the only one of its
         kind, and now you know its whole story.
       </p>
     </div>
   </section>
 
-  <section class="px-5 py-14">
-    <div class="mx-auto max-w-3xl space-y-5 text-lg leading-relaxed text-ink">
-      <h2 class="font-display text-2xl text-ink">Honest about the green part</h2>
-      <p>
+  <section class="relative overflow-hidden px-5 py-14">
+    <WaveEdge color="var(--color-sand-deep)" />
+    <div class="relative mx-auto max-w-3xl space-y-5 text-lg leading-relaxed text-ink">
+      <h2 data-reveal class="font-display text-2xl text-ink">Honest about the green part</h2>
+      <p data-reveal style="--reveal-delay:0.08s">
         We do not sell vague promises. The eco figures on each tale are
         estimates, worked out from the weight of the towel and the average
         impact of producing new cotton, and we label them as estimates every
@@ -64,15 +77,15 @@ import { SITE } from '../lib/site';
     </div>
   </section>
 
-  <section class="relative overflow-hidden bg-ink px-5 py-16 text-sand">
+  <section class="grain-layer relative overflow-hidden bg-ink px-5 py-16 text-sand">
     <WaveEdge color="var(--color-sand)" />
-    <div class="mx-auto max-w-3xl">
-      <h2 class="font-display text-2xl">Say hello</h2>
-      <p class="mt-3 max-w-md text-sand/70">
+    <div class="relative mx-auto max-w-3xl">
+      <h2 data-reveal class="font-display text-2xl">Say hello</h2>
+      <p data-reveal style="--reveal-delay:0.08s" class="mt-3 max-w-md text-sand/70">
         XUGA is made by students in {SITE.place}. If you have a towel with a
         story, or just want to see what we are making next, come and find us.
       </p>
-      <ul class="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-sand">
+      <ul data-reveal style="--reveal-delay:0.14s" class="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-sand">
         <li>
           <a
             class="underline-offset-4 hover:underline"
