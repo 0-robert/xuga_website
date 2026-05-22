@@ -1,0 +1,33 @@
+{
+  "introEyebrow": "About",
+  "introHeading": "We give beach towels a second life, and a voice.",
+
+  "sections": [
+    {
+      "heading": "Why towels",
+      "tone": "sand",
+      "paragraphs": [
+        "Beach towels wear out quickly. They go thin in the middle, the colours fade, the edges fray, and most are thrown away while the fabric still has years of life left in it. XUGA is a student-led island-wear brand in Malta. We take those towels and sew them, by hand and one at a time, into bucket hats, shorts, belt bags and pouches.",
+        "Because every towel is different, every piece is different. There is no second copy. There cannot be."
+      ]
+    },
+    {
+      "heading": "Why a tale",
+      "tone": "sand-deep",
+      "paragraphs": [
+        "A second-hand towel carries a history that most upcycled fashion quietly throws away. We thought that history was worth keeping. So every XUGA piece is sewn with a small tag, and every tag opens a page where the towel itself tells you where it has been: the summers, the beaches, the hotel by the sea, the person who decided not to bin it.",
+        "It makes the piece feel like yours, because it is the only one of its kind, and now you know its whole story."
+      ]
+    },
+    {
+      "heading": "Honest about the green part",
+      "tone": "sand",
+      "paragraphs": [
+        "We do not sell vague promises. The eco figures on each tale are estimates, worked out from the weight of the towel and the average impact of producing new cotton, and we label them as estimates every time. The real point is simpler than any number: a towel that becomes a garment is a towel that did not become waste."
+      ]
+    }
+  ],
+
+  "helloHeading": "Say hello",
+  "helloBody": "XUGA is made by students in Malta. If you have a towel with a story, or just want to see what we are making next, come and find us."
+}

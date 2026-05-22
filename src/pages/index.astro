@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TaleCard from '../components/TaleCard.astro';
@@ -13,23 +13,12 @@ import heroWide from '../assets/hero-wide.png';
 const towels = await getCollection('towels');
 const featured = towels.filter((t) => t.data.featured);
 
-const steps: { title: string; body: string; doodle: DoodleName }[] = [
-  {
-    title: 'You find a piece you love',
-    body: 'Each one is sewn by hand from a single retired beach towel. No two are alike, because no two towels are.',
-    doodle: 'shell',
-  },
-  {
-    title: 'It carries a small tag',
-    body: 'Sewn into every garment is a fabric tag with a code, the kind that brought you to this page.',
-    doodle: 'sparkle',
-  },
-  {
-    title: 'The towel tells its tale',
-    body: 'Scan it and you meet the towel: where it spent its summers, who rescued it, and what it became.',
-    doodle: 'sun',
-  },
-];
+const page = (await getEntry('pages', 'home'))!.data;
+const steps = (page.howSteps ?? []) as {
+  title: string;
+  body: string;
+  doodle: DoodleName;
+}[];
 ---
 
 <BaseLayout title={SITE.name}>
@@ -44,22 +33,21 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
             class="flex items-center gap-2 font-hand text-2xl text-[var(--accent-ink)]"
           >
             <Doodle name="sun" class="h-7 w-7" />
-            XUGA &middot; Island Wear Anywhere
+            {page.heroEyebrow}
           </p>
           <h1
             data-reveal
             style="--reveal-delay:0.08s"
             class="mt-1 font-display text-[2.4rem] leading-[1.05] text-ink sm:text-[3rem] lg:text-[3.1rem]"
           >
-            Our island wear started life as a beach towel.
+            {page.heroHeading}
           </h1>
           <p
             data-reveal
             style="--reveal-delay:0.16s"
             class="mt-5 text-lg text-ink-soft"
           >
-            XUGA up-cycles retired beach towels into island wear made to last. 
-            Every piece is unique, just like you!
+            {page.heroBody}
           </p>
           <div
             data-reveal
@@ -67,16 +55,16 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
             class="mt-8 flex flex-wrap gap-3"
           >
             <a
-              href="/tales/"
+              href={page.ctaPrimaryHref}
               class="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-sand transition-transform duration-200 ease-soft hover:scale-[1.03] active:scale-[0.97]"
             >
-              Read the tales
+              {page.ctaPrimaryLabel}
             </a>
             <a
-              href="#how"
+              href={page.ctaSecondaryHref}
               class="rounded-full border-2 border-ink px-6 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-ink/5"
             >
-              How it works
+              {page.ctaSecondaryLabel}
             </a>
           </div>
         </div>
@@ -148,14 +136,14 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
         data-reveal
         class="font-hand text-2xl text-[var(--accent-ink)]"
       >
-        Three small steps
+        {page.howEyebrow}
       </p>
       <h2
         data-reveal
         style="--reveal-delay:0.08s"
         class="mt-1 font-display text-3xl text-ink sm:text-4xl"
       >
-        How a tale works
+        {page.howHeading}
       </h2>
       <ol class="mt-10 grid gap-10 sm:grid-cols-3">
         {
@@ -187,21 +175,21 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
         class="flex items-center gap-2 font-hand text-2xl text-[var(--accent-ink)]"
       >
         <Doodle name="starfish" class="h-7 w-7" />
-        Three second lives
+        {page.meetEyebrow}
       </p>
       <h2
         data-reveal
         style="--reveal-delay:0.08s"
         class="mt-1 font-display text-3xl text-ink sm:text-4xl"
       >
-        Meet the towels
+        {page.meetHeading}
       </h2>
       <p
         data-reveal
         style="--reveal-delay:0.14s"
         class="mt-3 max-w-md text-ink-soft"
       >
-        Three towels, three second lives. Pick one and hear it out.
+        {page.meetBody}
       </p>
       <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {featured.map((entry, i) => (
@@ -211,12 +199,12 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
         ))}
       </div>
       <a
-        href="/gallery/"
+        href={page.meetMoreHref}
         data-reveal
         style="--reveal-delay:0.28s"
         class="group mt-9 -ml-3 inline-flex min-h-11 items-center gap-2 rounded-full px-3 py-2.5 text-sm font-semibold text-[var(--accent-ink)] hover:bg-ink/5"
       >
-        See the whole collection
+        {page.meetMoreLabel}
         <span
           class="inline-block transition-transform duration-300 ease-soft group-hover:translate-x-1"
           aria-hidden="true">&rarr;</span
@@ -242,23 +230,22 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
     </span>
     <div class="relative mx-auto max-w-3xl text-center">
       <h2 data-reveal class="font-display text-3xl sm:text-4xl">
-        Ready to find your own?
+        {page.closingHeading}
       </h2>
       <p
         data-reveal
         style="--reveal-delay:0.08s"
         class="mx-auto mt-3 max-w-md text-sand/70"
       >
-        Each XUGA piece is one of one. When you buy it, the tale becomes
-        yours to carry.
+        {page.closingBody}
       </p>
       <a
-        href="/gallery/"
+        href={page.closingCtaHref}
         data-reveal
         style="--reveal-delay:0.16s"
         class="mt-7 inline-block rounded-full bg-[var(--accent)] px-7 py-3 text-sm font-semibold text-ink shadow-[3px_3px_0_var(--color-sand)] transition-transform duration-200 ease-soft hover:scale-[1.03] active:scale-[0.97]"
       >
-        See the collection
+        {page.closingCtaLabel}
       </a>
     </div>
   </section>

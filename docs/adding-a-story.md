@@ -1,5 +1,21 @@
 # Adding a new garment story
 
+There are two ways to add a story. Most editors should use the first.
+
+## Through the CMS (recommended for non-developers)
+
+Go to https://xugawear.vercel.app/admin/, sign in, click **Tales → New Tale**,
+fill in the fields, drop in photos, write the story, and click **Publish**.
+The QR code is generated automatically on the next build. See
+`docs/editing-the-site.md` for the full walkthrough.
+
+The rest of this document describes the same process for a developer working
+directly in the repo.
+
+---
+
+## Through the repo (for developers)
+
 Every garment is one Markdown file. Adding a piece takes a few minutes and no
 code. Here is the whole process.
 

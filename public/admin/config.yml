@@ -1,0 +1,247 @@
+# Sveltia CMS configuration for XUGA Island Wear.
+# Edits go straight to the GitHub repo and trigger a Vercel rebuild.
+#
+# Editors: sign in at https://xugawear.vercel.app/admin/ with a GitHub
+# personal access token (PAT) that has `repo` scope on this repository.
+# See docs/editing-the-site.md for the exact steps.
+
+backend:
+  name: github
+  repo: 0-robert/xuga_website
+  branch: main
+  # PAT-based sign-in is enough for a small student team.
+  # To upgrade to "Sign in with GitHub" later, deploy the Sveltia auth
+  # Cloudflare Worker and set `base_url` to its URL.
+  auth_methods: [token, pat]
+
+# Editors uploading photos drop them here. The same folder is referenced
+# from Markdown frontmatter as /images/<filename>.
+media_folder: public/images
+public_folder: /images
+
+# Show URL previews on edit screens.
+site_url: https://xugawear.vercel.app
+display_url: https://xugawear.vercel.app
+logo_url: https://xugawear.vercel.app/favicon.png
+
+collections:
+  # -------------------------------------------------------------------
+  # The towels: one Markdown file per garment. Mirrors the Zod schema
+  # in src/content.config.ts. The story prose is the Markdown body.
+  # -------------------------------------------------------------------
+  - name: towels
+    label: Tales (one per garment)
+    label_singular: Tale
+    folder: src/content/towels
+    extension: md
+    format: frontmatter
+    create: true
+    slug: '{{garmentName | slugify}}-{{year}}{{month}}{{day}}'
+    summary: '{{garmentName}} — {{towelName}}'
+    sortable_fields: [madeDate, garmentName]
+    view_filters:
+      - label: Featured on home
+        field: featured
+        pattern: true
+    fields:
+      - { name: garmentName, label: Garment name, widget: string }
+      - { name: garmentType, label: Garment type, widget: select,
+          options: [Belt bag, Shorts, Bucket hat, Pouch, Trousers, Other] }
+      - { name: garmentPhoto, label: Garment photo, widget: image }
+      - { name: towelName, label: Towel's character name, widget: string,
+          hint: "What the towel calls itself. Used in headings, e.g. 'Meet Finn'." }
+      - { name: madeDate, label: Date sewn, widget: datetime, format: 'YYYY-MM-DD',
+          date_format: 'YYYY-MM-DD', time_format: false, picker_utc: true }
+      - { name: greeting, label: Greeting (handwritten quote), widget: string,
+          required: false,
+          hint: "The towel's opening line. Shown handwritten in the hero." }
+      - { name: featured, label: Featured on home, widget: boolean, default: false }
+      - { name: editionNote, label: Edition note, widget: string, default: '1 of 1' }
+      - { name: accent, label: Accent colour (OKLCH), widget: string, required: false,
+          hint: "Optional. E.g. oklch(0.7 0.13 50). Tints the story page to match the towel." }
+      - { name: towelPhoto, label: Original towel photo, widget: image, required: false,
+          hint: 'Used for the towel character with animated eyes.' }
+      - { name: towelPersonality, label: Towel personality notes, widget: text,
+          required: false }
+      - { name: originPlace, label: Origin place, widget: string, required: false,
+          hint: 'e.g. "A hotel in Sliema" or "Mellieha, Malta".' }
+      - { name: originType, label: Origin type, widget: select, required: false,
+          options: [donated, hotel, thrift, family, found, unknown] }
+      - { name: originYearApprox, label: Origin year (approximate), widget: string,
+          required: false, hint: 'e.g. "around 1998" or "the mid-2010s".' }
+      - { name: beforePhoto, label: Before photo (the towel), widget: image,
+          required: false }
+      - { name: afterPhoto, label: After photo (the garment), widget: image,
+          required: false }
+      - { name: maker, label: Made by (name or initials), widget: string,
+          required: false }
+      - label: Eyes (where on the towel photo)
+        name: eyes
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { name: x, label: 'Eyes X (% across)', widget: number, default: 50,
+              value_type: float, min: 0, max: 100 }
+          - { name: y, label: 'Eyes Y (% down)', widget: number, default: 40,
+              value_type: float, min: 0, max: 100 }
+          - { name: scale, label: Eye size multiplier, widget: number, default: 1,
+              value_type: float, min: 0.3, max: 3, step: 0.05 }
+      - label: Eco impact (optional)
+        name: eco
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { name: ecoTowelWeightGrams, label: Towel weight (g), widget: number,
+              required: false, value_type: int }
+          - { name: ecoWaterSavedLitres, label: Water saved (L) override,
+              widget: number, required: false, value_type: int }
+          - { name: ecoCo2SavedKg, label: CO2 saved (kg) override,
+              widget: number, required: false, value_type: float, step: 0.1 }
+          - { name: ecoTextileSavedGrams, label: Textile saved (g) override,
+              widget: number, required: false, value_type: int }
+      - { name: body, label: Story (the towel's own voice), widget: markdown,
+          hint: "Warm, sentimental, told in the towel's voice. See docs/towel-voice-guide.md before publishing." }
+
+  # -------------------------------------------------------------------
+  # The pages: one JSON file per page. Each entry's schema mirrors
+  # `src/content.config.ts` so what editors see matches what renders.
+  # -------------------------------------------------------------------
+  - name: pages
+    label: Pages
+    label_singular: Page
+    files:
+      - name: home
+        label: Home page
+        file: src/content/pages/home.json
+        format: json
+        fields:
+          - { name: heroEyebrow, label: Hero eyebrow (handwritten), widget: string }
+          - { name: heroHeading, label: Hero heading, widget: string }
+          - { name: heroBody, label: Hero body, widget: text }
+          - { name: ctaPrimaryLabel, label: Primary CTA label, widget: string }
+          - { name: ctaPrimaryHref, label: Primary CTA link, widget: string }
+          - { name: ctaSecondaryLabel, label: Secondary CTA label, widget: string }
+          - { name: ctaSecondaryHref, label: Secondary CTA link, widget: string }
+          - { name: howEyebrow, label: 'How section: eyebrow', widget: string }
+          - { name: howHeading, label: 'How section: heading', widget: string }
+          - name: howSteps
+            label: 'How section: steps'
+            widget: list
+            fields:
+              - { name: title, label: Title, widget: string }
+              - { name: body, label: Body, widget: text }
+              - { name: doodle, label: Doodle, widget: select,
+                  options: [shell, sparkle, sun, wave, starfish, sprout, flower] }
+          - { name: meetEyebrow, label: 'Meet section: eyebrow', widget: string }
+          - { name: meetHeading, label: 'Meet section: heading', widget: string }
+          - { name: meetBody, label: 'Meet section: body', widget: text }
+          - { name: meetMoreLabel, label: 'Meet section: see-more label', widget: string }
+          - { name: meetMoreHref, label: 'Meet section: see-more link', widget: string }
+          - { name: closingHeading, label: Closing heading, widget: string }
+          - { name: closingBody, label: Closing body, widget: text }
+          - { name: closingCtaLabel, label: Closing CTA label, widget: string }
+          - { name: closingCtaHref, label: Closing CTA link, widget: string }
+
+      - name: gallery
+        label: Gallery page
+        file: src/content/pages/gallery.json
+        format: json
+        fields:
+          - { name: introEyebrow, label: Intro eyebrow (handwritten), widget: string }
+          - { name: introHeading, label: Intro heading, widget: string }
+          - { name: introBody, label: Intro body, widget: text }
+          - { name: rangeEyebrow, label: 'Range: eyebrow', widget: string }
+          - { name: rangeHeading, label: 'Range: heading', widget: string }
+          - name: rangeItems
+            label: 'Range items'
+            widget: list
+            fields:
+              - { name: type, label: Type, widget: string }
+              - { name: note, label: Note, widget: string }
+              - { name: doodle, label: Doodle, widget: select,
+                  options: [shell, sparkle, sun, wave, starfish, sprout, flower] }
+          - { name: closingHeading, label: Closing heading, widget: string }
+          - { name: closingBody, label: Closing body, widget: text }
+          - { name: closingCtaInstagramLabel, label: Instagram CTA label, widget: string }
+          - { name: closingCtaContactLabel, label: Contact CTA label, widget: string }
+
+      - name: about
+        label: About page
+        file: src/content/pages/about.json
+        format: json
+        fields:
+          - { name: introEyebrow, label: Intro eyebrow (handwritten), widget: string }
+          - { name: introHeading, label: Intro heading, widget: string }
+          - name: sections
+            label: Sections
+            widget: list
+            fields:
+              - { name: heading, label: Heading, widget: string }
+              - { name: tone, label: Background tone, widget: select,
+                  options: [sand, sand-deep], default: sand,
+                  hint: "Alternate sand and sand-deep for visible bands." }
+              - name: paragraphs
+                label: Paragraphs
+                widget: list
+                field: { name: text, label: Paragraph, widget: text }
+          - { name: helloHeading, label: 'Say hello: heading', widget: string }
+          - { name: helloBody, label: 'Say hello: body', widget: text }
+
+      - name: contact
+        label: Contact page
+        file: src/content/pages/contact.json
+        format: json
+        fields:
+          - { name: introEyebrow, label: Intro eyebrow (handwritten), widget: string }
+          - { name: introHeading, label: Intro heading, widget: string }
+          - { name: introBody, label: Intro body, widget: text }
+          - name: channels
+            label: Channels
+            widget: list
+            fields:
+              - { name: label, label: Label, widget: string }
+              - { name: value, label: 'Value (shown handwritten)', widget: string }
+              - { name: note, label: Note, widget: text }
+              - { name: href, label: Link (optional), widget: string, required: false }
+              - { name: doodle, label: Doodle, widget: select,
+                  options: [shell, sparkle, sun, wave, starfish, sprout, flower] }
+              - { name: swatch, label: Swatch colour, widget: select,
+                  options: [shell, sea, sun, lime, grape] }
+          - { name: commissionEyebrow, label: 'Commission: eyebrow', widget: string }
+          - { name: commissionHeading, label: 'Commission: heading', widget: string }
+          - { name: commissionBody, label: 'Commission: body', widget: text }
+          - { name: commissionCtaLabel, label: 'Commission: CTA label', widget: string }
+
+  # -------------------------------------------------------------------
+  # Site-wide settings: the single source of truth read by src/lib/site.ts.
+  # -------------------------------------------------------------------
+  - name: settings
+    label: Site settings
+    files:
+      - name: site
+        label: Site settings
+        file: src/content/settings/site.json
+        format: json
+        fields:
+          - { name: name, label: Site name, widget: string }
+          - { name: brand, label: Brand wordmark, widget: string }
+          - { name: tagline, label: Tagline, widget: string }
+          - { name: talesName, label: Tales feature name, widget: string }
+          - { name: talesLine, label: Tales tagline, widget: string }
+          - { name: description, label: Meta description, widget: text }
+          - { name: defaultBaseUrl, label: Default base URL, widget: string,
+              hint: 'Used for QR targets and Open Graph URLs when QR_BASE_URL is unset.' }
+          - { name: instagramHandle, label: Instagram handle, widget: string }
+          - { name: instagramUrl, label: Instagram URL, widget: string }
+          - { name: email, label: Email address, widget: string }
+          - { name: place, label: Place, widget: string }
+          - { name: footerTagline, label: Footer tagline, widget: string }
+          - { name: footerBlurb, label: Footer blurb, widget: text }
+          - name: nav
+            label: Navigation
+            widget: list
+            fields:
+              - { name: label, label: Label, widget: string }
+              - { name: href, label: Link, widget: string }

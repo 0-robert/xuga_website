@@ -1,0 +1,37 @@
+{
+  "introEyebrow": "Come and find us",
+  "introHeading": "Say hello.",
+  "introBody": "XUGA is a small, student-led island-wear brand in Malta. A real person reads every message. Whether you want a piece, have a question, or just want to say something kind, we would love to hear it.",
+
+  "channels": [
+    {
+      "doodle": "flower",
+      "swatch": "shell",
+      "label": "Instagram",
+      "value": "@xuga_mlt",
+      "note": "New pieces, the fastest way to ask what is in stock, and where we will be next.",
+      "href": "https://www.instagram.com/xuga_mlt/"
+    },
+    {
+      "doodle": "wave",
+      "swatch": "sea",
+      "label": "Email",
+      "value": "xuga.islandwear@gmail.com",
+      "note": "For commissions, longer questions, or sending us a towel with a story.",
+      "href": "mailto:xuga.islandwear@gmail.com"
+    },
+    {
+      "doodle": "sun",
+      "swatch": "sun",
+      "label": "At the markets",
+      "value": "Malta \u00b7 pop-ups",
+      "note": "We sell in person at island markets. Watch Instagram for the next date and stall.",
+      "href": ""
+    }
+  ],
+
+  "commissionEyebrow": "Got a towel with a story?",
+  "commissionHeading": "We will turn it into something you keep.",
+  "commissionBody": "Send us the towel from a childhood summer, an old hotel, a holiday you still think about. We will sew it into a piece and write its tale, so the memory comes with it.",
+  "commissionCtaLabel": "Email us about a commission"
+}

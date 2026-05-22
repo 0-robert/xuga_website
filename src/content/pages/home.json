@@ -1,0 +1,40 @@
+{
+  "heroEyebrow": "XUGA \u00b7 Island Wear Anywhere",
+  "heroHeading": "Our island wear started life as a beach towel.",
+  "heroBody": "XUGA up-cycles retired beach towels into island wear made to last. Every piece is unique, just like you!",
+  "ctaPrimaryLabel": "Read the tales",
+  "ctaPrimaryHref": "/tales/",
+  "ctaSecondaryLabel": "How it works",
+  "ctaSecondaryHref": "#how",
+
+  "howEyebrow": "Three small steps",
+  "howHeading": "How a tale works",
+  "howSteps": [
+    {
+      "title": "You find a piece you love",
+      "body": "Each one is sewn by hand from a single retired beach towel. No two are alike, because no two towels are.",
+      "doodle": "shell"
+    },
+    {
+      "title": "It carries a small tag",
+      "body": "Sewn into every garment is a fabric tag with a code, the kind that brought you to this page.",
+      "doodle": "sparkle"
+    },
+    {
+      "title": "The towel tells its tale",
+      "body": "Scan it and you meet the towel: where it spent its summers, who rescued it, and what it became.",
+      "doodle": "sun"
+    }
+  ],
+
+  "meetEyebrow": "Three second lives",
+  "meetHeading": "Meet the towels",
+  "meetBody": "Three towels, three second lives. Pick one and hear it out.",
+  "meetMoreLabel": "See the whole collection",
+  "meetMoreHref": "/gallery/",
+
+  "closingHeading": "Ready to find your own?",
+  "closingBody": "Each XUGA piece is one of one. When you buy it, the tale becomes yours to carry.",
+  "closingCtaLabel": "See the collection",
+  "closingCtaHref": "/gallery/"
+}

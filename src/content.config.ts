@@ -79,4 +79,89 @@ const towels = defineCollection({
     }),
 });
 
-export const collections = { towels };
+/**
+ * One JSON file per editable page in src/content/pages/.
+ * Holds the headings, paragraphs, button labels and repeatable lists that
+ * editors can change through Sveltia CMS without touching code. The page's
+ * .astro file imports its entry and renders the structure around it.
+ *
+ * Schemas are deliberately lenient (extra fields allowed, optional defaults)
+ * so adding a new copy field through the CMS does not require a schema bump
+ * before content publishes. The .astro renders fall back gracefully.
+ */
+const pages = defineCollection({
+  loader: glob({ pattern: '*.json', base: './src/content/pages' }),
+  schema: z
+    .object({
+      // Common across pages
+      introEyebrow: z.string().optional(),
+      introHeading: z.string().optional(),
+      introBody: z.string().optional(),
+
+      // Home
+      heroEyebrow: z.string().optional(),
+      heroHeading: z.string().optional(),
+      heroBody: z.string().optional(),
+      ctaPrimaryLabel: z.string().optional(),
+      ctaPrimaryHref: z.string().optional(),
+      ctaSecondaryLabel: z.string().optional(),
+      ctaSecondaryHref: z.string().optional(),
+      howEyebrow: z.string().optional(),
+      howHeading: z.string().optional(),
+      howSteps: z
+        .array(z.object({ title: z.string(), body: z.string(), doodle: z.string() }))
+        .optional(),
+      meetEyebrow: z.string().optional(),
+      meetHeading: z.string().optional(),
+      meetBody: z.string().optional(),
+      meetMoreLabel: z.string().optional(),
+      meetMoreHref: z.string().optional(),
+      closingHeading: z.string().optional(),
+      closingBody: z.string().optional(),
+      closingCtaLabel: z.string().optional(),
+      closingCtaHref: z.string().optional(),
+
+      // Gallery
+      rangeEyebrow: z.string().optional(),
+      rangeHeading: z.string().optional(),
+      rangeItems: z
+        .array(z.object({ type: z.string(), doodle: z.string(), note: z.string() }))
+        .optional(),
+      closingCtaInstagramLabel: z.string().optional(),
+      closingCtaContactLabel: z.string().optional(),
+
+      // About
+      sections: z
+        .array(
+          z.object({
+            heading: z.string(),
+            tone: z.enum(['sand', 'sand-deep']).default('sand'),
+            paragraphs: z.array(z.string()),
+          }),
+        )
+        .optional(),
+      helloHeading: z.string().optional(),
+      helloBody: z.string().optional(),
+
+      // Contact
+      channels: z
+        .array(
+          z.object({
+            doodle: z.string(),
+            swatch: z.string(),
+            label: z.string(),
+            value: z.string(),
+            note: z.string(),
+            href: z.string().optional().default(''),
+          }),
+        )
+        .optional(),
+      commissionEyebrow: z.string().optional(),
+      commissionHeading: z.string().optional(),
+      commissionBody: z.string().optional(),
+      commissionCtaLabel: z.string().optional(),
+    })
+    .passthrough(),
+});
+
+export const collections = { towels, pages };

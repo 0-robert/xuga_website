@@ -1,32 +1,34 @@
 /**
- * Site-wide configuration. Imported by Astro pages and by scripts/generate-qr.mjs.
+ * Site-wide configuration. Reads from src/content/settings/site.json so the
+ * brand name, tagline, nav, social handles and similar values can be edited
+ * through Sveltia CMS at /admin/ without touching code.
+ *
+ * Imported by Astro pages and by scripts/generate-qr.mjs; both Node 22 and
+ * the Astro bundler resolve the JSON import natively.
  *
  * The production origin (used for QR targets and Open Graph URLs) is set in
  * astro.config.mjs via the QR_BASE_URL environment variable. `defaultBaseUrl`
  * below is only the fallback when that variable is not set.
  */
+import settings from '../content/settings/site.json' with { type: 'json' };
+
 export const SITE = {
-  name: 'XUGA Island Wear',
-  brand: 'XUGA',
-  tagline: 'Island Wear Anywhere',
+  name: settings.name,
+  brand: settings.brand,
+  tagline: settings.tagline,
   /** The name of the QR storytelling feature. */
-  talesName: 'Towel Tales',
-  talesLine: 'Every XUGA piece has a tale.',
-  description:
-    'XUGA upcycles worn-out beach towels into one-of-a-kind island wear in Malta. Every piece carries a code: scan it and the towel tells you where it has been.',
-  defaultBaseUrl: 'https://xugawear.vercel.app',
+  talesName: settings.talesName,
+  talesLine: settings.talesLine,
+  description: settings.description,
+  defaultBaseUrl: settings.defaultBaseUrl,
   instagram: {
-    handle: '@xuga_mlt',
-    url: 'https://www.instagram.com/xuga_mlt/',
+    handle: settings.instagramHandle,
+    url: settings.instagramUrl,
   },
-  email: 'xuga.islandwear@gmail.com',
-  place: 'Malta',
+  email: settings.email,
+  place: settings.place,
+  footerTagline: settings.footerTagline,
+  footerBlurb: settings.footerBlurb,
 };
 
-export const NAV = [
-  { label: 'Home', href: '/' },
-  { label: 'Gallery', href: '/gallery/' },
-  { label: 'Tales', href: '/tales/' },
-  { label: 'About', href: '/about/' },
-  { label: 'Contact', href: '/contact/' },
-];
+export const NAV = settings.nav;

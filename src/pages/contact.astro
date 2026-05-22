@@ -1,47 +1,33 @@
 ---
+import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Doodle from '../components/Doodle.astro';
 import WaveEdge from '../components/WaveEdge.astro';
 import { SITE } from '../lib/site';
 import type { DoodleName } from '../lib/doodles';
 
-const channels: {
+const page = (await getEntry('pages', 'contact'))!.data;
+
+const swatchClass: Record<string, string> = {
+  shell: 'bg-shell',
+  sea: 'bg-sea',
+  sun: 'bg-sun',
+  lime: 'bg-lime',
+  grape: 'bg-grape',
+};
+const channels = (page.channels ?? []) as {
   doodle: DoodleName;
   swatch: string;
   label: string;
   value: string;
   note: string;
   href?: string;
-}[] = [
-  {
-    doodle: 'flower',
-    swatch: 'bg-shell',
-    label: 'Instagram',
-    value: SITE.instagram.handle,
-    note: 'New pieces, the fastest way to ask what is in stock, and where we will be next.',
-    href: SITE.instagram.url,
-  },
-  {
-    doodle: 'wave',
-    swatch: 'bg-sea',
-    label: 'Email',
-    value: SITE.email,
-    note: 'For commissions, longer questions, or sending us a towel with a story.',
-    href: `mailto:${SITE.email}`,
-  },
-  {
-    doodle: 'sun',
-    swatch: 'bg-sun',
-    label: 'At the markets',
-    value: `${SITE.place} · pop-ups`,
-    note: 'We sell in person at island markets. Watch Instagram for the next date and stall.',
-  },
-];
+}[];
 ---
 
 <BaseLayout
   title="Contact"
-  description="Get in touch with XUGA — a student-led island-wear brand in Malta upcycling beach towels into one-of-a-kind clothing."
+  description="Get in touch with XUGA, a student-led island-wear brand in Malta upcycling beach towels into one-of-a-kind clothing."
 >
   <!-- Intro -->
   <section class="relative overflow-hidden px-5 pt-16 pb-10 sm:pt-20">
@@ -57,23 +43,21 @@ const channels: {
         data-reveal
       >
         <Doodle name="starfish" class="h-7 w-7" />
-        Come and find us
+        {page.introEyebrow}
       </p>
       <h1
         class="mt-1 font-display text-[2.6rem] leading-[1.04] text-ink sm:text-6xl"
         data-reveal
         style="--reveal-delay:0.08s"
       >
-        Say hello.
+        {page.introHeading}
       </h1>
       <p
         class="mt-5 max-w-xl text-lg text-ink-soft"
         data-reveal
         style="--reveal-delay:0.14s"
       >
-        XUGA is a small, student-led island-wear brand in {SITE.place}. A real
-        person reads every message. Whether you want a piece, have a question,
-        or just want to say something kind, we would love to hear it.
+        {page.introBody}
       </p>
     </div>
   </section>
@@ -86,7 +70,7 @@ const channels: {
           const inner = (
             <>
               <span
-                class={`grid h-12 w-12 place-items-center rounded-full border-2 border-ink ${c.swatch} text-ink`}
+                class={`grid h-12 w-12 place-items-center rounded-full border-2 border-ink ${swatchClass[c.swatch] ?? 'bg-paper'} text-ink`}
               >
                 <Doodle name={c.doodle} class="h-6 w-6" />
               </span>
@@ -139,23 +123,21 @@ const channels: {
     </span>
     <div class="relative mx-auto max-w-2xl text-center">
       <p class="font-hand text-2xl text-sun" data-reveal>
-        Got a towel with a story?
+        {page.commissionEyebrow}
       </p>
       <h2
         class="mt-1 font-display text-3xl sm:text-4xl"
         data-reveal
         style="--reveal-delay:0.08s"
       >
-        We will turn it into something you keep.
+        {page.commissionHeading}
       </h2>
       <p
         class="mx-auto mt-3 max-w-md text-sand/70"
         data-reveal
         style="--reveal-delay:0.14s"
       >
-        Send us the towel from a childhood summer, an old hotel, a holiday you
-        still think about. We will sew it into a piece and write its tale, so
-        the memory comes with it.
+        {page.commissionBody}
       </p>
       <a
         href={`mailto:${SITE.email}?subject=A%20towel%20with%20a%20story`}
@@ -163,7 +145,7 @@ const channels: {
         data-reveal
         style="--reveal-delay:0.2s"
       >
-        Email us about a commission
+        {page.commissionCtaLabel}
       </a>
     </div>
   </section>
