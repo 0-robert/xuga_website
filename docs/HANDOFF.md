@@ -82,7 +82,8 @@ audit and `humanizer` for any story or marketing copy.
 **Current state (verified 2026-05-22).** Build passes (8 pages). `npm test`
 passes (10/10). The full site exists and is rebranded to "XUGA Island Wear" with
 a 5-item nav and a mobile menu. Gallery and Contact pages are built. Three
-example garments are in `src/content/towels/`.
+example garments are in `src/content/towels/`. All work is committed on the
+branch `build/towel-tales` (not yet merged to `main`); continue on that branch.
 
 ---
 
