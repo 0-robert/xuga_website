@@ -14,7 +14,7 @@ export const SITE = {
   talesLine: 'Every XUGA piece has a tale.',
   description:
     'XUGA upcycles worn-out beach towels into one-of-a-kind island wear in Malta. Every piece carries a code: scan it and the towel tells you where it has been.',
-  defaultBaseUrl: 'https://xugaislandwear.com',
+  defaultBaseUrl: 'https://xugawear.vercel.app',
   instagram: {
     handle: '@xuga_mlt',
     url: 'https://www.instagram.com/xuga_mlt/',
