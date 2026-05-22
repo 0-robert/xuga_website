@@ -1,16 +1,16 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import TowelCharacter from '../components/TowelCharacter.astro';
 import TaleCard from '../components/TaleCard.astro';
 import Doodle from '../components/Doodle.astro';
 import WaveEdge from '../components/WaveEdge.astro';
 import type { DoodleName } from '../lib/doodles';
 import { SITE } from '../lib/site';
+import heroArt from '../assets/hero-home.png';
 
 const towels = await getCollection('towels');
 const featured = towels.filter((t) => t.data.featured);
-const hero = towels.find((t) => t.id === 'dolphin-belt-001') ?? towels[0];
 
 const steps: { title: string; body: string; doodle: DoodleName }[] = [
   {
@@ -34,44 +34,10 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
 <BaseLayout title={SITE.name}>
   <!-- Hero -->
   <section class="relative overflow-hidden">
-    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
-      <span
-        class="absolute inset-0"
-        style="background: radial-gradient(56% 42% at 82% 4%, oklch(0.9 0.1 80 / 0.55), transparent 72%);"
-      ></span>
-      <span
-        class="absolute -top-6 right-[1%] h-32 w-32 rotate-[-10deg] text-sun sm:h-48 sm:w-48"
-      >
-        <Doodle name="sun" class="h-full w-full" />
-      </span>
-      <span
-        class="absolute bottom-[12%] left-[2%] hidden h-16 w-16 rotate-[12deg] text-shell sm:block"
-      >
-        <Doodle name="starfish" class="h-full w-full" />
-      </span>
-      <span class="absolute top-[20%] left-[1%] h-9 w-9 text-grape sm:left-[3%]">
-        <Doodle name="sparkle" class="h-full w-full" />
-      </span>
-      <span
-        class="absolute bottom-[8%] right-[6%] hidden h-12 w-12 text-sea md:block"
-      >
-        <Doodle name="wave" class="h-full w-full" />
-      </span>
-      <span
-        class="absolute top-[58%] left-[46%] h-3.5 w-3.5 rounded-full bg-lime"
-      ></span>
-      <span
-        class="absolute top-[12%] left-[40%] h-2.5 w-2.5 rounded-full bg-sun-deep"
-      ></span>
-      <span
-        class="absolute bottom-[24%] right-[40%] h-3 w-3 rounded-full bg-grape"
-      ></span>
-    </div>
-
     <div
-      class="relative mx-auto grid max-w-5xl items-center gap-10 px-5 py-16 sm:py-24 md:grid-cols-[1.05fr_0.95fr]"
+      class="mx-auto grid max-w-6xl items-center gap-2 px-5 pt-8 pb-4 sm:gap-4 lg:grid-cols-[1fr_1.3fr] lg:gap-6 lg:py-6"
     >
-      <div>
+      <div class="lg:pr-2">
         <p
           data-reveal
           class="flex items-center gap-2 font-hand text-2xl text-[var(--accent)]"
@@ -82,20 +48,24 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
         <h1
           data-reveal
           style="--reveal-delay:0.08s"
-          class="mt-1 font-display text-[2.6rem] leading-[1.02] text-ink sm:text-6xl"
+          class="mt-1 font-display text-[2.4rem] leading-[1.05] text-ink sm:text-[3rem] lg:text-[3.4rem]"
         >
-          Your clothes used to be a beach towel.
+          Your island-wear used to be a beach towel.
         </h1>
         <p
           data-reveal
           style="--reveal-delay:0.16s"
           class="mt-5 max-w-md text-lg text-ink-soft"
         >
-          XUGA up-cycles worn-out beach towels into island wear made to last. Every
-          piece keeps a tag. Scan it, and the towel tells you, in its own
-          words, where it has been.
+          XUGA up-cycles worn-out beach towels into island wear made to last.
+          Every piece keeps a tag. Scan it, and the towel tells you, in its
+          own words, where it has been.
         </p>
-        <div data-reveal style="--reveal-delay:0.24s" class="mt-8 flex flex-wrap gap-3">
+        <div
+          data-reveal
+          style="--reveal-delay:0.24s"
+          class="mt-8 flex flex-wrap gap-3"
+        >
           <a
             href="/tales/"
             class="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-sand transition-transform duration-200 ease-soft hover:scale-[1.03]"
@@ -111,23 +81,17 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
         </div>
       </div>
 
-      {
-        hero && (
-          <div class="relative" data-reveal style="--reveal-delay:0.12s">
-            <TowelCharacter
-              towelName={hero.data.towelName}
-              photo={hero.data.towelPhoto}
-              video={hero.data.towelVideo}
-              rive={hero.data.towelRive}
-              eyes={hero.data.eyes}
-              class="aspect-square w-full rounded-[28px] border-4 border-paper shadow-[var(--shadow-lift-3)]"
-            />
-            <p class="absolute -bottom-5 left-4 right-4 rotate-[-2deg] rounded-2xl border-2 border-ink bg-paper px-4 py-3 text-center font-hand text-xl text-ink shadow-[3px_3px_0_var(--color-ink)] sm:right-auto">
-              Every towel here has somewhere it has been.
-            </p>
-          </div>
-        )
-      }
+      <!-- The towel character, on a beach -->
+      <Image
+        src={heroArt}
+        alt="A XUGA bucket hat resting on a stack of folded dolphin-print beach towels, with a friendly pair of eyes peeking out, on a sunny beach"
+        widths={[480, 768, 1100, 1536]}
+        sizes="(min-width: 1024px) 60vw, 100vw"
+        class="block h-auto w-full lg:-mr-3"
+        data-reveal
+        style="--reveal-delay:0.12s"
+        loading="eager"
+      />
     </div>
   </section>
 
