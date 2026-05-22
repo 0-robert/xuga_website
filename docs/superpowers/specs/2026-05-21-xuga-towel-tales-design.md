@@ -10,13 +10,15 @@ XUGA is a Malta-based, student-led brand that upcycles used beach towels into
 clothing and accessories: belt bags, shorts, bucket hats, pouches. Every piece
 is one of a kind because every source towel is one of a kind.
 
-**Towel Tales** is a standalone microsite. Each garment carries a QR code.
-Scanning it opens that garment's story page, where the original towel, given
-eyes and a voice, narrates how it went from a beach towel to the thing the
+**Towel Tales** is the storytelling heart of the site. Each garment carries a
+QR code. Scanning it opens that garment's story page, where the original towel,
+given eyes and a voice, narrates how it went from a beach towel to the thing the
 buyer is now holding.
 
-The existing shop site (`xugaislandwear.lovable.app`) stays as-is. Towel Tales
-is a separate site; QR codes point to it.
+**Scope (revised 2026-05-22):** the build is the full XUGA Island Wear website,
+a revamp of `xugaislandwear.lovable.app`, not a separate microsite. It has Home,
+Gallery, Tales, About and Contact pages. Towel Tales is its signature feature;
+QR codes point to the story pages on this site.
 
 ## 2. Is this worth building? (business assessment)
 
