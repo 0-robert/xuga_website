@@ -6,13 +6,15 @@
  * below is only the fallback when that variable is not set.
  */
 export const SITE = {
-  name: 'XUGA Towel Tales',
+  name: 'XUGA Island Wear',
   brand: 'XUGA',
-  tagline: 'Every XUGA piece has a tale.',
+  tagline: 'Island Wear Anywhere',
+  /** The name of the QR storytelling feature. */
+  talesName: 'Towel Tales',
+  talesLine: 'Every XUGA piece has a tale.',
   description:
-    'Every XUGA garment is sewn from a real beach towel. Scan its code and the towel tells you where it has been.',
-  defaultBaseUrl: 'https://towels.xugaislandwear.com',
-  shopUrl: 'https://xugaislandwear.lovable.app',
+    'XUGA upcycles worn-out beach towels into one-of-a-kind island wear in Malta. Every piece carries a code: scan it and the towel tells you where it has been.',
+  defaultBaseUrl: 'https://xugaislandwear.com',
   instagram: {
     handle: '@xuga_mlt',
     url: 'https://www.instagram.com/xuga_mlt/',
@@ -23,6 +25,8 @@ export const SITE = {
 
 export const NAV = [
   { label: 'Home', href: '/' },
+  { label: 'Gallery', href: '/gallery/' },
   { label: 'Tales', href: '/tales/' },
   { label: 'About', href: '/about/' },
+  { label: 'Contact', href: '/contact/' },
 ];

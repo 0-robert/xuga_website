@@ -9,3 +9,4 @@ public/qr/
 .env.*
 screenshots/
 new-images/
+extracted_assets/

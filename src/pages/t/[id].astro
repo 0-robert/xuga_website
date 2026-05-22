@@ -7,7 +7,6 @@ import BeforeAfter from '../../components/BeforeAfter.astro';
 import EcoCounter from '../../components/EcoCounter.astro';
 import StickyTowel from '../../components/StickyTowel.astro';
 import { computeEco } from '../../lib/eco';
-import { SITE } from '../../lib/site';
 
 export async function getStaticPaths() {
   const towels = await getCollection('towels');
@@ -294,8 +293,9 @@ const heroGlow = `radial-gradient(120% 70% at 50% -8%, color-mix(in oklch, var(-
               class="text-sand underline-offset-4 hover:underline">All the tales</a
             >
             <a
-              href={SITE.shopUrl}
-              class="text-sand underline-offset-4 hover:underline">The XUGA shop</a
+              href="/gallery/"
+              class="text-sand underline-offset-4 hover:underline"
+              >See the collection</a
             >
           </p>
         </div>
