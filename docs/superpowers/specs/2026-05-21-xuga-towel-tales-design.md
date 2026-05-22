@@ -16,9 +16,12 @@ given eyes and a voice, narrates how it went from a beach towel to the thing the
 buyer is now holding.
 
 **Scope (revised 2026-05-22):** the build is the full XUGA Island Wear website,
-a revamp of `xugaislandwear.lovable.app`, not a separate microsite. It has Home,
-Gallery, Tales, About and Contact pages. Towel Tales is its signature feature;
-QR codes point to the story pages on this site.
+a revamp of `xugaislandwear.lovable.app`, not a separate microsite. It has five
+top-level pages (Home, Gallery, Tales, About and Contact) plus one story page
+per garment at `/t/<id>/`. Towel Tales is the site's signature feature; the QR
+sewn into each garment points at that garment's story page on this same site,
+so the site itself is the QR destination, not a separate microsite linked from
+a brochure homepage.
 
 ## 2. Is this worth building? (business assessment)
 
@@ -83,10 +86,12 @@ flowchart LR
 
 | Route | Purpose |
 |---|---|
-| `/` | Home: what Towel Tales is, how to scan, a few featured stories |
-| `/t/[id]` | A single garment's story page (the QR destination) |
-| `/tales` | Index of all stories |
-| `/about` | The brand, the people, the sustainability case |
+| `/` | Home: brand intro, how a tale works, a few featured pieces |
+| `/gallery/` | The full collection as editorial rows, plus what XUGA makes |
+| `/tales/` | Index of every story page, with the tale count |
+| `/t/[id]/` | A single garment's story page (the QR destination) |
+| `/about/` | The brand, the people, the sustainability case |
+| `/contact/` | Channels for getting in touch and commissioning a piece |
 
 **Adding a new garment** = add one Markdown file and run the QR script. No code
 changes.
@@ -242,7 +247,10 @@ Jhey secondary (playful CSS), Emil selective.
 
 ## 10. Deliverables
 
-- The Astro + Tailwind microsite: Home, story template, story index, About.
+- The full Astro + Tailwind XUGA Island Wear website: Home, Gallery, Tales,
+  About, Contact, and the per-garment story page template at `/t/[id]`. Shared
+  site shell (header, footer, base layout) with site-wide nav, doodles, and
+  scroll-reveal motion.
 - Three fully written example garments, built from the towels in XUGA's own
   photos, story prose humanizer-passed:
   1. **The Dolphin Belt Bag** ("Finn") — from the dolphin-print striped towel.
@@ -261,15 +269,23 @@ Jhey secondary (playful CSS), Emil selective.
 
 ## 11. Out of scope (YAGNI)
 
-No backend, admin UI, database, accounts, checkout, CMS, or multi-language.
-Content is the Markdown collection. Each is noted as a possible future addition;
-a Git-based CMS such as Decap could be added later without rearchitecting.
+For Phase 1 (this spec): no backend, admin UI, database, accounts, checkout,
+or multi-language. Content is the Markdown collection plus hardcoded page copy.
+
+**Phase 2 (planned, see `docs/HANDOFF.md`):** a Git-based CMS (Sveltia, with
+Decap as fallback) is being added so a non-technical XUGA team member can edit
+every towel story, every page's copy, and site settings through a browser. Page
+copy is extracted into a `pages` content collection, the QR script is wired
+into the build, and GitHub auth handles editor access. This does not change
+the architecture in section 3; it sits on top of it.
 
 ## 12. Open items
 
-- **QR base URL.** QR codes encode an absolute URL, so the production domain
-  must be known before the final QR run. It is a single config value; the site
-  can be built and previewed before the domain is decided.
+- **QR base URL.** QR codes encode an absolute URL. As of 2026-05-22 the
+  configured production domain is `https://xugawear.vercel.app` (set in
+  `astro.config.mjs`, overridable with `QR_BASE_URL`). If XUGA registers a
+  custom domain, swap the value and re-run `npm run qr` before the next print
+  run.
 - **Real content.** The site ships with three example garments. Replacing them
   with real catalogue data is a content task, not a code change.
 - **Tag production.** Choosing a wash-durable physical tag for the QR is a
