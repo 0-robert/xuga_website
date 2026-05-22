@@ -8,7 +8,7 @@
 backend:
   name: github
   repo: 0-robert/xuga_website
-  branch: main
+  branch: build/towel-tales
   # PAT-based sign-in is enough for a small student team.
   # To upgrade to "Sign in with GitHub" later, deploy the Sveltia auth
   # Cloudflare Worker and set `base_url` to its URL.
