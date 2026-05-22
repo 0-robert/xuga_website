@@ -133,45 +133,8 @@ const links: { label: string; href: string; doodle: DoodleName; tone: string }[]
     justify-content: center;
     gap: 0.625rem;
   }
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-height: 2.75rem;
-    border-radius: 999px;
-    border: 2.5px solid var(--color-ink);
-    padding: 0.6rem 1.05rem 0.6rem 0.65rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--color-ink);
-    box-shadow: 3px 3px 0 var(--color-ink);
-    transition:
-      translate 0.18s var(--ease),
-      rotate 0.18s var(--ease),
-      box-shadow 0.18s var(--ease);
-  }
-  .chip:hover {
-    translate: 0 -2px;
-    rotate: -2deg;
-    box-shadow: 4px 6px 0 var(--color-ink);
-  }
-  .chip--sun {
-    background: var(--color-sun);
-  }
-  .chip--shell {
-    background: var(--color-shell);
-  }
-  .chip--sea {
-    background: var(--color-sea);
-  }
-  .chip__icon {
-    display: grid;
-    height: 1.6rem;
-    width: 1.6rem;
-    place-items: center;
-    border-radius: 999px;
-    background: var(--color-sand);
-  }
+  /* .chip and .chip__icon live in src/styles/global.css so the home hero
+     can use the same sticker-style buttons. Tone modifiers live there too. */
 
   .footer__legal {
     margin-top: 2rem;

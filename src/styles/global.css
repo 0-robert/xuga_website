@@ -102,6 +102,53 @@
   }
 }
 
+/* Sticker-style chip button: chunky offset shadow, circular icon on the left,
+   coloured background. Used on the home hero, the footer, and other CTAs that
+   want the brand's "sewn-on label" feel. Apply a tone modifier for the
+   background colour: chip--sun, chip--shell, chip--sea, chip--lime. */
+@utility chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.75rem;
+  border-radius: 999px;
+  border: 2.5px solid var(--color-ink);
+  padding: 0.6rem 1.1rem 0.6rem 0.6rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  background: var(--chip-bg, var(--color-sun));
+  box-shadow: 3px 3px 0 var(--color-ink);
+  transition:
+    translate 0.18s var(--ease),
+    rotate 0.18s var(--ease),
+    box-shadow 0.18s var(--ease);
+}
+@utility chip__icon {
+  display: grid;
+  height: 1.7rem;
+  width: 1.7rem;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--color-sand);
+  color: var(--color-ink);
+}
+.chip:hover {
+  translate: 0 -2px;
+  rotate: -2deg;
+  box-shadow: 4px 6px 0 var(--color-ink);
+}
+.chip:active {
+  translate: 0 0;
+  box-shadow: 2px 2px 0 var(--color-ink);
+}
+.chip--sun   { --chip-bg: var(--color-sun); }
+.chip--shell { --chip-bg: var(--color-shell); }
+.chip--sea   { --chip-bg: var(--color-sea); }
+.chip--lime  { --chip-bg: var(--color-lime); }
+
 /* Warm paper grain, applied to large surfaces for tactile texture. */
 @utility grain {
   position: relative;
