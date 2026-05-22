@@ -116,20 +116,24 @@
    JavaScript, and flattened entirely under reduced-motion. */
 .js [data-reveal] {
   opacity: 0;
-  transform: translateY(22px);
+  transform: translateY(8px);
+  filter: blur(4px);
   transition:
-    opacity 0.62s var(--ease),
-    transform 0.62s var(--ease);
+    opacity 0.55s var(--ease),
+    transform 0.55s var(--ease),
+    filter 0.55s var(--ease);
   transition-delay: var(--reveal-delay, 0s);
 }
 .js [data-reveal].is-revealed {
   opacity: 1;
   transform: none;
+  filter: blur(0);
 }
 @media (prefers-reduced-motion: reduce) {
   .js [data-reveal] {
     opacity: 1;
     transform: none;
+    filter: none;
   }
 }
 

@@ -125,4 +125,26 @@ const isActive = (href: string) =>
   .menu[open] .menu__close {
     display: block;
   }
+  /* Soft enter for the dropdown panel: blur + lift, matching the
+     site-wide reveal recipe. Reduced-motion users get the snap. */
+  .menu > ul {
+    opacity: 0;
+    transform: translateY(-6px);
+    filter: blur(4px);
+    transition:
+      opacity 0.22s var(--ease),
+      transform 0.22s var(--ease),
+      filter 0.22s var(--ease);
+    transform-origin: top right;
+  }
+  .menu[open] > ul {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .menu > ul {
+      transition: none;
+    }
+  }
 </style>
