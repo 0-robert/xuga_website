@@ -203,19 +203,17 @@ const team = page.teamMembers ?? [];
         {page.teamBody}
       </p>
 
-      <ul
-        class="team-grid mt-12 grid grid-cols-2 gap-x-6 gap-y-14 sm:grid-cols-3 sm:gap-x-9 lg:grid-cols-4"
-      >
+      <ul class="team-grid mt-12">
         {
           team.map((member, i) => {
             // Pinned-polaroid feel: each card gets its own tilt, sway timing,
             // and washi-tape colour so the row reads as hand-arranged rather
             // than a rigid grid. Values are deterministic per index so the
             // composition is consistent across builds.
-            const tilts = [-3.4, 2.6, -1.8, 3.1, -2.2, 1.6, -2.8];
+            const tilts = [-5.0, 4.2, -2.6, 4.6, -3.4, 2.4, -4.2];
             const tapes = ['sun', 'shell', 'sea', 'lime', 'shell', 'sun', 'sea'];
-            const swayDelay = (i * 0.7).toFixed(2);
-            const swayDur = (5.6 + (i % 3) * 0.8).toFixed(1);
+            const swayDelay = (i * 0.55).toFixed(2);
+            const swayDur = (4.4 + (i % 3) * 0.6).toFixed(1);
             return (
               <li
                 class={`team-card tape--${tapes[i % tapes.length]}`}
@@ -289,11 +287,31 @@ const team = page.teamMembers ?? [];
 <style>
   /* Polaroids on a corkboard. Each card sits on its own tilt and breathes
      gently on an infinite loop, with different timings so the row looks
-     hand-arranged. Hovering pulls one forward and steadies it. */
+     hand-arranged. Hovering pulls one forward and steadies it.
+
+     Flexbox + justify-center is deliberate: with 7 polaroids on a 4-up
+     desktop grid, plain CSS Grid leaves the second row left-aligned
+     (pic pic pic ___). Flex-wrap + justify-center makes the orphan row
+     centre itself (__ pic pic pic __). */
   .team-grid {
-    /* Push edge tiles slightly outside the column so heavy tilts still feel
-       intentional rather than clipped. */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 1.5rem;
+    row-gap: 3.5rem;
     padding-inline: 0.4rem;
+  }
+  .team-grid > .team-card {
+    flex: 0 0 46%;
+  }
+  @media (min-width: 640px) {
+    .team-grid > .team-card { flex-basis: 30%; }
+  }
+  @media (min-width: 1024px) {
+    .team-grid {
+      column-gap: 2rem;
+    }
+    .team-grid > .team-card { flex-basis: 21.5%; }
   }
   .team-card {
     position: relative;
@@ -388,10 +406,12 @@ const team = page.teamMembers ?? [];
     color: var(--color-ink-soft);
   }
 
+  /* Pendulum sway: rocks through ~3 degrees around the resting tilt, with
+     a tiny vertical bob mid-swing. Each card has its own duration and
+     delay (set inline) so the row falls out of phase. */
   @keyframes team-sway {
-    0%, 100% { rotate: var(--tilt, 0deg); translate: 0 0; }
-    50%      { rotate: calc(var(--tilt, 0deg) * 0.55);
-               translate: 0 -3px; }
+    0%, 100% { rotate: calc(var(--tilt, 0deg) + 1.6deg); translate: 0 0; }
+    50%      { rotate: calc(var(--tilt, 0deg) - 1.6deg); translate: 0 -4px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
