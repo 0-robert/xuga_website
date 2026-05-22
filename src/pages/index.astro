@@ -41,7 +41,7 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
         <div class="max-w-md lg:max-w-[30rem]">
           <p
             data-reveal
-            class="flex items-center gap-2 font-hand text-2xl text-[var(--accent)]"
+            class="flex items-center gap-2 font-hand text-2xl text-[var(--accent-ink)]"
           >
             <Doodle name="sun" class="h-7 w-7" />
             XUGA &middot; Island Wear Anywhere
@@ -146,7 +146,7 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
     <div class="relative mx-auto max-w-5xl">
       <p
         data-reveal
-        class="font-hand text-2xl text-[var(--accent)]"
+        class="font-hand text-2xl text-[var(--accent-ink)]"
       >
         Three small steps
       </p>
@@ -162,7 +162,7 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
           steps.map((step, i) => (
             <li data-reveal style={`--reveal-delay:${0.08 + 0.08 * i}s`}>
               <div class="flex items-center gap-3">
-                <span class="font-display text-5xl font-semibold text-[var(--accent)]">
+                <span class="font-display text-5xl font-semibold text-[var(--accent-ink)]">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <span class="h-10 w-10 text-ink">
@@ -184,7 +184,7 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
     <div class="relative mx-auto max-w-5xl">
       <p
         data-reveal
-        class="flex items-center gap-2 font-hand text-2xl text-[var(--accent)]"
+        class="flex items-center gap-2 font-hand text-2xl text-[var(--accent-ink)]"
       >
         <Doodle name="starfish" class="h-7 w-7" />
         Three second lives
@@ -214,7 +214,7 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
         href="/gallery/"
         data-reveal
         style="--reveal-delay:0.28s"
-        class="group mt-9 inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)]"
+        class="group mt-9 -ml-3 inline-flex min-h-11 items-center gap-2 rounded-full px-3 py-2.5 text-sm font-semibold text-[var(--accent-ink)] hover:bg-ink/5"
       >
         See the whole collection
         <span

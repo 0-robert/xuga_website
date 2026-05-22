@@ -39,6 +39,10 @@
   :root {
     /* Overridden per garment on story pages so each page feels like its towel. */
     --accent: var(--color-sun);
+    /* Readable variant of the accent for text on sand backgrounds. Mixes
+       the accent with ink so even a light per-garment accent clears AA
+       large text (3:1) against sand. */
+    --accent-ink: color-mix(in oklch, var(--accent) 62%, var(--color-ink) 38%);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 

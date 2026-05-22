@@ -50,7 +50,7 @@ const toneClass = {
       eyebrow && (
         <p
           data-reveal
-          class="flex items-center gap-2 font-hand text-2xl leading-none text-[var(--accent)]"
+          class={`flex items-center gap-2 font-hand text-2xl leading-none ${tone === 'ink' ? 'text-[var(--accent)]' : 'text-[var(--accent-ink)]'}`}
         >
           {doodle && <Doodle name={doodle} class="h-7 w-7 shrink-0" />}
           {eyebrow}
