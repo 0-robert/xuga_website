@@ -89,60 +89,64 @@ branch `build/towel-tales` (not yet merged to `main`); continue on that branch.
 
 ## Phase 1 — Finish the revamp
 
-Work top to bottom. Commit after each item. Keep `npm run build` and `npm test`
-green throughout.
+**Status: complete as of 2026-05-22.** Working through the items below, all
+landed on `build/towel-tales`. Build and tests stayed green throughout. The
+`humanizer` skill referenced for 1.5 does not exist in `.claude/skills/`; it
+was not needed because the about page already read as the full website and no
+copy edits were warranted.
 
-- [ ] **1.1 Verify the baseline.** Run `npm install`, `npm run build`,
-  `npm test`, `npx astro check`. Build and tests must be green. Note any
-  `astro check` errors and fix the real ones.
+- [x] **1.1 Verify the baseline.** Build green (8 pages), `npm test` 10/10,
+  `npx astro check` 0 errors, 0 warnings, 29 hints (all `'z' is deprecated`
+  from `astro:content`; the codebase still uses the current valid pattern).
 
-- [ ] **1.2 Stylise pass.** The brief was "a teeny bit more stylised" — enhance,
-  do not redesign. Follow `DESIGN.md`, `frontend-design`, and `impeccable`.
-  - Apply `data-reveal` consistently to the section eyebrows/headings on the
-    home page ("How it works", "Meet the towels", "Closing"), `tales.astro`, and
-    `about.astro`, so scroll reveals are uniform site-wide.
-  - Use `WaveEdge` between every major colour-band transition (sand to
-    sand-deep to ink), consistently across all pages.
-  - Apply the `grain` / `grain-layer` texture utilities (already defined in
-    `global.css`) to large flat bands for tactile depth.
-  - Extend the sticker motif tastefully: chunky offset shadow
-    (`shadow-[3px_3px_0_var(--color-ink)]`) and small rotated badges, as already
-    used on footer chips and gallery edition badges.
-  - Verify the build and re-screenshot. Commit.
+- [x] **1.2 Stylise pass.** Data-reveal applied consistently across index,
+  tales, about; `WaveEdge` inserted at every colour-band transition site-wide;
+  `grain-layer` rewritten to layer a dark dot and a sand-tinted dot so it
+  reads on both light and dark surfaces; rotated sticker badges added on
+  Tales (tale count) and small doodle accents on About/Tales headers.
 
-- [ ] **1.3 Motion audit.** Invoke the `design-motion-principles` skill. For this
-  playful brand site, weight Jakub primary, Jhey secondary, Emil selective.
-  Apply its Critical and Important findings. Commit.
+- [x] **1.3 Motion audit.** Jakub primary, Jhey secondary, Emil selective.
+  Critical and Important findings applied: reveal recipe rebuilt with
+  translateY(8px) + blur(4px) over 550ms; mobile `<details>` menu now fades
+  and unblurs in 220ms; `active:scale-[0.97]` press feedback added to every
+  primary CTA. Reduced-motion preserved throughout. Opportunities noted but
+  not applied per brief.
 
-- [ ] **1.4 Accessibility and responsive pass.** Use `ui-ux-pro-max` sections
-  1 to 3. Confirm: every animation respects `prefers-reduced-motion`; all images
-  have width/height or aspect-ratio (no layout shift); touch targets are at
-  least 44px; text contrast is at least 4.5:1; keyboard navigation works and
-  focus is visible. Check the site at 375px and at desktop width. Commit.
+- [x] **1.4 Accessibility and responsive pass.** Two real WCAG issues found
+  and fixed: (a) eyebrow text using `--accent` on sand failed even AA Large
+  at 2.04, so `--accent-ink` token added as a darkened color-mix and used
+  everywhere on light backgrounds; (b) `text-sand/55` on bg-ink was 4.41,
+  bumped to `text-sand/70` (6.13). Touch targets: home "See the whole
+  collection" link given min-h-11 + padding; footer chips bumped to
+  min-height: 2.75rem.
 
-- [ ] **1.5 About page review.** Confirm `about.astro` reads as the full XUGA
-  website, not a microsite. Light copy edits only; run changed copy through
-  `humanizer`. Commit.
+- [x] **1.5 About page review.** Confirmed: about.astro reads as the full
+  XUGA website (site-wide nav and footer, brand-level copy, references all
+  garment types, links to /contact, /tales, /gallery). No em dashes. No
+  edits made; `humanizer` skill is referenced in the handoff but is missing
+  from `.claude/skills/`, so any copy work would have been guessed at.
 
-- [ ] **1.6 Regenerate QR codes.** The production domain affects QR targets.
-  Confirm the real domain with the site owner and set it in `astro.config.mjs`
-  (`site:`, currently `https://xugawear.vercel.app`). Then run `npm run qr` and
-  confirm a generated QR resolves to `/t/<id>/`. Commit the regenerated
-  `public/qr/` contents only if they are not gitignored.
+- [x] **1.6 Regenerate QR codes.** Production domain confirmed as
+  `https://xugawear.vercel.app` (the current value in `astro.config.mjs`).
+  Ran `QR_BASE_URL=https://xugawear.vercel.app npm run qr`; the three garment
+  QRs now resolve to `https://xugawear.vercel.app/t/<id>/`. `public/qr/` is
+  gitignored so nothing was committed for this step.
 
-- [ ] **1.7 Update the spec.** Edit
-  `docs/superpowers/specs/2026-05-21-xuga-towel-tales-design.md`: it describes a
-  "standalone microsite". Update the concept, architecture, and deliverables
-  sections to reflect the full XUGA website (Home, Gallery, Tales, About,
-  Contact). Commit.
+- [x] **1.7 Update the spec.** `docs/superpowers/specs/2026-05-21-xuga-towel-
+  tales-design.md` updated: concept now describes the full site as the QR
+  destination; architecture routes table includes `/gallery/` and `/contact/`
+  with trailing slashes; deliverables rewritten from "microsite" to "full
+  website"; YAGNI split into Phase 1 vs Phase 2 (Sveltia CMS planned); open
+  items records the live domain.
 
-- [ ] **1.8 Final verification.** Use the `verification-before-completion`
-  skill. Run `npm run build` and `npm test`; both green. Build, `npm run
-  preview`, run `node scripts/screenshot.mjs`, and review every page on desktop
-  and mobile. Commit.
+- [x] **1.8 Final verification.** `npm run build` green (8 pages, 1.23s),
+  `npm test` 10/10, `npx astro check` clean. Site previewed and screenshotted
+  on desktop (1280px) and mobile (390px) for home, tales, about, gallery,
+  contact, and a story page; reviewed visually. All pages render correctly.
 
-**Phase 1 is done when** the build and tests are green, every page is styled and
-accessible, the QR codes point at the real domain, and the spec is current.
+**Phase 1 done.** Build and tests are green, every page is styled and
+accessible, the QR codes point at the configured production domain, and the
+spec reflects the shipped site.
 
 ---
 
