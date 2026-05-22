@@ -171,16 +171,14 @@ const team = page.teamMembers ?? [];
   <!-- The team -->
   <section
     id="team"
-    class="relative overflow-hidden px-5 py-20 sm:py-24"
+    class="team-section relative overflow-hidden px-5 pt-20 pb-32 sm:pt-24 sm:pb-40"
   >
     <WaveEdge color="var(--color-sand-deep)" />
-    <span
-      class="pointer-events-none absolute -top-2 left-[5%] hidden h-24 w-24 rotate-[-12deg] text-sun sm:block"
-      aria-hidden="true"
-    >
-      <Doodle name="sun" class="h-full w-full" />
-    </span>
-    <div class="relative mx-auto max-w-5xl text-center">
+    <!-- Stylised beach scene behind the polaroids. The image is bottom-
+         anchored, fades into the sand at the top, and sits below the
+         content stack via z-index. -->
+    <div class="team-beach" aria-hidden="true"></div>
+    <div class="relative z-10 mx-auto max-w-5xl text-center">
       <p
         data-reveal
         class="inline-flex items-center gap-2 font-hand text-2xl text-[var(--accent-ink)]"
@@ -285,6 +283,29 @@ const team = page.teamMembers ?? [];
 </BaseLayout>
 
 <style>
+  /* Stylised beach scene behind the polaroids. The PNG carries its own
+     transparency (the upper sky region was floodfilled to alpha=0), so
+     the sand-cream page colour shows through cleanly. Pinned wide
+     enough on mobile that palm trees and the sun stay anchored to the
+     sides instead of squeezing into the middle. Sits at z-index 0
+     below the content (z-10). */
+  .team-beach {
+    position: absolute;
+    inset: 0;
+    background-image: url('/images/team-beach.png');
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: max(100%, 1100px) auto;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.92;
+  }
+  @media (min-width: 1024px) {
+    .team-beach {
+      background-size: max(100%, 1500px) auto;
+    }
+  }
+
   /* Polaroids on a corkboard. Each card sits on its own tilt and breathes
      gently on an infinite loop, with different timings so the row looks
      hand-arranged. Hovering pulls one forward and steadies it.

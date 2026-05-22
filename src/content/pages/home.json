@@ -19,7 +19,7 @@
   "teamMembers": [
     { "name": "Sofiia", "role": "CEO",                 "photo": "/images/team/Sofiia.jpg" },
     { "name": "Andrew", "role": "COO",                 "photo": "/images/team/Andrew.jpg" },
-    { "name": "Nabeel", "role": "CFO",                 "photo": "/images/team/Nabil.jpg" },
+    { "name": "Nabeel", "role": "CFO",                 "photo": "/images/team/Nabeel.jpg" },
     { "name": "Charlotte", "role": "Marketing",        "photo": "/images/team/Charlotte.jpg" },
     { "name": "Daniele", "role": "Sales",              "photo": "/images/team/Daniele.jpg" },
     { "name": "Ben",    "role": "Outreach",            "photo": "/images/team/Ben.jpg" },
