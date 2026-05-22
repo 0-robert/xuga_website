@@ -8,6 +8,7 @@ import WaveEdge from '../components/WaveEdge.astro';
 import type { DoodleName } from '../lib/doodles';
 import { SITE } from '../lib/site';
 import heroArt from '../assets/hero-home.png';
+import heroWide from '../assets/hero-wide.png';
 
 const towels = await getCollection('towels');
 const featured = towels.filter((t) => t.data.featured);
@@ -33,67 +34,106 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
 
 <BaseLayout title={SITE.name}>
   <!-- Hero -->
-  <section class="relative overflow-hidden">
-    <div
-      class="mx-auto grid max-w-6xl items-center gap-2 px-5 pt-8 pb-4 sm:gap-4 lg:grid-cols-[1fr_1.3fr] lg:gap-6 lg:py-6"
-    >
-      <div class="lg:pr-2">
-        <p
-          data-reveal
-          class="flex items-center gap-2 font-hand text-2xl text-[var(--accent)]"
-        >
-          <Doodle name="sun" class="h-7 w-7" />
-          XUGA &middot; Island Wear Anywhere
-        </p>
-        <h1
-          data-reveal
-          style="--reveal-delay:0.08s"
-          class="mt-1 font-display text-[2.4rem] leading-[1.05] text-ink sm:text-[3rem] lg:text-[3.4rem]"
-        >
-          Your island-wear used to be a beach towel.
-        </h1>
-        <p
-          data-reveal
-          style="--reveal-delay:0.16s"
-          class="mt-5 max-w-md text-lg text-ink-soft"
-        >
-          XUGA up-cycles worn-out beach towels into island wear made to last.
-          Every piece keeps a tag. Scan it, and the towel tells you, in its
-          own words, where it has been.
-        </p>
-        <div
-          data-reveal
-          style="--reveal-delay:0.24s"
-          class="mt-8 flex flex-wrap gap-3"
-        >
-          <a
-            href="/tales/"
-            class="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-sand transition-transform duration-200 ease-soft hover:scale-[1.03]"
+  <section class="home-hero relative overflow-hidden">
+    <!-- Text: in flow above the art on small screens, overlaid on it from lg up -->
+    <div class="relative z-10 lg:absolute lg:inset-0 lg:flex lg:items-center">
+      <div class="mx-auto w-full max-w-6xl px-5 py-9 lg:py-8">
+        <div class="max-w-md lg:max-w-[30rem]">
+          <p
+            data-reveal
+            class="flex items-center gap-2 font-hand text-2xl text-[var(--accent)]"
           >
-            Read the tales
-          </a>
-          <a
-            href="#how"
-            class="rounded-full border-2 border-ink px-6 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-ink/5"
+            <Doodle name="sun" class="h-7 w-7" />
+            XUGA &middot; Island Wear Anywhere
+          </p>
+          <h1
+            data-reveal
+            style="--reveal-delay:0.08s"
+            class="mt-1 font-display text-[2.4rem] leading-[1.05] text-ink sm:text-[3rem] lg:text-[3.1rem]"
           >
-            How it works
-          </a>
+            Your island-wear used to be a beach towel.
+          </h1>
+          <p
+            data-reveal
+            style="--reveal-delay:0.16s"
+            class="mt-5 text-lg text-ink-soft"
+          >
+            XUGA up-cycles worn-out beach towels into island wear made to
+            last. Every piece keeps a tag. Scan it, and the towel tells you,
+            in its own words, where it has been.
+          </p>
+          <div
+            data-reveal
+            style="--reveal-delay:0.24s"
+            class="mt-8 flex flex-wrap gap-3"
+          >
+            <a
+              href="/tales/"
+              class="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-sand transition-transform duration-200 ease-soft hover:scale-[1.03]"
+            >
+              Read the tales
+            </a>
+            <a
+              href="#how"
+              class="rounded-full border-2 border-ink px-6 py-3 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-ink/5"
+            >
+              How it works
+            </a>
+          </div>
         </div>
       </div>
-
-      <!-- The towel character, on a beach -->
-      <Image
-        src={heroArt}
-        alt="A XUGA bucket hat resting on a stack of folded dolphin-print beach towels, with a friendly pair of eyes peeking out, on a sunny beach"
-        widths={[480, 768, 1100, 1536]}
-        sizes="(min-width: 1024px) 60vw, 100vw"
-        class="block h-auto w-full lg:-mr-3"
-        data-reveal
-        style="--reveal-delay:0.12s"
-        loading="eager"
-      />
     </div>
+
+    <!-- The towel character on a beach. Wide crop overlaid on desktop,
+         taller crop stacked below the text on small screens. -->
+    <Image
+      src={heroWide}
+      alt="A XUGA bucket hat on a stack of folded dolphin-print beach towels, with a friendly pair of eyes peeking out, on a sunny beach"
+      widths={[1200, 1800, 2386]}
+      sizes="100vw"
+      class="home-hero__wide"
+      loading="eager"
+    />
+    <Image
+      src={heroArt}
+      alt=""
+      widths={[480, 768, 1100]}
+      sizes="100vw"
+      class="home-hero__tall"
+      loading="eager"
+    />
   </section>
+
+  <style>
+    .home-hero {
+      background: #faeddf;
+    }
+    .home-hero__wide {
+      display: none;
+    }
+    .home-hero__tall {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    @media (min-width: 1024px) {
+      .home-hero {
+        min-height: clamp(31rem, 43vw, 40rem);
+      }
+      .home-hero__wide {
+        display: block;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: right center;
+      }
+      .home-hero__tall {
+        display: none;
+      }
+    }
+  </style>
 
   <!-- How it works -->
   <section id="how" class="relative overflow-hidden bg-sand-deep px-5 py-20 sm:py-24">
