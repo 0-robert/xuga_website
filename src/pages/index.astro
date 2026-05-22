@@ -119,15 +119,28 @@ const team = page.teamMembers ?? [];
   </style>
 
   <!-- Product first: what we are making right now -->
-  <section class="grain-layer relative overflow-hidden bg-sand-deep px-5 py-20 sm:py-24">
-    <WaveEdge color="var(--color-sand)" />
+  <section class="grain-layer relative overflow-hidden bg-sand-deep px-5 pt-32 pb-20 sm:pt-36 sm:pb-24">
+    <!-- Three-band wave transition (same pattern as the team -> closing
+         transition, scaled down for the milder colour shift between sand
+         and sand-deep). Each band drifts on its own period so the seam
+         reads as moving water, not a stripe. -->
+    <span class="product-waves" aria-hidden="true">
+      <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path class="wave-layer wave-layer--sand"
+              d="M-50 22 Q90 8 230 22 T510 22 T790 22 T1070 22 T1250 22 L1250 140 L-50 140 Z" />
+        <path class="wave-layer wave-layer--blend"
+              d="M-50 52 Q110 38 270 52 T590 52 T910 52 T1250 52 L1250 140 L-50 140 Z" />
+        <path class="wave-layer wave-layer--sand-deep"
+              d="M-50 84 Q80 70 210 84 T470 84 T730 84 T990 84 T1250 84 L1250 140 L-50 140 Z" />
+      </svg>
+    </span>
     <span
-      class="pointer-events-none absolute -right-6 top-8 hidden h-28 w-28 rotate-[8deg] text-shell sm:block"
+      class="pointer-events-none absolute -right-6 top-32 hidden h-28 w-28 rotate-[8deg] text-shell sm:block"
       aria-hidden="true"
     >
       <Doodle name="flower" class="h-full w-full" />
     </span>
-    <div class="relative mx-auto max-w-5xl text-center">
+    <div class="relative z-10 mx-auto max-w-5xl text-center">
       <p
         data-reveal
         class="inline-flex items-center gap-2 font-hand text-2xl text-[var(--accent-ink)]"
@@ -306,6 +319,40 @@ const team = page.teamMembers ?? [];
 </BaseLayout>
 
 <style>
+  /* Layered wave transition at the top of the product section. Three
+     soft bands (sand -> blend -> sand-deep) so the hero flows into the
+     product band on a gradient of cream rather than meeting it on a
+     single visible wave line. Same general pattern as the closing
+     waves, scaled down for the milder colour shift. */
+  .product-waves {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: clamp(80px, 9vw, 120px);
+    z-index: 1;
+    pointer-events: none;
+    line-height: 0;
+    overflow: hidden;
+    /* Painted area above the top wave reads as the hero's sand colour. */
+    background-color: var(--color-sand);
+  }
+  .product-waves svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  /* The .wave-layer drift animations (defined below for .closing-waves)
+     apply here too; just supply the colour for each band. */
+  .product-waves .wave-layer--sand      { fill: var(--color-sand); }
+  .product-waves .wave-layer--blend {
+    fill: color-mix(in oklch, var(--color-sand) 55%, var(--color-sand-deep) 45%);
+  }
+  .product-waves .wave-layer--sand-deep { fill: var(--color-sand-deep); }
+  @media (prefers-reduced-motion: no-preference) {
+    .product-waves .wave-layer--sand      { --drift-distance: 36px; animation-duration:  7s; }
+    .product-waves .wave-layer--blend     { --drift-distance: 48px; animation-duration: 10s; animation-direction: reverse; }
+    .product-waves .wave-layer--sand-deep { --drift-distance: 60px; animation-duration: 14s; }
+  }
+
   /* Layered wave transition at the top of the closing section. The SVG
      fills the full width and a chunk of section height; the four paths
      stack so the eye reads beach -> wet sand -> shallow sea -> deep
