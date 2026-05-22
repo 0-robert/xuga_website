@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Doodle from '../components/Doodle.astro';
+import WaveEdge from '../components/WaveEdge.astro';
 import { SITE } from '../lib/site';
 import type { DoodleName } from '../lib/doodles';
 
@@ -123,6 +124,7 @@ const channels: {
 
   <!-- Commission -->
   <section class="relative overflow-hidden bg-ink px-5 py-20 text-sand sm:py-24">
+    <WaveEdge color="var(--color-sand)" />
     <span
       class="pointer-events-none absolute top-10 left-[8%] hidden h-16 w-16 rotate-[-12deg] text-sun/70 sm:block"
       aria-hidden="true"

@@ -13,8 +13,11 @@ const shots = [
   { name: '2-story-desktop', url: '/t/dolphin-belt-001/', width: 1280 },
   { name: '3-tales-desktop', url: '/tales/', width: 1280 },
   { name: '4-about-desktop', url: '/about/', width: 1040 },
-  { name: '5-home-mobile', url: '/', width: 390 },
-  { name: '6-story-mobile', url: '/t/hotel-bucket-001/', width: 390 },
+  { name: '5-gallery-desktop', url: '/gallery/', width: 1280 },
+  { name: '6-contact-desktop', url: '/contact/', width: 1040 },
+  { name: '7-home-mobile', url: '/', width: 390 },
+  { name: '8-story-mobile', url: '/t/hotel-bucket-001/', width: 390 },
+  { name: '9-gallery-mobile', url: '/gallery/', width: 390 },
 ];
 
 const browser = await chromium.launch();

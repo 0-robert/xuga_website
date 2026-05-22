@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import TowelCharacter from '../components/TowelCharacter.astro';
 import TaleCard from '../components/TaleCard.astro';
 import Doodle from '../components/Doodle.astro';
+import WaveEdge from '../components/WaveEdge.astro';
 import type { DoodleName } from '../lib/doodles';
 import { SITE } from '../lib/site';
 
@@ -34,6 +35,10 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
   <!-- Hero -->
   <section class="relative overflow-hidden">
     <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <span
+        class="absolute inset-0"
+        style="background: radial-gradient(56% 42% at 82% 4%, oklch(0.9 0.1 80 / 0.55), transparent 72%);"
+      ></span>
       <span
         class="absolute -top-6 right-[1%] h-32 w-32 rotate-[-10deg] text-sun sm:h-48 sm:w-48"
       >
@@ -67,21 +72,30 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
       class="relative mx-auto grid max-w-5xl items-center gap-10 px-5 py-16 sm:py-24 md:grid-cols-[1.05fr_0.95fr]"
     >
       <div>
-        <p class="flex items-center gap-2 font-hand text-2xl text-[var(--accent)]">
+        <p
+          data-reveal
+          class="flex items-center gap-2 font-hand text-2xl text-[var(--accent)]"
+        >
           <Doodle name="sun" class="h-7 w-7" />
-          XUGA Towel Tales
+          XUGA &middot; Island Wear Anywhere
         </p>
         <h1
+          data-reveal
+          style="--reveal-delay:0.08s"
           class="mt-1 font-display text-[2.6rem] leading-[1.02] text-ink sm:text-6xl"
         >
           Your clothes used to be a beach towel.
         </h1>
-        <p class="mt-5 max-w-md text-lg text-ink-soft">
+        <p
+          data-reveal
+          style="--reveal-delay:0.16s"
+          class="mt-5 max-w-md text-lg text-ink-soft"
+        >
           XUGA sews worn-out beach towels into island wear made to last. Every
           piece keeps a tag. Scan it, and the towel tells you, in its own
           words, where it has been.
         </p>
-        <div class="mt-8 flex flex-wrap gap-3">
+        <div data-reveal style="--reveal-delay:0.24s" class="mt-8 flex flex-wrap gap-3">
           <a
             href="/tales/"
             class="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-sand transition-transform duration-200 ease-soft hover:scale-[1.03]"
@@ -99,7 +113,7 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
 
       {
         hero && (
-          <div class="relative">
+          <div class="relative" data-reveal style="--reveal-delay:0.12s">
             <TowelCharacter
               towelName={hero.data.towelName}
               photo={hero.data.towelPhoto}
@@ -119,6 +133,7 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
 
   <!-- How it works -->
   <section id="how" class="relative overflow-hidden bg-sand-deep px-5 py-20 sm:py-24">
+    <WaveEdge color="var(--color-sand)" />
     <span
       class="pointer-events-none absolute -right-6 top-8 hidden h-28 w-28 rotate-[8deg] text-shell sm:block"
       aria-hidden="true"
@@ -166,11 +181,22 @@ const steps: { title: string; body: string; doodle: DoodleName }[] = [
       <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {featured.map((entry) => <TaleCard entry={entry} />)}
       </div>
+      <a
+        href="/gallery/"
+        class="group mt-9 inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)]"
+      >
+        See the whole collection
+        <span
+          class="inline-block transition-transform duration-300 ease-soft group-hover:translate-x-1"
+          aria-hidden="true">&rarr;</span
+        >
+      </a>
     </div>
   </section>
 
   <!-- Closing -->
   <section class="relative overflow-hidden bg-ink px-5 py-20 text-sand sm:py-24">
+    <WaveEdge color="var(--color-sand)" />
     <span
       class="pointer-events-none absolute left-[8%] top-10 hidden h-16 w-16 rotate-[-12deg] text-sun/70 sm:block"
       aria-hidden="true"

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import WaveEdge from '../components/WaveEdge.astro';
 import { SITE } from '../lib/site';
 ---
 
@@ -63,7 +64,8 @@ import { SITE } from '../lib/site';
     </div>
   </section>
 
-  <section class="bg-ink px-5 py-16 text-sand">
+  <section class="relative overflow-hidden bg-ink px-5 py-16 text-sand">
+    <WaveEdge color="var(--color-sand)" />
     <div class="mx-auto max-w-3xl">
       <h2 class="font-display text-2xl">Say hello</h2>
       <p class="mt-3 max-w-md text-sand/70">
