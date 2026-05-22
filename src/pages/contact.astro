@@ -75,7 +75,7 @@ const channels = (page.channels ?? []) as {
                 <Doodle name={c.doodle} class="h-6 w-6" />
               </span>
               <h2 class="mt-4 font-display text-2xl text-ink">{c.label}</h2>
-              <p class="mt-1 font-hand text-2xl text-[var(--accent-ink)]">
+              <p class="channel-value mt-1 font-hand text-[var(--accent-ink)]">
                 {c.value}
               </p>
               <p class="mt-2 text-ink-soft">{c.note}</p>
@@ -150,3 +150,15 @@ const channels = (page.channels ?? []) as {
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  /* The handwritten channel value (Caveat) is much wider per character
+     than the body font, so a static text-2xl overflows narrow cards on
+     long strings like the email address. Scale with viewport, clamp to a
+     readable range, and allow break-anywhere as the final fallback. */
+  .channel-value {
+    font-size: clamp(1.2rem, calc(0.95rem + 0.9vw), 1.5rem);
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+</style>
