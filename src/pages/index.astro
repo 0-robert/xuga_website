@@ -86,7 +86,10 @@ const team = page.teamMembers ?? [];
 
   <style>
     .home-hero {
-      background: #faeddf;
+      /* Was a hardcoded #faeddf; switched to the brand sand token so the
+         hero blends seamlessly into the WaveEdge sand-colour at the top
+         of the section below (otherwise the seam shows as a thin band). */
+      background: var(--color-sand);
     }
     .home-hero__wide {
       display: none;
