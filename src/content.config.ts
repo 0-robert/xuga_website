@@ -69,7 +69,7 @@ const towels = defineCollection({
           y: z.number().default(40),
           scale: z.number().default(1),
         })
-        .default({}),
+        .default({ x: 50, y: 40, scale: 1 }),
 
       // --- Eco impact (optional) ---
       ecoTowelWeightGrams: z.number().optional(),

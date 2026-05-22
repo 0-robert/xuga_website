@@ -62,7 +62,7 @@ const isActive = (href: string) =>
     <!-- Mobile navigation: a no-JS disclosure menu -->
     <details class="menu relative sm:hidden">
       <summary
-        class="grid h-10 w-10 cursor-pointer place-items-center rounded-full border-2 border-ink text-ink"
+        class="grid h-11 w-11 cursor-pointer place-items-center rounded-full border-2 border-ink text-ink"
         aria-label="Menu"
       >
         <svg
@@ -97,7 +97,7 @@ const isActive = (href: string) =>
               <a
                 href={item.href}
                 aria-current={isActive(item.href) ? 'page' : undefined}
-                class="block rounded-xl px-3.5 py-2.5 text-sm font-semibold text-ink-soft transition-colors duration-150 hover:bg-sand-deep aria-[current=page]:bg-[var(--accent)] aria-[current=page]:text-ink"
+                class="block rounded-xl px-3.5 py-3 text-sm font-semibold text-ink-soft transition-colors duration-150 hover:bg-sand-deep aria-[current=page]:bg-[var(--accent)] aria-[current=page]:text-ink"
               >
                 {item.label}
               </a>
