@@ -341,17 +341,36 @@ const team = page.teamMembers ?? [];
   }
   @media (prefers-reduced-motion: no-preference) {
     .wave-layer {
-      animation: wave-drift 14s ease-in-out infinite;
+      animation-name: wave-drift;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
       transform-origin: center;
     }
-    .wave-layer--foam    { animation-duration:  9s; }
-    .wave-layer--shallow { animation-duration: 12s; animation-direction: reverse; }
-    .wave-layer--sea     { animation-duration: 16s; }
-    .wave-layer--ink     { animation-duration: 20s; animation-direction: reverse; }
+    /* Faster, deeper drift on the foam (closer to the eye); slower and
+       wider underneath so the parallax reads. Alternating directions
+       between layers makes the water look like it is folding. */
+    .wave-layer--foam    {
+      animation-duration: 5s;
+      --drift-distance: 56px;
+    }
+    .wave-layer--shallow {
+      animation-duration: 7s;
+      animation-direction: reverse;
+      --drift-distance: 72px;
+    }
+    .wave-layer--sea     {
+      animation-duration: 9s;
+      --drift-distance: 84px;
+    }
+    .wave-layer--ink     {
+      animation-duration: 12s;
+      animation-direction: reverse;
+      --drift-distance: 96px;
+    }
   }
   @keyframes wave-drift {
-    0%, 100% { transform: translateX(0); }
-    50%      { transform: translateX(-32px); }
+    0%, 100% { transform: translateX(calc(var(--drift-distance, 60px) * -0.5)); }
+    50%      { transform: translateX(calc(var(--drift-distance, 60px) *  0.5)); }
   }
 
   /* Stylised beach scene behind the polaroids. The PNG carries its own
@@ -370,6 +389,21 @@ const team = page.teamMembers ?? [];
     pointer-events: none;
     z-index: 0;
     opacity: 0.92;
+    /* Soften the bottom edge of the beach image so its yellow-tan sand
+       dissolves into the page cream instead of meeting it on a hard
+       horizontal line just above the foam wave below. */
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 88%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 88%,
+      transparent 100%
+    );
   }
   @media (min-width: 1024px) {
     .team-beach {

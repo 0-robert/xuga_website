@@ -81,7 +81,10 @@ const links: { label: string; href: string; doodle: DoodleName; tone: string }[]
 <style>
   .footer {
     position: relative;
-    margin-top: 6rem;
+    /* No top margin: the footer's own wave drips up into whatever
+       section sits above (usually the ink closing) so the seam is the
+       wave, not a strip of body background. */
+    margin-top: 0;
     background: var(--color-sand-deep);
     overflow: hidden;
     isolation: isolate;
