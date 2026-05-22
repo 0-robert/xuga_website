@@ -204,19 +204,30 @@ const team = page.teamMembers ?? [];
       </p>
 
       <ul
-        class="mt-10 grid grid-cols-2 gap-x-5 gap-y-9 sm:grid-cols-3 lg:grid-cols-4"
+        class="team-grid mt-12 grid grid-cols-2 gap-x-6 gap-y-14 sm:grid-cols-3 sm:gap-x-9 lg:grid-cols-4"
       >
         {
           team.map((member, i) => {
-            // Subtle alternating tilt so the row reads as hand-pinned polaroids
-            // rather than a rigid grid. Reset on hover for legibility.
-            const tilt = i % 2 === 0 ? '-1.2deg' : '1.4deg';
+            // Pinned-polaroid feel: each card gets its own tilt, sway timing,
+            // and washi-tape colour so the row reads as hand-arranged rather
+            // than a rigid grid. Values are deterministic per index so the
+            // composition is consistent across builds.
+            const tilts = [-3.4, 2.6, -1.8, 3.1, -2.2, 1.6, -2.8];
+            const tapes = ['sun', 'shell', 'sea', 'lime', 'shell', 'sun', 'sea'];
+            const swayDelay = (i * 0.7).toFixed(2);
+            const swayDur = (5.6 + (i % 3) * 0.8).toFixed(1);
             return (
               <li
-                class="team-card"
+                class={`team-card tape--${tapes[i % tapes.length]}`}
                 data-reveal
-                style={`--reveal-delay:${0.05 + 0.04 * i}s; --tilt:${tilt}`}
+                style={`
+                  --reveal-delay:${0.05 + 0.05 * i}s;
+                  --tilt:${tilts[i % tilts.length]}deg;
+                  --sway-delay:${swayDelay}s;
+                  --sway-duration:${swayDur}s;
+                `}
               >
+                <span class="team-card__tape" aria-hidden="true"></span>
                 <div class="team-card__frame">
                   <img
                     src={member.photo}
@@ -276,45 +287,118 @@ const team = page.teamMembers ?? [];
 </BaseLayout>
 
 <style>
+  /* Polaroids on a corkboard. Each card sits on its own tilt and breathes
+     gently on an infinite loop, with different timings so the row looks
+     hand-arranged. Hovering pulls one forward and steadies it. */
+  .team-grid {
+    /* Push edge tiles slightly outside the column so heavy tilts still feel
+       intentional rather than clipped. */
+    padding-inline: 0.4rem;
+  }
   .team-card {
+    position: relative;
+    padding: 12px 12px 14px;
+    background: var(--color-paper);
+    border-radius: 6px;
+    box-shadow:
+      0 1px 2px oklch(0.3 0.07 256 / 0.10),
+      0 14px 28px oklch(0.3 0.07 256 / 0.18);
     text-align: center;
     rotate: var(--tilt, 0deg);
+    transform-origin: center 60%;
     transition:
-      rotate 0.3s var(--ease-soft),
-      translate 0.3s var(--ease-soft);
+      rotate 0.45s var(--ease-soft),
+      scale 0.45s var(--ease-soft),
+      box-shadow 0.45s var(--ease-soft);
   }
-  .team-card:hover {
+  @media (prefers-reduced-motion: no-preference) {
+    .team-card {
+      animation: team-sway var(--sway-duration, 6s) ease-in-out infinite;
+      animation-delay: var(--sway-delay, 0s);
+    }
+  }
+  .team-card:hover,
+  .team-card:focus-within {
     rotate: 0deg;
-    translate: 0 -3px;
+    scale: 1.06;
+    z-index: 2;
+    box-shadow:
+      0 2px 4px oklch(0.3 0.07 256 / 0.14),
+      0 24px 44px oklch(0.3 0.07 256 / 0.26);
+    animation-play-state: paused;
   }
+  .team-card__tape {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    width: 64px;
+    height: 18px;
+    translate: -50% 0;
+    rotate: -4deg;
+    background: var(--tape-bg, var(--color-sun));
+    /* Slight transparency + grain edge so it reads as real tape. */
+    opacity: 0.82;
+    box-shadow: 0 1px 0 oklch(0.3 0.07 256 / 0.05);
+    /* Torn-edge effect via clip-path. */
+    clip-path: polygon(
+      0% 12%, 6% 0%, 14% 18%, 22% 4%, 30% 16%, 40% 2%, 50% 14%,
+      60% 0%, 70% 18%, 80% 6%, 90% 14%, 100% 0%,
+      100% 88%, 94% 100%, 86% 82%, 78% 96%, 70% 84%, 60% 98%, 50% 86%,
+      40% 100%, 30% 82%, 20% 94%, 10% 86%, 0% 100%
+    );
+  }
+  .team-card:nth-child(even) .team-card__tape { rotate: 5deg; }
+  .tape--sun   { --tape-bg: var(--color-sun); }
+  .tape--shell { --tape-bg: var(--color-shell); }
+  .tape--sea   { --tape-bg: var(--color-sea); }
+  .tape--lime  { --tape-bg: var(--color-lime); }
+
   .team-card__frame {
     overflow: hidden;
-    border: 3px solid var(--color-paper);
-    border-radius: 20px;
-    background: var(--color-paper);
-    box-shadow: var(--shadow-lift-2);
+    background: var(--color-sand-deep);
     aspect-ratio: 1 / 1;
+    border-radius: 2px;
   }
   .team-card__photo {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    /* Warm the photos a touch so they sit in the sand palette. */
+    filter: saturate(1.02) contrast(1.02);
+    transition: scale 0.6s var(--ease-soft);
+  }
+  .team-card:hover .team-card__photo {
+    scale: 1.04;
   }
   .team-card__name {
-    margin-top: 0.85rem;
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 1.25rem;
-    line-height: 1.1;
+    margin-top: 0.9rem;
+    font-family: var(--font-hand);
+    font-weight: 700;
+    font-size: 1.85rem;
+    line-height: 0.95;
     color: var(--color-ink);
   }
   .team-card__role {
     margin-top: 0.15rem;
-    font-size: 0.92rem;
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: var(--color-ink-soft);
   }
+
+  @keyframes team-sway {
+    0%, 100% { rotate: var(--tilt, 0deg); translate: 0 0; }
+    50%      { rotate: calc(var(--tilt, 0deg) * 0.55);
+               translate: 0 -3px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .team-card { rotate: 0deg; transition: none; }
+    .team-card {
+      animation: none;
+      rotate: 0deg;
+    }
+    .team-card:hover { scale: 1; }
   }
 </style>
