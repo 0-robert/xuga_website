@@ -165,29 +165,14 @@
     2px 2px;
 }
 
-/* Scroll-reveal. Gated on .js so every element stays visible without
-   JavaScript, and flattened entirely under reduced-motion. */
-.js [data-reveal] {
-  opacity: 0;
-  transform: translateY(8px);
-  filter: blur(4px);
-  transition:
-    opacity 0.55s var(--ease),
-    transform 0.55s var(--ease),
-    filter 0.55s var(--ease);
-  transition-delay: var(--reveal-delay, 0s);
-}
-.js [data-reveal].is-revealed {
+/* Scroll-reveal disabled by request. The data-reveal attributes are
+   left in the markup (they are everywhere and used as a hook in many
+   places) but the animation is a no-op: elements render in their final
+   state immediately, with no fade, slide, or blur. */
+[data-reveal] {
   opacity: 1;
   transform: none;
-  filter: blur(0);
-}
-@media (prefers-reduced-motion: reduce) {
-  .js [data-reveal] {
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
+  filter: none;
 }
 
 /* Rendered Markdown body of a towel's story. */
