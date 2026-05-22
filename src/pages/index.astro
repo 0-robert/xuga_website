@@ -245,10 +245,30 @@ const team = page.teamMembers ?? [];
   </section>
 
   <!-- Closing -->
-  <section class="grain-layer relative overflow-hidden bg-ink px-5 py-20 text-sand sm:py-24">
-    <WaveEdge color="var(--color-sand)" />
+  <section class="closing-section grain-layer relative overflow-hidden bg-ink pt-52 pb-20 text-sand sm:pt-60 sm:pb-24">
+    <!-- Four-layer wave transition: foam (sand) -> shallows (sea-pale)
+         -> water (sea) -> deep (ink). Each layer drifts slowly on its
+         own timing so the whole thing reads as moving water rather
+         than a static edge. Disabled under reduced-motion.
+
+         Painter order matters: each path fills from its wave-top down
+         to the SVG bottom; subsequent (deeper) layers paint on top and
+         cover the previous one's lower portion. So we go from foam at
+         the back to deep ink at the front. -->
+    <span class="closing-waves" aria-hidden="true">
+      <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+        <path class="wave-layer wave-layer--foam"
+              d="M-50 28 Q80 16 210 28 T470 28 T730 28 T990 28 T1250 28 L1250 220 L-50 220 Z" />
+        <path class="wave-layer wave-layer--shallow"
+              d="M-50 60 Q110 44 270 60 T590 60 T910 60 T1250 60 L1250 220 L-50 220 Z" />
+        <path class="wave-layer wave-layer--sea"
+              d="M-50 105 Q90 84 230 105 T510 105 T790 105 T1070 105 T1250 105 L1250 220 L-50 220 Z" />
+        <path class="wave-layer wave-layer--ink"
+              d="M-50 150 Q70 128 190 150 T430 150 T670 150 T910 150 T1150 150 T1250 150 L1250 220 L-50 220 Z" />
+      </svg>
+    </span>
     <span
-      class="pointer-events-none absolute left-[8%] top-10 hidden h-16 w-16 rotate-[-12deg] text-sun/70 sm:block"
+      class="pointer-events-none absolute left-[8%] top-32 hidden h-16 w-16 rotate-[-12deg] text-sun/70 sm:block"
       aria-hidden="true"
     >
       <Doodle name="sparkle" class="h-full w-full" />
@@ -259,7 +279,7 @@ const team = page.teamMembers ?? [];
     >
       <Doodle name="shell" class="h-full w-full" />
     </span>
-    <div class="relative mx-auto max-w-3xl text-center">
+    <div class="relative z-10 mx-auto max-w-3xl text-center">
       <h2 data-reveal class="font-display text-3xl sm:text-4xl">
         {page.closingHeading}
       </h2>
@@ -283,6 +303,57 @@ const team = page.teamMembers ?? [];
 </BaseLayout>
 
 <style>
+  /* Layered wave transition at the top of the closing section. The SVG
+     fills the full width and a chunk of section height; the four paths
+     stack so the eye reads beach -> wet sand -> shallow sea -> deep
+     ink. Each layer drifts horizontally on a different period so the
+     transition feels alive without being noisy. */
+  .closing-waves {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: clamp(140px, 16vw, 200px);
+    z-index: 1;
+    pointer-events: none;
+    line-height: 0;
+    overflow: hidden;
+    /* The area above the topmost (foam) wave needs to read as the page's
+       sand background, not as the closing section's ink. Painting sand
+       here lets the team-section sand flow seamlessly into the foam. */
+    background-color: var(--color-sand);
+  }
+  .closing-waves svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  /* Layer fills. The shallows are a custom blend (sea + sand-deep) so
+     the transition between foam and full sea reads as one of those
+     pale-aqua shallows that fade into deeper water. */
+  .wave-layer--foam    { fill: var(--color-sand); }
+  .wave-layer--shallow {
+    fill: color-mix(in oklch, var(--color-sea) 55%, var(--color-sand-deep) 45%);
+  }
+  .wave-layer--sea     { fill: var(--color-sea); }
+  .wave-layer--ink     { fill: var(--color-ink); }
+  /* Subtle warm-tinted shadow under the foam line for depth. */
+  .wave-layer--foam {
+    filter: drop-shadow(0 2px 0 oklch(0.3 0.07 256 / 0.08));
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .wave-layer {
+      animation: wave-drift 14s ease-in-out infinite;
+      transform-origin: center;
+    }
+    .wave-layer--foam    { animation-duration:  9s; }
+    .wave-layer--shallow { animation-duration: 12s; animation-direction: reverse; }
+    .wave-layer--sea     { animation-duration: 16s; }
+    .wave-layer--ink     { animation-duration: 20s; animation-direction: reverse; }
+  }
+  @keyframes wave-drift {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(-32px); }
+  }
+
   /* Stylised beach scene behind the polaroids. The PNG carries its own
      transparency (the upper sky region was floodfilled to alpha=0), so
      the sand-cream page colour shows through cleanly. Pinned wide
