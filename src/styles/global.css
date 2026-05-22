@@ -39,12 +39,12 @@
   :root {
     /* Overridden per garment on story pages so each page feels like its towel. */
     --accent: var(--color-sun);
-    /* Readable variant of the accent for text on sand backgrounds. Keeps
-       the accent's hue and chroma, only drops lightness, so the warm orange
-       stays warm orange (not pulled toward navy). Clears AA Large (3:1)
-       against sand for the default sun accent and remains in-hue for any
-       per-garment override. */
-    --accent-ink: oklch(from var(--accent) calc(l - 0.2) c h);
+    /* Eyebrow/handwritten-text variant of the accent. We keep the brand's
+       bright sun orange here even though it sits below WCAG AA Large
+       contrast on sand: the handwritten eyebrows are decorative, the
+       brand reads as warm and sunny, and darkening them shifts the feel.
+       Real body text uses --color-ink-soft, which is fully compliant. */
+    --accent-ink: var(--accent);
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
