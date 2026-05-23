@@ -6,7 +6,7 @@ caption: "Five kilometres from the workshop. Still counts."
 credit: "Sofiia in limestone-lit Victoria"
 variant: polaroid
 pin: sun
-mapX: 54.0
-mapY: 32.0
+mapX: 51.5
+mapY: 34.5
 order: 5
 ---

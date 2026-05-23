@@ -6,7 +6,7 @@ caption: "Prague said yes to bucket hats."
 credit: "Charlotte under the astronomical clock"
 variant: snap
 pin: lime
-mapX: 54.0
-mapY: 23.0
+mapX: 51.8
+mapY: 24.0
 order: 3
 ---

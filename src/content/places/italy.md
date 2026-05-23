@@ -6,7 +6,7 @@ caption: "Went for a bit of skiing as a towel."
 credit: "Andrew · Pink pouch"
 variant: postcard
 pin: sea
-mapX: 52.8
-mapY: 26.5
+mapX: 50.6
+mapY: 29.5
 order: 4
 ---
