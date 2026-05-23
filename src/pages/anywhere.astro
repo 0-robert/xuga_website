@@ -355,26 +355,30 @@ const places = (await getCollection('places')).sort(
   }
 
   /* ---------- the artifact wall ----------
-     Masonry-style via CSS columns so cards stack densely with no row
-     alignment. Each card keeps its tilt and sway, and per-variant widths
-     give the wall an uneven, hand-arranged rhythm. */
+     CSS Grid so every card has a guaranteed slot. The previous CSS-columns
+     layout used `column-fill: balance` (default) which distributes cards
+     non-deterministically across browsers — Chromium/Webkit/etc. can leave
+     a column empty when one card is taller than its siblings. Grid keeps
+     the wall reliable; per-variant width + tilt + sway still give the
+     "hand-arranged" rhythm. */
   .board__wall {
     list-style: none;
     margin: 2.25rem 0 0;
     padding: 0;
-    column-count: 1;
-    column-gap: 1.25rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.6rem 1.25rem;
     position: relative;
     z-index: 1;
   }
   @media (min-width: 560px) {
-    .board__wall { column-count: 2; column-gap: 1.25rem; }
+    .board__wall { grid-template-columns: repeat(2, 1fr); }
   }
   @media (min-width: 880px) {
-    .board__wall { column-count: 3; column-gap: 1.5rem; margin-top: 3rem; }
+    .board__wall { grid-template-columns: repeat(3, 1fr); gap: 2rem 1.5rem; margin-top: 3rem; }
   }
   @media (min-width: 1100px) {
-    .board__wall { column-count: 4; column-gap: 1.5rem; }
+    .board__wall { grid-template-columns: repeat(4, 1fr); gap: 2rem 1.5rem; }
   }
 
   .artifact {
@@ -385,10 +389,9 @@ const places = (await getCollection('places')).sort(
     display: block;
     width: var(--width);
     /* Top padding keeps the absolutely-positioned pin inside the artifact's
-       bounding box, so CSS columns don't clip it at the column edge. */
+       bounding box so it doesn't clip at the cell edge. */
     padding-top: 14px;
-    margin: 0 auto 1.6rem;
-    break-inside: avoid;
+    margin: 0 auto;
     rotate: var(--tilt);
     animation: artifact-sway var(--sway-dur, 5s) var(--sway-delay, 0s)
       ease-in-out infinite alternate;
