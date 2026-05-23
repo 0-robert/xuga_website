@@ -179,4 +179,36 @@ const pages = defineCollection({
     .passthrough(),
 });
 
-export const collections = { towels, pages };
+/**
+ * One Markdown file per travel snapshot in src/content/places/.
+ * Each entry is a photo of a XUGA piece in the wild, pinned to the travel
+ * board on /anywhere/. Frontmatter only for now; the Markdown body is unused
+ * (kept available so editors can append longer notes through the CMS later).
+ *
+ * mapX / mapY are percentages on the stylised world-strip SVG used by the
+ * board (0% left / 0% top). They drive both the pin position on the map
+ * and the dotted-string anchor to the artifact below.
+ */
+const places = defineCollection({
+  loader: glob({ pattern: '*.md', base: './src/content/places' }),
+  schema: ({ image }) =>
+    z.object({
+      place: z.string(),
+      country: z.string(),
+      photo: image(),
+      caption: z.string(),
+      /** Free-form line under the place name, e.g. "Andrew · Dolphin bucket hat". */
+      credit: z.string().optional(),
+      /** Card style: postcard (washi tape + caption), polaroid (square + handwritten), snap (bare pinned photo). */
+      variant: z.enum(['postcard', 'polaroid', 'snap']).default('postcard'),
+      /** Palette key driving the pin + accent of this artifact. */
+      pin: z.enum(['sun', 'sea', 'shell', 'lime', 'grape']).default('sun'),
+      mapX: z.number().min(0).max(100),
+      mapY: z.number().min(0).max(100),
+      order: z.number().default(0),
+      /** Optional slug linking the artifact to a /t/<slug>/ story page. */
+      garmentSlug: z.string().optional(),
+    }),
+});
+
+export const collections = { towels, pages, places };

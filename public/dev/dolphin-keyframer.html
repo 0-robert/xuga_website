@@ -1,0 +1,1335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dolphin path editor (GSAP)</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/MotionPathPlugin.min.js"></script>
+<style>
+  :root {
+    --color-sand: #fdf4e3;
+    --color-sand-deep: #f4e2c5;
+    --color-sea: #4aa6c0;
+    --color-shallow: #95c4b6;
+    --color-ink: #142a45;
+    --accent: #f1a13a;
+    --splash: #6fe0ff;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #1c1c22;
+    color: #eee;
+    font: 14px/1.4 ui-sans-serif, system-ui, -apple-system, sans-serif;
+  }
+  body {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    grid-template-rows: auto 1fr auto;
+    height: 100vh;
+  }
+  header {
+    grid-column: 1 / -1;
+    padding: 10px 16px;
+    background: #11111a;
+    border-bottom: 1px solid #2a2a36;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  header h1 { font-size: 14px; margin: 0; font-weight: 600; }
+  header .hint { font-size: 12px; color: #888; }
+
+  /* Stage = closing-section clone with wave masking. */
+  .stage-wrap {
+    position: relative;
+    overflow: auto;
+    background: #0d0d12;
+    padding: 24px;
+  }
+  .stage {
+    position: relative;
+    width: 1280px;
+    height: 540px;
+    background: var(--color-ink);
+    overflow: hidden;
+    border-radius: 4px;
+    user-select: none;
+  }
+  /* BACK wave SVG: cream bg + foam, shallow, sea — paint behind dolphin. */
+  .closing-waves--back {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 200px;
+    background-color: var(--color-sand);
+    z-index: 1;
+    pointer-events: none;
+  }
+  .closing-waves--back svg { display: block; width: 100%; height: 100%; }
+  .wave-foam    { fill: var(--color-sand); }
+  .wave-shallow { fill: var(--color-shallow); }
+  .wave-sea     { fill: var(--color-sea); }
+  .wave-ink     { fill: var(--color-ink); }
+
+  /* FRONT wave SVG: ink only — paints OVER dolphin so it dives behind dark water. */
+  .closing-waves--front {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 200px;
+    z-index: 6;
+    pointer-events: none;
+  }
+  .closing-waves--front svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+  /* Below-water mask: extends the ink color from the wave SVG bottom all the
+     way down. Anything the dolphin does deeper than the ink wave is hidden
+     behind this. */
+  .below-water {
+    position: absolute;
+    top: 195px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-ink);
+    z-index: 6;
+    pointer-events: none;
+  }
+
+  /* Path overlay (the dolphin's motion path) */
+  .path-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4;
+  }
+  .path-overlay .smooth-path {
+    fill: none;
+    stroke: rgba(241,161,58,0.55);
+    stroke-width: 2;
+    stroke-dasharray: 5 4;
+  }
+  .path-overlay .ctrl-dot {
+    fill: var(--accent);
+    stroke: #fff;
+    stroke-width: 1.5;
+    cursor: grab;
+    pointer-events: auto;
+  }
+  .path-overlay .ctrl-dot.active { fill: #fff; stroke: var(--accent); stroke-width: 2; r: 7; }
+  .path-overlay .ctrl-dot:hover { stroke-width: 2.5; }
+
+  /* Water line indicator */
+  .water-line {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(241,161,58,0.4);
+    pointer-events: none;
+    z-index: 3;
+  }
+  .water-line::after {
+    content: 'water line (foam/shallow seam)';
+    position: absolute;
+    right: 8px;
+    top: -16px;
+    font-size: 10px;
+    color: rgba(241,161,58,0.7);
+  }
+
+  /* Dolphin — between back and front waves. */
+  .dolphin {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 220px;
+    z-index: 5;
+    pointer-events: none;
+    transform-origin: center center;
+  }
+  .dolphin img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.3));
+  }
+
+  /* Splash markers (above ink wave for editability) */
+  .splash-marker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 28px;
+    height: 28px;
+    transform: translate(-50%, -50%);
+    z-index: 9;
+    cursor: grab;
+  }
+  .splash-marker.dragging { cursor: grabbing; }
+  .splash-marker svg { width: 100%; height: 100%; overflow: visible; }
+  .splash-marker .ring { fill: none; stroke: var(--splash); stroke-width: 2; opacity: 0.9; }
+  .splash-marker .core { fill: var(--splash); opacity: 0.4; }
+  .splash-marker .num {
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    font-size: 10px;
+    color: var(--splash);
+    text-shadow: 0 0 4px #000, 0 0 4px #000;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .splash-marker .coord {
+    position: absolute;
+    top: 26px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: var(--splash);
+    text-shadow: 0 0 4px #000, 0 0 4px #000;
+    white-space: nowrap;
+  }
+  .splash-marker .remove-btn {
+    position: absolute;
+    top: -4px;
+    right: -16px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #f55;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 11px;
+    line-height: 1;
+    display: none;
+  }
+  .splash-marker:hover .remove-btn { display: block; }
+
+  /* Splash live previews (above ink, animated by GSAP) */
+  .splash-live {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 80px;
+    transform: translate(-50%, -50%);
+    z-index: 7;
+    pointer-events: none;
+    color: var(--color-sand);
+    opacity: 0;
+  }
+  .splash-live svg { width: 100%; height: 100%; overflow: visible; }
+  .splash-live .ring   { fill: none; stroke: currentColor; stroke-width: 2.2; }
+  .splash-live .drop   { fill: currentColor; }
+  .splash-live .pellet { fill: currentColor; }
+
+  /* SIDEBAR */
+  aside {
+    background: #161620;
+    border-left: 1px solid #2a2a36;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  aside h2 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 8px 0 4px;
+    color: #888;
+  }
+  aside p.hint { font-size: 11px; color: #666; margin: 0; line-height: 1.5; }
+
+  /* Points list */
+  .pts { display: flex; flex-direction: column; gap: 4px; }
+  .pt {
+    display: grid;
+    grid-template-columns: 26px 1fr auto;
+    gap: 6px;
+    align-items: center;
+    padding: 6px 8px;
+    background: #1f1f2a;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+  }
+  .pt:hover { border-color: #333; }
+  .pt.active { border-color: var(--accent); background: #2a2118; }
+  .pt .idx { font-weight: 600; color: var(--accent); }
+  .pt .vals { color: #aaa; font-size: 11px; }
+  .pt .actions { display: flex; gap: 4px; }
+  .pt .actions button {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 2px 4px;
+  }
+  .pt .actions button:hover { color: #f55; }
+
+  button.btn {
+    padding: 5px 12px;
+    background: var(--accent);
+    border: none;
+    border-radius: 3px;
+    color: #111;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  button.btn.ghost { background: #2a2a36; color: #eee; }
+  button.btn.blue { background: var(--splash); color: #111; }
+  button.btn:hover { filter: brightness(1.1); }
+  button.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Property editor */
+  .props { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 8px; }
+  .props label {
+    font-size: 11px;
+    color: #888;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .props input {
+    padding: 4px 6px;
+    background: #11111a;
+    border: 1px solid #333;
+    border-radius: 3px;
+    color: #eee;
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+  }
+  .props .span2 { grid-column: 1 / -1; }
+
+  /* Splash UI */
+  .splashes { display: flex; flex-direction: column; gap: 4px; }
+  .splash-row {
+    display: grid;
+    grid-template-columns: 16px 1fr auto;
+    gap: 6px;
+    align-items: center;
+    padding: 6px 8px;
+    background: #15252a;
+    border: 1px solid #2a3a44;
+    border-radius: 4px;
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+  }
+  .splash-row.active { border-color: var(--splash); }
+  .splash-row .num { color: var(--splash); font-weight: 700; }
+  .splash-row .vals { color: #aaa; font-size: 11px; }
+  .splash-row .del {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .splash-row .del:hover { color: #f55; }
+
+  .toggle-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 12px;
+    flex-wrap: wrap;
+  }
+  .toggle-row label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+
+  /* Footer */
+  footer {
+    grid-column: 1 / -1;
+    background: #11111a;
+    border-top: 1px solid #2a2a36;
+    padding: 10px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .timeline {
+    flex: 1;
+    position: relative;
+    height: 36px;
+    background: #1f1f2a;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .timeline .grid {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, #2a2a36 1px, transparent 1px) 0 0 / 10% 100%,
+      linear-gradient(to right, #1a1a24 1px, transparent 1px) 0 0 / 2% 100%;
+  }
+  .timeline .now {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: #fff;
+    pointer-events: none;
+  }
+  .timeline .splash-tick {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 3px;
+    background: var(--splash);
+    pointer-events: none;
+  }
+  .timeline .splash-band {
+    position: absolute;
+    top: 0; bottom: 0;
+    background: rgba(111,224,255,0.18);
+    pointer-events: none;
+  }
+  footer .play-controls { display: flex; gap: 6px; }
+  footer .dur {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #aaa;
+  }
+  footer .dur input {
+    width: 60px;
+    padding: 4px 6px;
+    background: #1f1f2a;
+    border: 1px solid #333;
+    border-radius: 3px;
+    color: #eee;
+    font-family: ui-monospace, monospace;
+  }
+
+  pre.export {
+    grid-column: 1 / -1;
+    margin: 0;
+    background: #0d0d12;
+    border-top: 1px solid #2a2a36;
+    padding: 12px 16px;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: #aaa;
+    white-space: pre-wrap;
+    max-height: 320px;
+    overflow-y: auto;
+    display: none;
+  }
+  pre.export.open { display: block; }
+
+  .copyhint {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--accent);
+    color: #111;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .copyhint.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Dolphin path editor (GSAP MotionPath)</h1>
+  <span class="hint">
+    Drag the orange dots to shape the path. Shift-click an empty stage spot to add a point.
+    Cyan rings are splash triggers — drag to position. Hit ▶ to preview with GSAP autoRotate.
+  </span>
+</header>
+
+<div class="stage-wrap">
+  <div class="stage" id="stage">
+    <!-- BACK waves -->
+    <span class="closing-waves--back" aria-hidden="true">
+      <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+        <path class="wave-foam"    d="M-50 28 Q80 16 210 28 T470 28 T730 28 T990 28 T1250 28 L1250 220 L-50 220 Z" />
+        <path class="wave-shallow" d="M-50 60 Q110 44 270 60 T590 60 T910 60 T1250 60 L1250 220 L-50 220 Z" />
+        <path class="wave-sea"     d="M-50 105 Q90 84 230 105 T510 105 T790 105 T1070 105 T1250 105 L1250 220 L-50 220 Z" />
+      </svg>
+    </span>
+
+    <div class="water-line"></div>
+
+    <!-- The dolphin (between back and front waves) -->
+    <div class="dolphin" id="dolphin">
+      <img id="dolphinImg" src="/images/dolphin.png" alt="dolphin" draggable="false" />
+    </div>
+
+    <!-- FRONT wave (ink) — paints OVER the dolphin so it disappears underwater. -->
+    <span class="closing-waves--front" aria-hidden="true">
+      <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
+        <path class="wave-ink" d="M-50 150 Q70 128 190 150 T430 150 T670 150 T910 150 T1150 150 T1250 150 L1250 220 L-50 220 Z" />
+      </svg>
+    </span>
+    <div class="below-water" aria-hidden="true"></div>
+
+    <!-- Splash live previews (z above ink) — populated by JS -->
+    <div id="splashLiveContainer"></div>
+
+    <!-- Path overlay & control points -->
+    <svg class="path-overlay" id="pathOverlay" xmlns="http://www.w3.org/2000/svg"></svg>
+
+    <!-- Splash markers (UI) -->
+    <div id="splashMarkers"></div>
+  </div>
+</div>
+
+<aside>
+  <div class="toggle-row">
+    <label><input type="checkbox" id="showPath" checked /> Show path</label>
+    <label><input type="checkbox" id="autoRotate" checked /> Auto-rotate</label>
+    <label><input type="checkbox" id="loop" checked /> Loop closed</label>
+  </div>
+  <div class="props">
+    <label>rotate offset (deg) <input type="number" id="rotOffset" value="-30" step="5" /></label>
+    <label>ease
+      <select id="easeSel" style="padding:4px 6px;background:#11111a;border:1px solid #333;border-radius:3px;color:#eee;font-family:ui-monospace,monospace;">
+        <option value="none">linear</option>
+        <option value="sine.inOut">sine.inOut</option>
+        <option value="power1.inOut">power1.inOut</option>
+        <option value="power2.inOut">power2.inOut</option>
+        <option value="power3.inOut">power3.inOut</option>
+        <option value="circ.inOut">circ.inOut</option>
+      </select>
+    </label>
+  </div>
+
+  <h2>Path control points</h2>
+  <div class="pts" id="ptsList"></div>
+  <p class="hint">Shift-click empty stage to add. Drag to move. Order matters — points are followed in sequence.</p>
+
+  <h2>Current point</h2>
+  <div class="props" id="props">
+    <label>x (px) <input type="number" id="propX" step="1" /></label>
+    <label>y (px) <input type="number" id="propY" step="1" /></label>
+    <label>opacity <input type="number" id="propO" step="0.05" min="0" max="1" /></label>
+    <label>scale <input type="number" id="propS" step="0.05" min="0.1" max="3" /></label>
+  </div>
+
+  <h2 style="color: var(--splash);">Splash triggers</h2>
+  <div class="splashes" id="splashesList"></div>
+  <button class="btn blue" id="addSplash">+ Add splash trigger</button>
+  <p class="hint">Each splash fires once per cycle, at the moment the dolphin's path is closest to its position. Duplicate positions are deduped on export.</p>
+
+  <h2>Dolphin size</h2>
+  <div class="props">
+    <label>width (px) <input type="number" id="propW" value="220" step="1" /></label>
+    <label>height (px) <input type="number" id="propH" value="220" step="1" /></label>
+  </div>
+
+  <h2>Export</h2>
+  <div style="display:flex; gap:6px; flex-wrap: wrap;">
+    <button class="btn" id="exportBtn">Copy GSAP code</button>
+    <button class="btn ghost" id="showCssBtn">Show / hide</button>
+    <button class="btn ghost" id="saveBtn">Save</button>
+    <button class="btn ghost" id="loadBtn">Load</button>
+    <button class="btn ghost" id="resetBtn">Reset</button>
+  </div>
+  <p class="hint">Exports a single GSAP timeline you can drop into a script tag. Includes motionPath, autoRotate, opacity/scale tween, and a splash trigger for each marker.</p>
+</aside>
+
+<pre class="export" id="exportPre"></pre>
+
+<footer>
+  <div class="play-controls">
+    <button class="btn" id="playBtn">▶ Play</button>
+    <button class="btn ghost" id="stopBtn">■ Stop</button>
+  </div>
+  <div class="dur">
+    duration <input type="number" id="durInput" value="5000" step="100" min="500" /> ms
+  </div>
+  <div class="timeline" id="timeline">
+    <div class="grid"></div>
+  </div>
+  <span style="font-family: ui-monospace, monospace; font-size: 12px; color: #aaa; min-width: 60px; text-align: right;" id="scrubLabel">0%</span>
+</footer>
+
+<div class="copyhint" id="copyhint">Copied!</div>
+
+<script>
+(() => {
+  const { gsap, MotionPathPlugin } = window;
+  if (MotionPathPlugin) gsap.registerPlugin(MotionPathPlugin);
+
+  // ───────── State ─────────
+  // Path is an ORDERED sequence of control points.
+  // x, y are pixel offsets from the dolphin's anchor (stage center, water-line height).
+  let pts = [
+    { x: -465, y: 240, opacity: 0,   scale: 0.9 },  // submerged left
+    { x: -350, y: 50,  opacity: 1,   scale: 1.0 },  // breaching
+    { x: -100, y: -120, opacity: 1,  scale: 1.0 }, // apex
+    { x:  150, y: -80, opacity: 1,   scale: 1.0 }, // descending
+    { x:  300, y: 80,  opacity: 1,   scale: 0.95 }, // re-entering water
+    { x:  420, y: 200, opacity: 0,   scale: 0.85 }, // submerged right
+  ];
+
+  let splashes = [
+    { x: -236, y: 94 },
+  ];
+
+  try {
+    const stored = localStorage.getItem('dolphin-path-v1');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed?.pts?.length) pts = parsed.pts;
+      if (parsed?.splashes?.length) splashes = parsed.splashes;
+    }
+  } catch {}
+
+  let activeIdx = 0;
+  let activeSplashIdx = 0;
+  let playing = false;
+  let timeline = null;
+  let containerW = 220;
+  let containerH = 220;
+  let showPath = true;
+  let autoRotate = true;
+  let looped = true;
+  let rotOffset = -30;
+  let easeName = 'none';
+
+  // ───────── DOM ─────────
+  const stage          = document.getElementById('stage');
+  const dolphin        = document.getElementById('dolphin');
+  const dolphinImg     = document.getElementById('dolphinImg');
+  const pathOverlay    = document.getElementById('pathOverlay');
+  const splashLiveCt   = document.getElementById('splashLiveContainer');
+  const splashMarkers  = document.getElementById('splashMarkers');
+  const ptsList        = document.getElementById('ptsList');
+  const propX          = document.getElementById('propX');
+  const propY          = document.getElementById('propY');
+  const propO          = document.getElementById('propO');
+  const propS          = document.getElementById('propS');
+  const propW          = document.getElementById('propW');
+  const propH          = document.getElementById('propH');
+  const splashesList   = document.getElementById('splashesList');
+  const addSplashBtn   = document.getElementById('addSplash');
+  const exportBtn      = document.getElementById('exportBtn');
+  const showCssBtn     = document.getElementById('showCssBtn');
+  const exportPre      = document.getElementById('exportPre');
+  const saveBtn        = document.getElementById('saveBtn');
+  const loadBtn        = document.getElementById('loadBtn');
+  const resetBtn       = document.getElementById('resetBtn');
+  const timelineEl     = document.getElementById('timeline');
+  const playBtn        = document.getElementById('playBtn');
+  const stopBtn        = document.getElementById('stopBtn');
+  const durInput       = document.getElementById('durInput');
+  const scrubLabel     = document.getElementById('scrubLabel');
+  const copyhint       = document.getElementById('copyhint');
+  const showPathChk    = document.getElementById('showPath');
+  const autoRotateChk  = document.getElementById('autoRotate');
+  const loopChk        = document.getElementById('loop');
+  const rotOffsetIn    = document.getElementById('rotOffset');
+  const easeSel        = document.getElementById('easeSel');
+
+  // ───────── Coord conversion ─────────
+  // Dolphin coords (x, y) are offsets from the stage's anchor: (stageW/2, 50px).
+  function ptToStage(p) {
+    const w = stage.getBoundingClientRect().width;
+    return { sx: w / 2 + p.x, sy: 50 + p.y };
+  }
+  function stageToPt(sx, sy) {
+    const w = stage.getBoundingClientRect().width;
+    return { x: sx - w / 2, y: sy - 50 };
+  }
+
+  // ───────── Build SVG path d-attribute ─────────
+  // Catmull-Rom spline through control points, converted to cubic Bézier
+  // for SVG. Closed if `looped` is true.
+  function buildPathD() {
+    if (pts.length < 2) return '';
+    const w = stage.getBoundingClientRect().width;
+    const coords = pts.map(p => [w / 2 + p.x, 50 + p.y]);
+    if (looped) coords.push(coords[0]); // close
+
+    const n = coords.length;
+    if (n < 2) return '';
+    let d = `M ${coords[0][0].toFixed(2)} ${coords[0][1].toFixed(2)}`;
+    // Catmull-Rom to Bezier conversion
+    for (let i = 0; i < n - 1; i++) {
+      const p0 = coords[(i - 1 + n) % n] || coords[i];
+      const p1 = coords[i];
+      const p2 = coords[i + 1];
+      const p3 = coords[(i + 2) % n] || coords[i + 1];
+      const c1x = p1[0] + (p2[0] - p0[0]) / 6;
+      const c1y = p1[1] + (p2[1] - p0[1]) / 6;
+      const c2x = p2[0] - (p3[0] - p1[0]) / 6;
+      const c2y = p2[1] - (p3[1] - p1[1]) / 6;
+      d += ` C ${c1x.toFixed(2)} ${c1y.toFixed(2)}, ${c2x.toFixed(2)} ${c2y.toFixed(2)}, ${p2[0].toFixed(2)} ${p2[1].toFixed(2)}`;
+    }
+    return d;
+  }
+
+  // ───────── Render ─────────
+  function renderPath() {
+    pathOverlay.innerHTML = '';
+    const rect = stage.getBoundingClientRect();
+    pathOverlay.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+
+    if (showPath) {
+      const d = buildPathD();
+      if (d) {
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('class', 'smooth-path');
+        p.setAttribute('d', d);
+        pathOverlay.appendChild(p);
+      }
+    }
+    // Control point dots (drag handles)
+    pts.forEach((pt, i) => {
+      const { sx, sy } = ptToStage(pt);
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('class', 'ctrl-dot' + (i === activeIdx ? ' active' : ''));
+      dot.setAttribute('cx', sx);
+      dot.setAttribute('cy', sy);
+      dot.setAttribute('r', i === activeIdx ? 7 : 5);
+      dot.dataset.idx = i;
+      pathOverlay.appendChild(dot);
+
+      // Tiny index label
+      const lbl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      lbl.setAttribute('x', sx + 8);
+      lbl.setAttribute('y', sy - 8);
+      lbl.setAttribute('fill', '#fff');
+      lbl.setAttribute('font-size', '10');
+      lbl.setAttribute('font-family', 'ui-monospace, monospace');
+      lbl.style.textShadow = '0 0 4px #000';
+      lbl.style.pointerEvents = 'none';
+      lbl.textContent = i;
+      pathOverlay.appendChild(lbl);
+    });
+
+    // Drag handlers on dots
+    pathOverlay.querySelectorAll('.ctrl-dot').forEach((dot) => {
+      dot.addEventListener('pointerdown', startDragPoint);
+    });
+  }
+
+  function renderPtsList() {
+    ptsList.innerHTML = '';
+    pts.forEach((p, i) => {
+      const row = document.createElement('div');
+      row.className = 'pt' + (i === activeIdx ? ' active' : '');
+      row.innerHTML = `
+        <span class="idx">${i}</span>
+        <span class="vals">x=${p.x.toFixed(0)} y=${p.y.toFixed(0)} o=${p.opacity.toFixed(2)} s=${p.scale.toFixed(2)}</span>
+        <span class="actions">
+          <button title="insert before">↑+</button>
+          <button title="delete">✕</button>
+        </span>
+      `;
+      row.addEventListener('click', (e) => {
+        const txt = e.target.title;
+        if (txt === 'delete') {
+          if (pts.length <= 2) return alert('Need at least 2 points.');
+          pts.splice(i, 1);
+          activeIdx = Math.max(0, Math.min(activeIdx, pts.length - 1));
+        } else if (txt === 'insert before') {
+          const prev = pts[(i - 1 + pts.length) % pts.length];
+          const cur = pts[i];
+          const newPt = {
+            x: (prev.x + cur.x) / 2,
+            y: (prev.y + cur.y) / 2,
+            opacity: (prev.opacity + cur.opacity) / 2,
+            scale: (prev.scale + cur.scale) / 2,
+          };
+          pts.splice(i, 0, newPt);
+          activeIdx = i;
+        } else {
+          activeIdx = i;
+        }
+        renderAll();
+      });
+      ptsList.appendChild(row);
+    });
+  }
+
+  function renderSplashesList() {
+    splashesList.innerHTML = '';
+    splashes.forEach((s, i) => {
+      const row = document.createElement('div');
+      row.className = 'splash-row' + (i === activeSplashIdx ? ' active' : '');
+      row.innerHTML = `
+        <span class="num">${i + 1}</span>
+        <span class="vals">x=${s.x.toFixed(0)} y=${s.y.toFixed(0)}</span>
+        <button class="del" title="delete">✕</button>
+      `;
+      row.querySelector('.del').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (splashes.length <= 0) return;
+        splashes.splice(i, 1);
+        activeSplashIdx = Math.max(0, Math.min(activeSplashIdx, splashes.length - 1));
+        renderSplashMarkers();
+        renderSplashLives();
+        renderSplashesList();
+        renderTimeline();
+      });
+      row.addEventListener('click', (e) => {
+        if (e.target.classList.contains('del')) return;
+        activeSplashIdx = i;
+        renderSplashesList();
+      });
+      splashesList.appendChild(row);
+    });
+  }
+
+  function renderSplashMarkers() {
+    splashMarkers.innerHTML = '';
+    splashes.forEach((s, i) => {
+      const { sx, sy } = ptToStage(s);
+      const el = document.createElement('div');
+      el.className = 'splash-marker';
+      el.dataset.idx = i;
+      el.style.left = sx + 'px';
+      el.style.top = sy + 'px';
+      el.innerHTML = `
+        <svg viewBox="-14 -14 28 28">
+          <circle class="ring" cx="0" cy="0" r="12" />
+          <circle class="core" cx="0" cy="0" r="5" />
+        </svg>
+        <span class="num">splash ${i + 1}</span>
+        <span class="coord">(${s.x.toFixed(0)}, ${s.y.toFixed(0)})</span>
+        <button class="remove-btn" title="remove">✕</button>
+      `;
+      el.querySelector('.remove-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        splashes.splice(i, 1);
+        renderSplashMarkers();
+        renderSplashLives();
+        renderSplashesList();
+        renderTimeline();
+      });
+      el.addEventListener('pointerdown', (e) => {
+        if (e.target.classList.contains('remove-btn')) return;
+        startDragSplash(e, i);
+      });
+      splashMarkers.appendChild(el);
+    });
+  }
+
+  function renderSplashLives() {
+    splashLiveCt.innerHTML = '';
+    splashes.forEach((s, i) => {
+      const { sx, sy } = ptToStage(s);
+      const el = document.createElement('div');
+      el.className = 'splash-live';
+      el.id = 'splashLive' + i;
+      el.style.left = sx + 'px';
+      el.style.top = sy + 'px';
+      el.innerHTML = `
+        <svg viewBox="-80 -40 160 50" preserveAspectRatio="xMidYMax meet">
+          <ellipse class="ring outer" cx="0" cy="-2" rx="34" ry="6" />
+          <ellipse class="ring inner" cx="0" cy="-2" rx="18" ry="3.5" />
+          <path class="drop" d="M-6 -2 Q-9 -14 -10 -26 Q-7 -14 -4 -2 Z" />
+          <path class="drop" d="M6 -2 Q9 -14 10 -26 Q7 -14 4 -2 Z" />
+          <path class="drop" d="M-18 -2 Q-22 -10 -28 -18 Q-22 -10 -16 -2 Z" />
+          <path class="drop" d="M18 -2 Q22 -10 28 -18 Q22 -10 16 -2 Z" />
+          <circle class="pellet" cx="-30" cy="-14" r="1.6" />
+          <circle class="pellet" cx="30" cy="-14" r="1.6" />
+          <circle class="pellet" cx="-14" cy="-26" r="1.2" />
+          <circle class="pellet" cx="14" cy="-26" r="1.2" />
+        </svg>
+      `;
+      splashLiveCt.appendChild(el);
+    });
+  }
+
+  function renderTimeline() {
+    [...timelineEl.querySelectorAll('.now, .splash-tick, .splash-band')].forEach(n => n.remove());
+    // Splash bands
+    splashTimes().forEach(t => {
+      if (t == null) return;
+      const band = document.createElement('div');
+      band.className = 'splash-band';
+      band.style.left = Math.max(0, t - 5) + '%';
+      band.style.width = Math.min(10, t) + '%';
+      timelineEl.appendChild(band);
+      const tick = document.createElement('div');
+      tick.className = 'splash-tick';
+      tick.style.left = t + '%';
+      timelineEl.appendChild(tick);
+    });
+    const nowPct = timeline?.progress ? timeline.progress() * 100 : 0;
+    const now = document.createElement('div');
+    now.className = 'now';
+    now.style.left = nowPct + '%';
+    timelineEl.appendChild(now);
+    scrubLabel.textContent = nowPct.toFixed(1) + '%';
+  }
+
+  function setActive(i) {
+    activeIdx = i;
+    const pt = pts[i];
+    propX.value = pt.x.toFixed(0);
+    propY.value = pt.y.toFixed(0);
+    propO.value = pt.opacity.toFixed(2);
+    propS.value = pt.scale.toFixed(2);
+    renderPath();
+    renderPtsList();
+  }
+
+  function renderAll() {
+    renderPath();
+    renderPtsList();
+    renderSplashMarkers();
+    renderSplashLives();
+    renderSplashesList();
+    renderTimeline();
+    setupTimeline();
+  }
+
+  // ───────── Drag control point ─────────
+  let dragPointIdx = -1, dragPointStart = null, dragPointKfStart = null;
+  function startDragPoint(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dragPointIdx = parseInt(e.target.dataset.idx);
+    activeIdx = dragPointIdx;
+    dragPointStart = { x: e.clientX, y: e.clientY };
+    dragPointKfStart = { x: pts[dragPointIdx].x, y: pts[dragPointIdx].y };
+    e.target.setPointerCapture(e.pointerId);
+    document.addEventListener('pointermove', onDragPoint);
+    document.addEventListener('pointerup', endDragPoint, { once: true });
+  }
+  function onDragPoint(e) {
+    if (dragPointIdx < 0) return;
+    const dx = e.clientX - dragPointStart.x;
+    const dy = e.clientY - dragPointStart.y;
+    pts[dragPointIdx].x = dragPointKfStart.x + dx;
+    pts[dragPointIdx].y = dragPointKfStart.y + dy;
+    renderPath();
+    renderPtsList();
+    setActive(dragPointIdx);
+    setupTimeline();
+  }
+  function endDragPoint(e) {
+    dragPointIdx = -1;
+    document.removeEventListener('pointermove', onDragPoint);
+  }
+
+  // ───────── Drag splash marker ─────────
+  let dragSplashIdx = -1, dragSplashStart = null, dragSplashKfStart = null;
+  function startDragSplash(e, i) {
+    e.preventDefault();
+    e.stopPropagation();
+    dragSplashIdx = i;
+    activeSplashIdx = i;
+    dragSplashStart = { x: e.clientX, y: e.clientY };
+    dragSplashKfStart = { x: splashes[i].x, y: splashes[i].y };
+    document.addEventListener('pointermove', onDragSplash);
+    document.addEventListener('pointerup', endDragSplash, { once: true });
+  }
+  function onDragSplash(e) {
+    if (dragSplashIdx < 0) return;
+    const dx = e.clientX - dragSplashStart.x;
+    const dy = e.clientY - dragSplashStart.y;
+    splashes[dragSplashIdx].x = dragSplashKfStart.x + dx;
+    splashes[dragSplashIdx].y = dragSplashKfStart.y + dy;
+    renderSplashMarkers();
+    renderSplashLives();
+    renderSplashesList();
+    renderTimeline();
+    setupTimeline();
+  }
+  function endDragSplash() {
+    dragSplashIdx = -1;
+    document.removeEventListener('pointermove', onDragSplash);
+  }
+
+  // ───────── Shift-click empty stage = add point ─────────
+  stage.addEventListener('pointerdown', (e) => {
+    if (!e.shiftKey) return;
+    if (e.target !== stage && e.target !== pathOverlay && !e.target.classList.contains('closing-waves--back') && !e.target.closest('.closing-waves--back') && !e.target.closest('.closing-waves--front')) return;
+    const r = stage.getBoundingClientRect();
+    const p = stageToPt(e.clientX - r.left, e.clientY - r.top);
+    pts.push({ x: p.x, y: p.y, opacity: 1, scale: 1 });
+    activeIdx = pts.length - 1;
+    renderAll();
+  });
+
+  // ───────── Property editors ─────────
+  [['x', propX], ['y', propY], ['opacity', propO], ['scale', propS]].forEach(([key, el]) => {
+    el.addEventListener('input', () => {
+      const v = parseFloat(el.value);
+      if (!isNaN(v)) {
+        pts[activeIdx][key] = v;
+        renderAll();
+      }
+    });
+  });
+  propW.addEventListener('input', () => { containerW = parseFloat(propW.value) || 220; dolphin.style.width = containerW + 'px'; setupTimeline(); });
+  propH.addEventListener('input', () => { containerH = parseFloat(propH.value) || 220; dolphin.style.height = containerH + 'px'; setupTimeline(); });
+
+  // ───────── Toggles ─────────
+  showPathChk.addEventListener('change', () => { showPath = showPathChk.checked; renderPath(); });
+  autoRotateChk.addEventListener('change', () => { autoRotate = autoRotateChk.checked; setupTimeline(); });
+  loopChk.addEventListener('change', () => { looped = loopChk.checked; setupTimeline(); renderPath(); });
+  rotOffsetIn.addEventListener('input', () => { rotOffset = parseFloat(rotOffsetIn.value) || 0; setupTimeline(); });
+  easeSel.addEventListener('change', () => { easeName = easeSel.value; setupTimeline(); });
+
+  // ───────── Splash add/list ─────────
+  addSplashBtn.addEventListener('click', () => {
+    splashes.push({ x: 0, y: 50 + splashes.length * 20 });
+    activeSplashIdx = splashes.length - 1;
+    renderSplashMarkers();
+    renderSplashLives();
+    renderSplashesList();
+    renderTimeline();
+    setupTimeline();
+  });
+
+  // ───────── Compute splash trigger times along the path ─────────
+  // For each splash, find the % of the path (timeline progress 0–100) where the dolphin's
+  // position is closest. Dedupes splashes at identical coords.
+  function uniqueSplashes() {
+    const seen = new Set();
+    return splashes.filter(s => {
+      const key = `${s.x.toFixed(0)},${s.y.toFixed(0)}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+  function sampleAlongPath(steps = 200) {
+    // Returns array of { pct, x, y } sampled along the path geometry.
+    const path = pathOverlay.querySelector('.smooth-path');
+    if (!path) {
+      // Fallback: linearly interpolate through pts
+      const out = [];
+      const n = pts.length;
+      const segs = looped ? n : n - 1;
+      for (let s = 0; s <= steps; s++) {
+        const t = s / steps;
+        const f = t * segs;
+        const i = Math.min(Math.floor(f), segs - 1);
+        const frac = f - i;
+        const a = pts[i];
+        const b = pts[(i + 1) % n];
+        out.push({ pct: t * 100, x: a.x + (b.x - a.x) * frac, y: a.y + (b.y - a.y) * frac });
+      }
+      return out;
+    }
+    const total = path.getTotalLength();
+    const out = [];
+    const r = stage.getBoundingClientRect();
+    for (let s = 0; s <= steps; s++) {
+      const t = s / steps;
+      const pt = path.getPointAtLength(t * total);
+      out.push({ pct: t * 100, x: pt.x - r.width / 2, y: pt.y - 50 });
+    }
+    return out;
+  }
+  function splashTimes() {
+    if (!splashes.length) return [];
+    const samples = sampleAlongPath(300);
+    return uniqueSplashes().map(s => {
+      let bestT = 0, bestD = Infinity;
+      samples.forEach(sm => {
+        const dx = sm.x - s.x, dy = sm.y - s.y;
+        const d = dx * dx + dy * dy;
+        if (d < bestD) { bestD = d; bestT = sm.pct; }
+      });
+      return bestT;
+    });
+  }
+
+  // ───────── GSAP timeline setup ─────────
+  function setupTimeline() {
+    if (timeline) { timeline.kill(); timeline = null; }
+    const d = buildPathD();
+    if (!d) return;
+
+    // Make a hidden SVG path for MotionPath
+    let mpSvg = document.getElementById('mpSvg');
+    if (!mpSvg) {
+      mpSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      mpSvg.id = 'mpSvg';
+      mpSvg.style.cssText = 'position:absolute;width:0;height:0;visibility:hidden;';
+      stage.appendChild(mpSvg);
+    }
+    mpSvg.innerHTML = '';
+    const mpPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    mpPath.id = 'dolphinPath';
+    mpPath.setAttribute('d', d);
+    mpSvg.appendChild(mpPath);
+
+    const dur = (parseFloat(durInput.value) || 5000) / 1000;
+    const w = containerW, h = containerH;
+
+    // Build the timeline
+    timeline = gsap.timeline({
+      paused: true,
+      onUpdate: () => {
+        scrubLabel.textContent = (timeline.progress() * 100).toFixed(1) + '%';
+        const nowEl = timelineEl.querySelector('.now');
+        if (nowEl) nowEl.style.left = (timeline.progress() * 100) + '%';
+      },
+    });
+    timeline.to(dolphin, {
+      duration: dur,
+      ease: easeName,
+      motionPath: {
+        path: '#dolphinPath',
+        align: '#dolphinPath',
+        autoRotate: autoRotate ? rotOffset : false,
+        alignOrigin: [0.5, 0.5],
+      },
+    }, 0);
+
+    // Opacity + scale: keyframe from each point at its proportional time along the path.
+    // Use length-based proportions so spacing on the path matches.
+    const path = pathOverlay.querySelector('.smooth-path');
+    if (path) {
+      const total = path.getTotalLength();
+      const pctPerPt = [];
+      // Walk path to find proportional position of each control point
+      let cumulative = 0;
+      for (let i = 0; i < pts.length; i++) {
+        const fraction = looped ? i / pts.length : i / (pts.length - 1);
+        pctPerPt.push(fraction);
+      }
+
+      // GSAP keyframe-style tween for opacity + scale
+      const opacityFrames = pts.map((p, i) => ({ opacity: p.opacity, scale: p.scale, ease: 'none' }));
+      // Set initial state
+      timeline.set(dolphin, { opacity: pts[0].opacity, scale: pts[0].scale }, 0);
+      for (let i = 1; i < pts.length; i++) {
+        const tStart = pctPerPt[i - 1] * dur;
+        const tEnd = pctPerPt[i] * dur;
+        timeline.to(dolphin, {
+          opacity: pts[i].opacity,
+          scale: pts[i].scale,
+          duration: tEnd - tStart,
+          ease: 'none',
+        }, tStart);
+      }
+    }
+
+    // Splash triggers: tween each splash's opacity/scale at its computed time.
+    const stimes = splashTimes();
+    uniqueSplashes().forEach((s, i) => {
+      const t = stimes[i];
+      if (t == null) return;
+      const triggerAt = (t / 100) * dur;
+      const splashEl = document.getElementById('splashLive' + splashes.indexOf(s));
+      if (!splashEl) return;
+      // Reset state at t=0 then animate burst at triggerAt
+      timeline.set(splashEl, { opacity: 0 }, 0);
+      timeline.to(splashEl, {
+        keyframes: [
+          { opacity: 0, scale: 0.4, duration: 0 },
+          { opacity: 1, scale: 1.0, duration: 0.06 * dur },
+          { opacity: 0, scale: 1.5, duration: 0.10 * dur },
+        ],
+        ease: 'power2.out',
+      }, triggerAt);
+    });
+
+    if (playing) timeline.play();
+  }
+
+  // ───────── Play / scrub ─────────
+  playBtn.addEventListener('click', () => {
+    if (!timeline) setupTimeline();
+    if (!timeline) return;
+    playing = true;
+    timeline.play();
+    scrubTick();
+  });
+  stopBtn.addEventListener('click', () => {
+    playing = false;
+    if (timeline) timeline.pause(0);
+  });
+  function scrubTick() {
+    if (!playing) return;
+    renderTimeline();
+    requestAnimationFrame(scrubTick);
+  }
+  timelineEl.addEventListener('pointerdown', (e) => {
+    if (!timeline) return;
+    const r = timelineEl.getBoundingClientRect();
+    const p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    timeline.progress(p).pause();
+    playing = false;
+    renderTimeline();
+    timelineEl.setPointerCapture(e.pointerId);
+  });
+  timelineEl.addEventListener('pointermove', (e) => {
+    if (!timelineEl.hasPointerCapture(e.pointerId)) return;
+    const r = timelineEl.getBoundingClientRect();
+    const p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+    timeline.progress(p);
+    renderTimeline();
+  });
+  durInput.addEventListener('input', () => setupTimeline());
+
+  // ───────── Export ─────────
+  function generateGsapCode() {
+    const d = buildPathD();
+    const dur = (parseFloat(durInput.value) || 5000) / 1000;
+    const w = containerW, h = containerH;
+    const stimes = splashTimes();
+    const uSplashes = uniqueSplashes();
+
+    const lines = [];
+    lines.push('// Dolphin animation via GSAP MotionPath.');
+    lines.push('// Add to your Astro page (or anywhere this HTML lives):');
+    lines.push('//   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"><\/script>');
+    lines.push('//   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/MotionPathPlugin.min.js"><\/script>');
+    lines.push('');
+    lines.push('gsap.registerPlugin(MotionPathPlugin);');
+    lines.push('');
+    lines.push('// Smooth path (Catmull-Rom converted to cubic Bezier).');
+    lines.push('// Inject as a hidden SVG path so GSAP MotionPath can reference it.');
+    lines.push('const dolphinPathD = "' + d + '";');
+    lines.push('');
+    lines.push('// Inject the hidden path element if needed:');
+    lines.push('(function ensurePath(){');
+    lines.push('  if (document.getElementById("dolphinPath")) return;');
+    lines.push('  const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");');
+    lines.push('  svg.style.cssText = "position:absolute;width:0;height:0;visibility:hidden;";');
+    lines.push('  const p = document.createElementNS("http://www.w3.org/2000/svg","path");');
+    lines.push('  p.id = "dolphinPath";');
+    lines.push('  p.setAttribute("d", dolphinPathD);');
+    lines.push('  svg.appendChild(p);');
+    lines.push('  document.body.appendChild(svg);');
+    lines.push('})();');
+    lines.push('');
+    lines.push('const dolphinEl = document.querySelector(".closing-dolphin .dolphin-img");');
+    lines.push('const tl = gsap.timeline();');
+    lines.push('tl.to(dolphinEl, {');
+    lines.push(`  duration: ${dur},`);
+    lines.push(`  ease: ${JSON.stringify(easeName)},`);
+    lines.push('  motionPath: {');
+    lines.push('    path: "#dolphinPath",');
+    lines.push('    align: "#dolphinPath",');
+    lines.push(`    autoRotate: ${autoRotate ? rotOffset : false},`);
+    lines.push('    alignOrigin: [0.5, 0.5],');
+    lines.push('  },');
+    lines.push('}, 0);');
+    lines.push('');
+    if (pts.length > 1) {
+      lines.push('// Opacity & scale keyframed along the path');
+      lines.push(`tl.set(dolphinEl, { opacity: ${pts[0].opacity}, scale: ${pts[0].scale} }, 0);`);
+      for (let i = 1; i < pts.length; i++) {
+        const tStart = (looped ? (i - 1) / pts.length : (i - 1) / (pts.length - 1)) * dur;
+        const tEnd   = (looped ? i / pts.length         : i / (pts.length - 1))     * dur;
+        lines.push(`tl.to(dolphinEl, { opacity: ${pts[i].opacity}, scale: ${pts[i].scale}, duration: ${(tEnd - tStart).toFixed(3)}, ease: "none" }, ${tStart.toFixed(3)});`);
+      }
+      lines.push('');
+    }
+    if (uSplashes.length) {
+      lines.push('// Splash triggers — fire each splash once per cycle at its computed time.');
+      uSplashes.forEach((s, i) => {
+        const t = stimes[i];
+        if (t == null) return;
+        const triggerAt = (t / 100) * dur;
+        const splashXPct = (s.x / w * 100).toFixed(2);
+        const splashYPct = (s.y / h * 100).toFixed(2);
+        lines.push(`// Splash ${i + 1} at (${s.x.toFixed(0)}, ${s.y.toFixed(0)}) — peaks at ${t.toFixed(1)}% of cycle.`);
+        lines.push(`const splash${i + 1} = document.querySelector(".closing-dolphin .dolphin-splash--${i + 1}");`);
+        lines.push(`if (splash${i + 1}) {`);
+        lines.push(`  tl.set(splash${i + 1}, { opacity: 0, scale: 0.4 }, 0);`);
+        lines.push(`  tl.to(splash${i + 1}, {`);
+        lines.push(`    keyframes: [`);
+        lines.push(`      { opacity: 1, scale: 1.0, duration: ${(0.06 * dur).toFixed(3)} },`);
+        lines.push(`      { opacity: 0, scale: 1.5, duration: ${(0.10 * dur).toFixed(3)} },`);
+        lines.push(`    ],`);
+        lines.push(`    ease: "power2.out",`);
+        lines.push(`  }, ${triggerAt.toFixed(3)});`);
+        lines.push(`}`);
+        lines.push('');
+      });
+      lines.push('// In your HTML, add one splash SVG per trigger inside .closing-dolphin:');
+      uSplashes.forEach((s, i) => {
+        const left = (50 + s.x / w * 100).toFixed(2);
+        const top  = (50 + s.y / h * 100).toFixed(2);
+        lines.push(`//   <svg class="dolphin-splash dolphin-splash--${i + 1}" style="position:absolute; left:${left}%; top:${top}%; transform:translate(-50%,-50%); width:120%; overflow:visible; pointer-events:none;" ...>...</svg>`);
+      });
+    }
+    return lines.join('\n');
+  }
+  exportBtn.addEventListener('click', async () => {
+    const code = generateGsapCode();
+    try {
+      await navigator.clipboard.writeText(code);
+      copyhint.textContent = 'Copied!';
+      copyhint.classList.add('show');
+      setTimeout(() => copyhint.classList.remove('show'), 1200);
+    } catch {
+      exportPre.textContent = code;
+      exportPre.classList.add('open');
+    }
+    exportPre.textContent = code;
+  });
+  showCssBtn.addEventListener('click', () => {
+    exportPre.textContent = generateGsapCode();
+    exportPre.classList.toggle('open');
+  });
+
+  // ───────── Save / load / reset ─────────
+  saveBtn.addEventListener('click', () => {
+    localStorage.setItem('dolphin-path-v1', JSON.stringify({ pts, splashes }));
+    copyhint.textContent = 'Saved!';
+    copyhint.classList.add('show');
+    setTimeout(() => copyhint.classList.remove('show'), 1200);
+  });
+  loadBtn.addEventListener('click', () => {
+    const raw = localStorage.getItem('dolphin-path-v1');
+    if (!raw) return alert('Nothing saved.');
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed?.pts?.length) pts = parsed.pts;
+      if (parsed?.splashes?.length) splashes = parsed.splashes;
+      activeIdx = 0;
+      setActive(0);
+      renderAll();
+    } catch { alert('Save corrupted.'); }
+  });
+  resetBtn.addEventListener('click', () => {
+    if (!confirm('Reset?')) return;
+    pts = [
+      { x: -465, y: 240, opacity: 0,   scale: 0.9 },
+      { x: -350, y: 50,  opacity: 1,   scale: 1.0 },
+      { x: -100, y: -120, opacity: 1,  scale: 1.0 },
+      { x:  150, y: -80, opacity: 1,   scale: 1.0 },
+      { x:  300, y: 80,  opacity: 1,   scale: 0.95 },
+      { x:  420, y: 200, opacity: 0,   scale: 0.85 },
+    ];
+    splashes = [{ x: -236, y: 94 }];
+    activeIdx = 0;
+    activeSplashIdx = 0;
+    setActive(0);
+    renderAll();
+  });
+
+  // ───────── Init ─────────
+  function init() {
+    setActive(0);
+    renderAll();
+  }
+  if (dolphinImg.complete) init();
+  else dolphinImg.addEventListener('load', init);
+  window.addEventListener('resize', () => renderAll());
+})();
+</script>
+</body>
+</html>

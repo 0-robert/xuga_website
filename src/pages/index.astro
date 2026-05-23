@@ -62,6 +62,19 @@ const team = page.teamMembers ?? [];
               {page.ctaSecondaryLabel}
             </a>
           </div>
+          <p
+            data-reveal
+            style="--reveal-delay:0.32s"
+            class="mt-4 font-hand text-xl text-[var(--accent-ink)]"
+          >
+            <a
+              class="inline-flex items-center gap-1 underline-offset-4 hover:underline focus-visible:underline"
+              href="/anywhere/"
+            >
+              See where it's been
+              <span aria-hidden="true">→</span>
+            </a>
+          </p>
         </div>
       </div>
     </div>
@@ -257,11 +270,25 @@ const team = page.teamMembers ?? [];
           })
         }
       </ul>
+
+      <p
+        data-reveal
+        style="--reveal-delay:0.1s"
+        class="relative z-10 mt-12 text-center font-hand text-2xl text-[var(--accent-ink)] sm:mt-16 sm:text-3xl"
+      >
+        <a
+          class="inline-flex items-center gap-2 underline-offset-4 hover:underline focus-visible:underline"
+          href="/anywhere/"
+        >
+          See where the team has taken XUGA
+          <span aria-hidden="true">→</span>
+        </a>
+      </p>
     </div>
   </section>
 
   <!-- Closing -->
-  <section class="closing-section grain-layer relative overflow-hidden bg-ink pt-52 pb-20 text-sand sm:pt-60 sm:pb-24">
+  <section class="closing-section grain-layer relative bg-ink pt-52 pb-20 text-sand sm:pt-60 sm:pb-24">
     <!-- Four-layer wave transition: foam (sand) -> shallows (sea-pale)
          -> water (sea) -> deep (ink). Each layer drifts slowly on its
          own timing so the whole thing reads as moving water rather
@@ -271,7 +298,8 @@ const team = page.teamMembers ?? [];
          to the SVG bottom; subsequent (deeper) layers paint on top and
          cover the previous one's lower portion. So we go from foam at
          the back to deep ink at the front. -->
-    <span class="closing-waves" aria-hidden="true">
+    <!-- BACK waves (foam, shallow, sea): paint BEHIND the dolphin. -->
+    <span class="closing-waves closing-waves--back" aria-hidden="true">
       <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
         <path class="wave-layer wave-layer--foam"
               d="M-50 28 Q80 16 210 28 T470 28 T730 28 T990 28 T1250 28 L1250 220 L-50 220 Z" />
@@ -279,10 +307,69 @@ const team = page.teamMembers ?? [];
               d="M-50 60 Q110 44 270 60 T590 60 T910 60 T1250 60 L1250 220 L-50 220 Z" />
         <path class="wave-layer wave-layer--sea"
               d="M-50 105 Q90 84 230 105 T510 105 T790 105 T1070 105 T1250 105 L1250 220 L-50 220 Z" />
+      </svg>
+    </span>
+    <span class="closing-dolphin" aria-hidden="true">
+      <img
+        class="dolphin-img"
+        src="/images/dolphin.png"
+        alt=""
+        width="400"
+        height="400"
+        loading="lazy"
+        decoding="async"
+      />
+      <!-- Splashes live INSIDE the dolphin container so their inline left/top
+           percentages (from the keyframer export) resolve against the same
+           box the GSAP MotionPath uses as origin. Each one is fired once by
+           the timeline at the moment the dolphin's path passes nearest. -->
+      <svg
+        class="dolphin-splash dolphin-splash--1"
+        viewBox="-80 -40 160 50"
+        preserveAspectRatio="xMidYMax meet"
+        aria-hidden="true"
+        style="left:-112.87%; top:83.34%;"
+      >
+        <ellipse class="splash-ring splash-ring--outer" cx="0" cy="-2" rx="34" ry="6" />
+        <ellipse class="splash-ring splash-ring--inner" cx="0" cy="-2" rx="18" ry="3.5" />
+        <path class="splash-drop" d="M-6 -2 Q-9 -14 -10 -26 Q-7 -14 -4 -2 Z" />
+        <path class="splash-drop" d="M6 -2 Q9 -14 10 -26 Q7 -14 4 -2 Z" />
+        <path class="splash-drop" d="M-18 -2 Q-22 -10 -28 -18 Q-22 -10 -16 -2 Z" />
+        <path class="splash-drop" d="M18 -2 Q22 -10 28 -18 Q22 -10 16 -2 Z" />
+        <circle class="splash-pellet" cx="-30" cy="-14" r="1.6" />
+        <circle class="splash-pellet" cx="30" cy="-14" r="1.6" />
+        <circle class="splash-pellet" cx="-14" cy="-26" r="1.2" />
+        <circle class="splash-pellet" cx="14" cy="-26" r="1.2" />
+      </svg>
+      <svg
+        class="dolphin-splash dolphin-splash--2"
+        viewBox="-80 -40 160 50"
+        preserveAspectRatio="xMidYMax meet"
+        aria-hidden="true"
+        style="left:-22.23%; top:79.46%;"
+      >
+        <ellipse class="splash-ring splash-ring--outer" cx="0" cy="-2" rx="34" ry="6" />
+        <ellipse class="splash-ring splash-ring--inner" cx="0" cy="-2" rx="18" ry="3.5" />
+        <path class="splash-drop" d="M-6 -2 Q-9 -14 -10 -26 Q-7 -14 -4 -2 Z" />
+        <path class="splash-drop" d="M6 -2 Q9 -14 10 -26 Q7 -14 4 -2 Z" />
+        <path class="splash-drop" d="M-18 -2 Q-22 -10 -28 -18 Q-22 -10 -16 -2 Z" />
+        <path class="splash-drop" d="M18 -2 Q22 -10 28 -18 Q22 -10 16 -2 Z" />
+        <circle class="splash-pellet" cx="-30" cy="-14" r="1.6" />
+        <circle class="splash-pellet" cx="30" cy="-14" r="1.6" />
+        <circle class="splash-pellet" cx="-14" cy="-26" r="1.2" />
+        <circle class="splash-pellet" cx="14" cy="-26" r="1.2" />
+      </svg>
+    </span>
+    <!-- FRONT wave (ink only): paints OVER the dolphin so it dives behind dark water. -->
+    <span class="closing-waves closing-waves--front" aria-hidden="true">
+      <svg viewBox="0 0 1200 200" preserveAspectRatio="none">
         <path class="wave-layer wave-layer--ink"
               d="M-50 150 Q70 128 190 150 T430 150 T670 150 T910 150 T1150 150 T1250 150 L1250 220 L-50 220 Z" />
       </svg>
     </span>
+    <!-- Below-water mask: extends ink colour from the wave SVG bottom all the
+         way down so the dolphin is hidden anywhere below the surface. -->
+    <div class="closing-below-water" aria-hidden="true"></div>
     <span
       class="pointer-events-none absolute left-[8%] top-32 hidden h-16 w-16 rotate-[-12deg] text-sun/70 sm:block"
       aria-hidden="true"
@@ -421,6 +508,106 @@ const team = page.teamMembers ?? [];
   @keyframes wave-drift {
     0%, 100% { transform: translateX(calc(var(--drift-distance, 60px) * -0.5)); }
     50%      { transform: translateX(calc(var(--drift-distance, 60px) *  0.5)); }
+  }
+
+  /* The closing-waves wrapper above paints behind everything (z:1).
+     The FRONT wave (ink only) paints OVER the dolphin so the dolphin
+     visibly dives behind the dark surface; the below-water mask
+     continues that ink colour from the wave SVG bottom all the way
+     down, so anything the dolphin does deeper is hidden. */
+  /* Closing section needs horizontal clipping (so wave-drift doesn't
+     spill sideways) but vertical overflow visible — so the dolphin's
+     apex can extend above the section line and paint over the
+     team-section's beach background image. */
+  .closing-section {
+    overflow-x: clip;
+    overflow-y: visible;
+  }
+  .closing-waves--back  { z-index: 1; }
+  .closing-waves--front {
+    z-index: 5;
+    /* Same dimensions as --back; they overlap, only ink layer paints. */
+    background-color: transparent;
+  }
+  .closing-below-water {
+    position: absolute;
+    /* Anchor at the bottom of the wave SVG (wave height clamps from
+       140px to 200px, matching .closing-waves height). */
+    top: clamp(140px, 16vw, 200px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-ink);
+    z-index: 4;
+    pointer-events: none;
+  }
+
+  /* Decorative dolphin animated by GSAP MotionPath. Sits BETWEEN the
+     back waves (z:1) and the front-wave / below-water (z:4-5) so it
+     visibly emerges through the surface and dives behind it. */
+  .closing-dolphin {
+    /* Container is anchored over the visible water line. The dolphin
+       img inside is positioned absolutely; GSAP transforms it along a
+       hidden SVG path. The splashes are absolutely positioned children
+       whose left/top come from the keyframer export. */
+    position: absolute;
+    top: clamp(38px, 5.5vw, 70px);
+    left: 50%;
+    width: clamp(140px, 18vw, 220px);
+    height: clamp(140px, 18vw, 220px);
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    pointer-events: none;
+    color: var(--color-sand);
+  }
+  .closing-dolphin .dolphin-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+    transform-origin: 50% 50%;
+    filter: drop-shadow(0 8px 12px oklch(0.2 0.05 256 / 0.3));
+    will-change: transform, opacity;
+    /* Hidden until scroll drives the GSAP timeline. The reduced-motion
+       fallback below overrides this to keep a static visible pose. */
+    opacity: 0;
+  }
+  .closing-dolphin .dolphin-splash {
+    position: absolute;
+    /* left/top come from the keyframer export as inline styles. */
+    width: 120%;
+    height: auto;
+    overflow: visible;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    /* GSAP fades the whole splash svg in/out at trigger time; children
+       stay fully painted so the parent opacity is the only knob. */
+    opacity: 0;
+  }
+  .closing-dolphin .splash-ring {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .closing-dolphin .splash-drop,
+  .closing-dolphin .splash-pellet {
+    fill: currentColor;
+    transform-box: fill-box;
+    transform-origin: center bottom;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    /* Hold a static dolphin pose so the section still has a focal
+       point but nothing moves. GSAP is gated on no-preference, so the
+       img stays untransformed; we nudge it into a pleasant rest. */
+    .closing-dolphin .dolphin-img {
+      transform: translateY(-20%) rotate(2deg);
+      opacity: 1;
+    }
+    .closing-dolphin .dolphin-splash { display: none; }
   }
 
   /* Stylised beach scene behind the polaroids. The PNG carries its own
@@ -598,3 +785,127 @@ const team = page.teamMembers ?? [];
     .team-card:hover { scale: 1; }
   }
 </style>
+
+<!-- GSAP MotionPath for the closing-section dolphin. Loaded as plain CDN
+     scripts (is:inline) so they execute in order before the timeline init
+     below. Total payload is small (~80kB gzip) and only on the home page. -->
+<script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/MotionPathPlugin.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script is:inline>
+  (function () {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (typeof gsap === 'undefined' || typeof MotionPathPlugin === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+    var dolphinEl = document.querySelector('.closing-dolphin .dolphin-img');
+    var section   = document.querySelector('.closing-section');
+    if (!dolphinEl || !section) return;
+
+    gsap.registerPlugin(MotionPathPlugin, ScrollTrigger);
+
+    // Path d-attribute from the keyframer, rebased so its coords are
+    // pixel offsets from the dolphin's anchor (stage centre, water line
+    // y=50). The splashes live in this same anchor-relative space, so
+    // path + splashes stay aligned: the dolphin actually swims through
+    // the spots the keyframer placed the splashes at.
+    //
+    // The dolphin's initial transform at t=0 is translate(-371.66, 134.07)
+    // — left & deep underwater (hidden by .closing-below-water) — matching
+    // the keyframer's first control point.
+    var dolphinPathD = 'M -371.66 134.07 C -370.43 127.87, -373.34 120.54, -364.30 96.84 C -355.25 73.14, -339.39 12.44, -317.37 -8.15 C -295.35 -28.74, -255.00 -33.80, -232.19 -26.70 C -209.37 -19.59, -194.99 11.88, -180.48 34.49 C -165.97 57.10, -149.68 79.50, -145.12 108.97 C -140.57 138.43, -109.59 173.06, -153.13 211.28 C -196.67 249.49, -369.95 351.11, -406.37 338.25 C -442.79 325.38, -377.44 168.10, -371.66 134.07';
+
+    // Inject a hidden SVG holding the motion path. GSAP MotionPath
+    // references it by id. We anchor the SVG at the body's top-left
+    // (top:0; left:0) explicitly: with position:absolute and no offsets
+    // the SVG would sit at its in-flow position (the very bottom of the
+    // body), which would shift every path coordinate down by ~3000px and
+    // teleport the dolphin off-screen below the page.
+    if (!document.getElementById('dolphinPath')) {
+      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.style.cssText = 'position:absolute;top:0;left:0;width:0;height:0;visibility:hidden;pointer-events:none;';
+      var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.id = 'dolphinPath';
+      p.setAttribute('d', dolphinPathD);
+      svg.appendChild(p);
+      document.body.appendChild(svg);
+    }
+
+    // Scroll-driven timeline: the dolphin's position is tied to scroll
+    // progress through the closing section. As the user scrolls the
+    // section into view, the timeline scrubs forward; scrolling back
+    // reverses it. `scrub: 0.8` smooths the lag so motion feels fluid
+    // rather than clamped frame-for-frame to the scroll wheel.
+    var dur = 8;
+    var tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: section,
+        // Start once the section top has scrolled up past the lower
+        // quarter of the viewport, so the user has a beat to settle on
+        // the waves before the dolphin appears.
+        start: 'top 75%',
+        // 900px of scrolling plays the full animation (1.5x the previous
+        // 600). The section is pinned across that range so it stays
+        // in place while the dolphin animates, guaranteeing the full
+        // range is reachable even on a short page.
+        end: '+=900',
+        pin: true,
+        scrub: 0.8,
+      },
+    });
+    // No `align` / `alignOrigin`: GSAP treats path coordinates as CSS
+    // translate offsets from the element's natural position, so path
+    // point (0, 0) keeps the dolphin at its CSS-anchored spot and the
+    // rest of the curve animates ±-relative to it.
+    tl.to(dolphinEl, {
+      duration: dur,
+      ease: 'none',
+      motionPath: {
+        path: '#dolphinPath',
+        autoRotate: 30,
+      },
+    }, 0);
+
+    // Opacity & scale keyframed along the path (from the keyframer export).
+    tl.set(dolphinEl, { opacity: 0, scale: 0.9 }, 0);
+    tl.to(dolphinEl, { opacity: 0.5,         scale: 0.95,         duration: 1.0, ease: 'none' }, 0.0);
+    tl.to(dolphinEl, { opacity: 0.9375,      scale: 0.99375,      duration: 1.0, ease: 'none' }, 1.0);
+    tl.to(dolphinEl, { opacity: 0.96875,     scale: 0.996875,     duration: 1.0, ease: 'none' }, 2.0);
+    tl.to(dolphinEl, { opacity: 0.984375,    scale: 0.9984375,    duration: 1.0, ease: 'none' }, 3.0);
+    tl.to(dolphinEl, { opacity: 0.98828125,  scale: 0.998828125,  duration: 1.0, ease: 'none' }, 4.0);
+    tl.to(dolphinEl, { opacity: 0.990234375, scale: 0.9990234375, duration: 1.0, ease: 'none' }, 5.0);
+    tl.to(dolphinEl, { opacity: 0.9921875,   scale: 0.99921875,   duration: 1.0, ease: 'none' }, 6.0);
+    // Fade the dolphin out across the final second so it's fully hidden
+    // when ScrollTrigger pins the timeline at 100% past the section —
+    // otherwise the head pokes above the water line when scrolled by.
+    tl.to(dolphinEl, { opacity: 0, duration: 1.0, ease: 'none' }, 7.0);
+
+    // Splash 1 (peaks at ~6.0% of cycle).
+    var splash1 = document.querySelector('.closing-dolphin .dolphin-splash--1');
+    if (splash1) {
+      tl.set(splash1, { opacity: 0, scale: 0.4 }, 0);
+      tl.to(splash1, {
+        keyframes: [
+          { opacity: 1, scale: 1.0, duration: 0.480 },
+          { opacity: 0, scale: 1.5, duration: 0.800 },
+        ],
+        ease: 'power2.out',
+      }, 0.480);
+    }
+
+    // Splash 2 (peaks at ~35.7% of cycle).
+    var splash2 = document.querySelector('.closing-dolphin .dolphin-splash--2');
+    if (splash2) {
+      tl.set(splash2, { opacity: 0, scale: 0.4 }, 0);
+      tl.to(splash2, {
+        keyframes: [
+          { opacity: 1, scale: 1.0, duration: 0.480 },
+          { opacity: 0, scale: 1.5, duration: 0.800 },
+        ],
+        ease: 'power2.out',
+      }, 2.853);
+    }
+
+    // ScrollTrigger drives playback; no manual play() needed.
+  })();
+</script>

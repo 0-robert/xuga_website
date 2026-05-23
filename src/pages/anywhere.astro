@@ -1,0 +1,580 @@
+---
+/**
+ * /anywhere/ — the XUGA travel board.
+ *
+ * One cohesive artifact: a paper "board" pinned to the page, with a stylised
+ * hand-drawn world strip up top and an irregular wall of postcards, polaroids,
+ * and pinned snaps below. Each artifact shares a data-place attribute with its
+ * pin on the map, so hovering one highlights the other (script at the bottom).
+ *
+ * Variants live on each entry in src/content/places/ so editors can tune the
+ * mix without touching markup. Pin colours come from the existing palette.
+ */
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WaveEdge from '../components/WaveEdge.astro';
+import Doodle from '../components/Doodle.astro';
+import { SITE } from '../lib/site';
+import { WORLD_VIEWBOX, WORLD_PATH_A, WORLD_PATH_B } from '../lib/world-map';
+
+const places = (await getCollection('places')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<BaseLayout
+  title="Anywhere"
+  description="A travel board of XUGA pieces in the wild, from Brussels to Cape Town."
+>
+  <section class="relative overflow-hidden px-5 pt-16 pb-8 sm:pt-20">
+    <span
+      class="pointer-events-none absolute -top-2 right-[6%] hidden h-24 w-24 rotate-[-12deg] text-sun/70 sm:block"
+      aria-hidden="true"
+    >
+      <Doodle name="sun" class="h-full w-full" />
+    </span>
+    <span
+      class="pointer-events-none absolute top-24 left-[4%] hidden h-16 w-16 rotate-[14deg] text-sea/70 sm:block"
+      aria-hidden="true"
+    >
+      <Doodle name="sparkle" class="h-full w-full" />
+    </span>
+    <div class="relative mx-auto max-w-3xl">
+      <p data-reveal class="font-hand text-2xl text-[var(--accent-ink)]">
+        ✦ The XUGA travel diary
+      </p>
+      <h1
+        data-reveal
+        style="--reveal-delay:0.08s"
+        class="mt-1 font-display text-4xl leading-tight text-ink sm:text-5xl"
+      >
+        Anywhere we land.
+      </h1>
+      <p
+        data-reveal
+        style="--reveal-delay:0.14s"
+        class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft"
+      >
+        Every XUGA piece is one of one. So is every trip it goes on. Postcards,
+        polaroids, and pinned snaps from the team and the friends who took us
+        along.
+      </p>
+    </div>
+  </section>
+
+  <section class="grain-layer relative overflow-hidden bg-sand-deep px-3 py-14 sm:px-5 sm:py-20">
+    <WaveEdge color="var(--color-sand)" />
+
+    <div class="relative mx-auto max-w-6xl">
+      <div class="board">
+        <span class="board__tape board__tape--tl" aria-hidden="true"></span>
+        <span class="board__tape board__tape--tr" aria-hidden="true"></span>
+        <span class="board__tape board__tape--bl" aria-hidden="true"></span>
+        <span class="board__tape board__tape--br" aria-hidden="true"></span>
+
+        <p class="board__eyebrow font-hand">Where we've been</p>
+        <p class="board__sub">A pin for every passport stamp our towels have collected.</p>
+
+        <div class="board__map" data-board-map>
+          <svg
+            viewBox={WORLD_VIEWBOX}
+            preserveAspectRatio="xMidYMid meet"
+            aria-hidden="true"
+            class="board__map-svg"
+          >
+            <g
+              class="board__landmasses"
+              fill="var(--color-sand-deep)"
+              stroke="var(--color-ink)"
+              stroke-opacity="0.35"
+              stroke-width="0.4"
+              stroke-linejoin="round"
+            >
+              <path d={WORLD_PATH_A} />
+              <path d={WORLD_PATH_B} />
+            </g>
+          </svg>
+
+          {
+            places.map((p) => (
+              <button
+                type="button"
+                class={`board__pin board__pin--${p.data.pin}`}
+                style={`left:${p.data.mapX}%; top:${p.data.mapY}%;`}
+                data-place={p.id}
+                aria-label={`Jump to ${p.data.place}, ${p.data.country}`}
+              >
+                <span class="board__pin-dot" aria-hidden="true" />
+                <span class="board__pin-label font-hand">{p.data.place}</span>
+              </button>
+            ))
+          }
+        </div>
+
+        <!-- Faint decorative doodles inside the board so empty paper still
+             carries some of the brand's hand-drawn personality. Purely
+             decorative; sit behind the artifact wall via z-index. -->
+        <span class="board__doodle board__doodle--a" aria-hidden="true">
+          <Doodle name="sparkle" class="h-full w-full" />
+        </span>
+        <span class="board__doodle board__doodle--b" aria-hidden="true">
+          <Doodle name="starfish" class="h-full w-full" />
+        </span>
+        <span class="board__doodle board__doodle--c" aria-hidden="true">
+          <Doodle name="shell" class="h-full w-full" />
+        </span>
+        <span class="board__doodle board__doodle--d" aria-hidden="true">
+          <Doodle name="wave" class="h-full w-full" />
+        </span>
+        <span class="board__doodle board__doodle--e" aria-hidden="true">
+          <Doodle name="sparkle" class="h-full w-full" />
+        </span>
+
+        <ul class="board__wall">
+          {
+            places.map((p, i) => {
+              const tilts = [-3.8, 2.6, -2.1, 3.4, -3.0, 2.2, -2.6, 3.6];
+              const tilt = tilts[i % tilts.length];
+              const swayDelay = (i * 0.55).toFixed(2);
+              const swayDur = (5.4 + (i % 3) * 0.7).toFixed(1);
+              return (
+                <li
+                  class={`artifact artifact--${p.data.variant} pin--${p.data.pin}`}
+                  data-reveal
+                  data-place={p.id}
+                  style={`--tilt:${tilt}deg; --sway-delay:${swayDelay}s; --sway-dur:${swayDur}s;`}
+                >
+                  <article class="artifact__card">
+                    <span class="artifact__pin" aria-hidden="true" />
+                    {p.data.variant === 'postcard' && (
+                      <span class="artifact__tape" aria-hidden="true" />
+                    )}
+                    <div class="artifact__frame">
+                      <Image
+                        src={p.data.photo}
+                        alt={`${p.data.credit ?? 'A XUGA piece'} in ${p.data.place}, ${p.data.country}`}
+                        width={640}
+                        height={640}
+                        class="artifact__photo"
+                      />
+                    </div>
+                    <div class="artifact__meta">
+                      <p class="artifact__place font-hand">{p.data.place}</p>
+                      <p class="artifact__caption">{p.data.caption}</p>
+                      {p.data.credit && (
+                        <p class="artifact__credit">{p.data.credit}</p>
+                      )}
+                    </div>
+                  </article>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="grain-layer relative overflow-hidden bg-ink px-5 py-16 text-sand">
+    <WaveEdge color="var(--color-sand-deep)" />
+    <div class="relative mx-auto max-w-3xl text-center">
+      <h2 data-reveal class="font-display text-3xl">Send us your postcard.</h2>
+      <p
+        data-reveal
+        style="--reveal-delay:0.08s"
+        class="mt-3 text-sand/70"
+      >
+        Wearing XUGA somewhere new? Tag us and you might end up on this wall.
+      </p>
+      <ul
+        data-reveal
+        style="--reveal-delay:0.14s"
+        class="mt-7 flex flex-wrap justify-center gap-3"
+      >
+        <li>
+          <a
+            class="inline-flex min-h-11 items-center rounded-full bg-sun px-6 py-3 font-medium text-ink shadow-lift-1 transition active:scale-[0.97]"
+            href={SITE.instagram.url}
+          >
+            Tag {SITE.instagram.handle}
+          </a>
+        </li>
+        <li>
+          <a
+            class="inline-flex min-h-11 items-center rounded-full bg-shell/30 px-6 py-3 text-sand ring-1 ring-sand/25 transition active:scale-[0.97] hover:bg-shell/40"
+            href={`mailto:${SITE.email}?subject=XUGA%20postcard`}
+          >
+            Email a photo
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------- the board ---------- */
+  .board {
+    position: relative;
+    padding: 2.5rem 1rem 2.5rem;
+    border-radius: 6px;
+    background: var(--color-paper);
+    box-shadow:
+      var(--shadow-lift-2),
+      inset 0 0 0 1px oklch(0.3 0.07 256 / 0.06);
+  }
+  @media (min-width: 640px) {
+    .board { padding: 3rem 2rem 3.5rem; }
+  }
+
+  .board__tape {
+    position: absolute;
+    width: 84px;
+    height: 22px;
+    opacity: 0.82;
+    box-shadow: 0 1px 0 oklch(0.3 0.07 256 / 0.05);
+    pointer-events: none;
+  }
+  .board__tape--tl { top: -10px; left: 28px; rotate: -8deg; background: var(--color-sea); }
+  .board__tape--tr { top: -10px; right: 28px; rotate: 6deg; background: var(--color-sun); }
+  .board__tape--bl { bottom: -10px; left: 32px; rotate: 5deg; background: var(--color-shell); }
+  .board__tape--br { bottom: -10px; right: 24px; rotate: -7deg; background: var(--color-lime); }
+
+  .board__eyebrow {
+    margin: 0;
+    text-align: center;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--color-ink);
+  }
+  .board__sub {
+    margin: 0.35rem 0 1.5rem;
+    text-align: center;
+    color: var(--color-ink-soft);
+    font-size: 0.98rem;
+  }
+
+  /* ---------- the world strip ---------- */
+  .board__map {
+    position: relative;
+    margin: 0 auto;
+    aspect-ratio: 494.7 / 265.7;
+    width: 100%;
+    max-width: 820px;
+  }
+  .board__map-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .board__pin {
+    position: absolute;
+    translate: -50% -100%;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: transparent;
+    border: 0;
+    padding: 4px 6px;
+    cursor: pointer;
+    transition: scale 200ms var(--ease-soft), opacity 200ms;
+  }
+  .board__pin:hover, .board__pin:focus-visible { scale: 1.12; outline: none; }
+  .board__pin:focus-visible .board__pin-dot {
+    box-shadow:
+      inset 0 -2px 0 oklch(0 0 0 / 0.18),
+      0 0 0 3px var(--color-sun);
+  }
+  .board__pin-dot {
+    width: 14px; height: 14px;
+    border-radius: 999px;
+    background: var(--pin-color, var(--color-sun));
+    border: 2px solid var(--color-paper);
+    box-shadow:
+      inset 0 -2px 0 oklch(0 0 0 / 0.18),
+      0 2px 4px oklch(0.3 0.07 256 / 0.25);
+  }
+  .board__pin-label {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 50%;
+    translate: -50% 0;
+    font-size: 0.95rem;
+    line-height: 1;
+    color: var(--color-ink);
+    background: var(--color-paper);
+    padding: 3px 8px;
+    border-radius: 4px;
+    box-shadow:
+      0 1px 2px oklch(0.3 0.07 256 / 0.18),
+      0 0 0 1px oklch(0.3 0.07 256 / 0.06);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 160ms var(--ease-soft);
+  }
+  .board__pin:hover .board__pin-label,
+  .board__pin:focus-visible .board__pin-label,
+  .board__pin.is-active .board__pin-label {
+    opacity: 1;
+  }
+  .board__pin--sun   { --pin-color: var(--color-sun); }
+  .board__pin--sea   { --pin-color: var(--color-sea); }
+  .board__pin--shell { --pin-color: var(--color-shell); }
+  .board__pin--lime  { --pin-color: var(--color-lime); }
+  .board__pin--grape { --pin-color: var(--color-grape); }
+
+  /* When something on the board is being hovered, dim everything else. */
+  .board[data-active] .board__pin { opacity: 0.4; }
+  .board[data-active] .board__pin.is-active { opacity: 1; scale: 1.2; }
+  .board[data-active] .artifact { opacity: 0.55; }
+  .board[data-active] .artifact.is-active {
+    opacity: 1;
+    scale: 1.04;
+    rotate: 0deg;
+    z-index: 2;
+  }
+
+  /* Decorative doodles scattered inside the board, behind the wall. */
+  .board__doodle {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .board__doodle--a { top: 56%; left: 4%;  width: 56px; height: 56px; rotate: -14deg; color: var(--color-sea); opacity: 0.45; }
+  .board__doodle--b { top: 64%; right: 5%; width: 64px; height: 64px; rotate: 10deg;  color: var(--color-shell); opacity: 0.55; }
+  .board__doodle--c { top: 78%; left: 38%; width: 44px; height: 44px; rotate: -6deg;  color: var(--color-sun); opacity: 0.45; }
+  .board__doodle--d { top: 88%; left: 8%;  width: 64px; height: 64px; rotate: -8deg;  color: var(--color-sea); opacity: 0.35; }
+  .board__doodle--e { top: 84%; right: 12%; width: 40px; height: 40px; rotate: 16deg; color: var(--color-grape); opacity: 0.5; }
+  @media (max-width: 640px) {
+    .board__doodle--a, .board__doodle--c, .board__doodle--d { display: none; }
+  }
+
+  /* ---------- the artifact wall ----------
+     Masonry-style via CSS columns so cards stack densely with no row
+     alignment. Each card keeps its tilt and sway, and per-variant widths
+     give the wall an uneven, hand-arranged rhythm. */
+  .board__wall {
+    list-style: none;
+    margin: 2.25rem 0 0;
+    padding: 0;
+    column-count: 1;
+    column-gap: 1.25rem;
+    position: relative;
+    z-index: 1;
+  }
+  @media (min-width: 560px) {
+    .board__wall { column-count: 2; column-gap: 1.25rem; }
+  }
+  @media (min-width: 880px) {
+    .board__wall { column-count: 3; column-gap: 1.5rem; margin-top: 3rem; }
+  }
+  @media (min-width: 1100px) {
+    .board__wall { column-count: 4; column-gap: 1.5rem; }
+  }
+
+  .artifact {
+    --tilt: 0deg;
+    --pin-color: var(--color-sun);
+    --width: 100%;
+    position: relative;
+    display: block;
+    width: var(--width);
+    /* Top padding keeps the absolutely-positioned pin inside the artifact's
+       bounding box, so CSS columns don't clip it at the column edge. */
+    padding-top: 14px;
+    margin: 0 auto 1.6rem;
+    break-inside: avoid;
+    rotate: var(--tilt);
+    animation: artifact-sway var(--sway-dur, 5s) var(--sway-delay, 0s)
+      ease-in-out infinite alternate;
+    transition:
+      scale 240ms var(--ease-soft),
+      rotate 240ms var(--ease-soft),
+      opacity 240ms;
+  }
+  /* Per-variant width variation so the wall reads as scattered, not gridded. */
+  .artifact--polaroid { --width: 88%; }
+  .artifact--snap     { --width: 80%; }
+  .artifact--postcard { --width: 96%; }
+  /* Every other card gets a small vertical offset, breaking horizontal alignment. */
+  .artifact:nth-child(2n)   { margin-top: 0.8rem; }
+  .artifact:nth-child(3n+1) { margin-top: 1.6rem; }
+  .artifact.pin--sun   { --pin-color: var(--color-sun); }
+  .artifact.pin--sea   { --pin-color: var(--color-sea); }
+  .artifact.pin--shell { --pin-color: var(--color-shell); }
+  .artifact.pin--lime  { --pin-color: var(--color-lime); }
+  .artifact.pin--grape { --pin-color: var(--color-grape); }
+
+  .artifact__card {
+    position: relative;
+    display: block;
+  }
+
+  .artifact:hover, .artifact:focus-within {
+    scale: 1.03;
+    rotate: 0deg;
+    animation-play-state: paused;
+    z-index: 2;
+  }
+
+  /* the push pin stuck through the top of every artifact */
+  .artifact__pin {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    translate: -50% 0;
+    width: 16px; height: 16px;
+    border-radius: 999px;
+    background: var(--pin-color);
+    box-shadow:
+      inset 0 -2px 0 oklch(0 0 0 / 0.22),
+      0 3px 5px oklch(0.3 0.07 256 / 0.28);
+    z-index: 3;
+  }
+
+
+
+  /* ---------- variants ---------- */
+  /* Postcard: white card, washi tape, photo, handwritten place + caption */
+  .artifact--postcard .artifact__frame {
+    background: var(--color-paper);
+    padding: 10px 10px 0;
+    border-radius: 3px;
+    box-shadow: var(--shadow-lift-2);
+  }
+  .artifact--postcard .artifact__tape {
+    position: absolute;
+    top: 6px; left: 50%;
+    width: 70px; height: 14px;
+    translate: -50% 0;
+    background: var(--pin-color);
+    opacity: 0.78;
+    rotate: -4deg;
+    z-index: 2;
+  }
+  .artifact--postcard .artifact__photo {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 2px;
+  }
+  .artifact--postcard .artifact__meta {
+    background: var(--color-paper);
+    padding: 0.6rem 0.9rem 0.95rem;
+    border-radius: 0 0 3px 3px;
+    text-align: center;
+  }
+
+  /* Polaroid: thicker bottom border, square photo, handwritten place name (no caption) */
+  .artifact--polaroid .artifact__frame {
+    background: var(--color-paper);
+    padding: 12px 12px 0;
+    border-radius: 2px;
+    box-shadow: var(--shadow-lift-2);
+  }
+  .artifact--polaroid .artifact__photo {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+  }
+  .artifact--polaroid .artifact__meta {
+    background: var(--color-paper);
+    padding: 0.7rem 0.6rem 1.3rem;
+    text-align: center;
+  }
+  .artifact--polaroid .artifact__caption { display: none; }
+
+  /* Snap: bare photo with a yellow torn sticky note for the caption */
+  .artifact--snap .artifact__frame {
+    box-shadow: var(--shadow-lift-2);
+    background: oklch(0.3 0.07 256 / 0.08);
+  }
+  .artifact--snap .artifact__photo {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+  }
+  .artifact--snap .artifact__meta {
+    position: relative;
+    margin: 0.7rem auto -0.4rem;
+    width: 88%;
+    background: oklch(0.94 0.07 95);
+    padding: 0.55rem 0.75rem 0.65rem;
+    rotate: -2deg;
+    box-shadow: var(--shadow-lift-1);
+    text-align: left;
+  }
+  .artifact--snap .artifact__place { display: none; }
+
+  /* ---------- meta typography ---------- */
+  .artifact__place {
+    margin: 0;
+    font-size: 1.4rem;
+    line-height: 1.05;
+    color: var(--color-ink);
+  }
+  .artifact__caption {
+    margin: 0.3rem 0 0;
+    font-size: 0.95rem;
+    line-height: 1.35;
+    color: var(--color-ink-soft);
+  }
+  .artifact__credit {
+    margin: 0.4rem 0 0;
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+    opacity: 0.85;
+  }
+
+  @keyframes artifact-sway {
+    from { rotate: calc(var(--tilt) - 0.5deg); }
+    to   { rotate: calc(var(--tilt) + 0.5deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .artifact { animation: none; }
+    .board__pin, .artifact { transition: none; }
+  }
+
+  @media (max-width: 640px) {
+    .board__wall { gap: 2.25rem 1.25rem; }
+  }
+</style>
+
+<script>
+  // Sync hover/focus between map pins and artifact cards. Shared via data-place.
+  const board = document.querySelector('.board');
+  if (board) {
+    const targets = board.querySelectorAll<HTMLElement>('[data-place]');
+    const setActive = (id: string | null) => {
+      if (id) board.setAttribute('data-active', '');
+      else board.removeAttribute('data-active');
+      targets.forEach((el) => {
+        el.classList.toggle('is-active', el.getAttribute('data-place') === id);
+      });
+    };
+    targets.forEach((el) => {
+      const id = el.getAttribute('data-place');
+      el.addEventListener('pointerenter', () => setActive(id));
+      el.addEventListener('pointerleave', () => setActive(null));
+      el.addEventListener('focusin', () => setActive(id));
+      el.addEventListener('focusout', () => setActive(null));
+      // Tap-to-scroll on mobile: when a pin is tapped, scroll to its artifact.
+      if (el.tagName === 'BUTTON') {
+        el.addEventListener('click', () => {
+          const card = board.querySelector<HTMLElement>(`li.artifact[data-place="${id}"]`);
+          card?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      }
+    });
+  }
+</script>
