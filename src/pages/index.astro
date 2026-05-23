@@ -844,12 +844,10 @@ const team = page.teamMembers ?? [];
         // quarter of the viewport, so the user has a beat to settle on
         // the waves before the dolphin appears.
         start: 'top 75%',
-        // 900px of scrolling plays the full animation (1.5x the previous
-        // 600). The section is pinned across that range so it stays
-        // in place while the dolphin animates, guaranteeing the full
-        // range is reachable even on a short page.
-        end: '+=900',
-        pin: true,
+        // 780px of scroll plays the full animation (1.3x the previous
+        // 600). No pin — the section scrolls naturally; the dolphin's
+        // timeline scrubs in step with the page motion.
+        end: '+=780',
         scrub: 0.8,
       },
     });
