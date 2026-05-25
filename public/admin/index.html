@@ -7,13 +7,227 @@
     <title>XUGA — Content editor</title>
     <link rel="icon" href="/favicon.png" />
     <style>
-      body { margin: 0; font-family: system-ui, sans-serif; }
+      body { margin: 0; font-family: system-ui, sans-serif; background: #faeddf; color: #1a1a2e; }
+      .gate {
+        max-width: 360px;
+        margin: 18vh auto;
+        padding: 2rem 1.75rem;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        text-align: center;
+      }
+      .gate h1 { margin: 0 0 0.25rem; font-size: 1.4rem; }
+      .gate p  { margin: 0 0 1.25rem; opacity: 0.7; font-size: 0.9rem; }
+      .gate input {
+        width: 100%;
+        padding: 0.75rem 0.9rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        box-sizing: border-box;
+        font-family: inherit;
+      }
+      .gate button {
+        margin-top: 0.75rem;
+        width: 100%;
+        padding: 0.75rem;
+        border: 0;
+        border-radius: 8px;
+        background: #1a1a2e;
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .gate .m { min-height: 1.2em; font-size: 0.85rem; margin-top: 0.6rem; }
+      .gate .m.e { color: #c63b3b; }
+      .gate .m.k { color: #2d8a4f; }
     </style>
   </head>
   <body>
     <!-- Sveltia CMS is a drop-in, Decap-compatible Git-based CMS that runs
-         entirely in the browser. It reads /admin/config.yml below and writes
-         changes back to the GitHub repo as commits. -->
-    <script type="module" src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js"></script>
+         entirely in the browser. It reads /admin/config.yml and writes
+         changes back to the GitHub repo as commits.
+
+         Auth: the GitHub PAT is AES-GCM encrypted with a key derived from
+         the editor password (PBKDF2, 600k iters). The plaintext is verified
+         by SHA-256 — there's no shape-based oracle. Decrypt runs in a
+         Worker, no globals are exposed, and crypto refs are pinned at
+         script entry. This is obscurity-grade only: a determined attacker
+         with DevTools can still recover the token after a successful
+         unlock. Keep the PAT scoped to this repo only. -->
+    <div id="g" class="gate">
+      <h1>XUGA Editor</h1>
+      <p>Enter the editor password.</p>
+      <form id="f">
+        <input id="p" type="password" autofocus autocomplete="off" placeholder="Password" />
+        <button type="submit">Unlock</button>
+        <div id="m" class="m"></div>
+      </form>
+    </div>
+
+    <script>
+      (function () {
+        'use strict';
+
+        // Pin DOM + crypto refs BEFORE any other script can run. Late
+        // monkey-patches of crypto.subtle.* no longer affect us.
+        var _sub = crypto.subtle;
+        if (!_sub) return;
+        var _imp = _sub.importKey.bind(_sub);
+        var _crt = _sub.deriveKey.bind(_sub);
+        var _dec = _sub.decrypt.bind(_sub);
+        var _dig = _sub.digest.bind(_sub);
+        var _atob = window.atob.bind(window);
+        var _setVal = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+        var URLc = URL;
+        var Blobc = Blob;
+        var Workerc = Worker;
+
+        // Origin guard. Doesn't stop anyone running the page locally with
+        // tweaks, but blocks naive "download the file, double-click it".
+        var allowedHost = /^(xugawear\.vercel\.app|localhost|127\.0\.0\.1|0\.0\.0\.0)$/;
+        if (!allowedHost.test(location.hostname)) {
+          document.body.innerHTML = '<p style="font-family:system-ui;padding:2rem">Not available here.</p>';
+          return;
+        }
+
+        // === Encrypted payload ===========================================
+        // Generate with /admin/encode-token.html, paste here, then delete
+        // the encoder file before pushing.
+        var E = {
+          s: 'ObJy6aTo+l4LaouEjLwRDQ==',
+          i: '6/RbwTPLateARvth',
+          c: '5wqqZrRMZLjC+z6zfJyCMMArmvgJ3IsNqoxKP1mrF/i9BnDr+I0STZsSr/WPO/uQPZlCtI2/EshAFGQhXGWWMJmnfHLhl29X2qrIhRVxIikwFBIb5622H2sSnQQQrIQtdaJj21ytMuesQAQ96w==',
+          h: '7e5d73a7f67f3a891377f6ddb9f940ee0e1e2958fddb711427ae252eab97cbd0'
+        };
+        // =================================================================
+
+        // Worker source. Decrypt runs off the main thread; the page never
+        // exposes a callable decrypt function. The worker closes itself
+        // after a single message exchange.
+        var WSRC = [
+          "self.onmessage = async function (e) {",
+          "  var pw = e.data.pw, P = e.data.P;",
+          "  var enc = new TextEncoder(), td = new TextDecoder();",
+          "  var b = function (s) { return Uint8Array.from(atob(s), function (c) { return c.charCodeAt(0); }); };",
+          "  var hex = function (buf) {",
+          "    var a = new Uint8Array(buf), o = '';",
+          "    for (var i = 0; i < a.length; i++) o += ('0' + a[i].toString(16)).slice(-2);",
+          "    return o;",
+          "  };",
+          "  try {",
+          "    var bk = await crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveKey']);",
+          "    var key = await crypto.subtle.deriveKey(",
+          "      { name: 'PBKDF2', salt: b(P.s), iterations: 600000, hash: 'SHA-256' },",
+          "      bk, { name: 'AES-GCM', length: 256 }, false, ['decrypt']",
+          "    );",
+          "    var plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b(P.i) }, key, b(P.c));",
+          "    var h = hex(await crypto.subtle.digest('SHA-256', plain));",
+          "    if (h !== P.h) { self.postMessage({ ok: false }); }",
+          "    else { self.postMessage({ ok: true, t: td.decode(plain) }); }",
+          "  } catch (_) { self.postMessage({ ok: false }); }",
+          "  finally { self.close(); }",
+          "};"
+        ].join('\n');
+
+        function runDecrypt(pw) {
+          return new Promise(function (resolve) {
+            var blob = new Blobc([WSRC], { type: 'application/javascript' });
+            var url = URLc.createObjectURL(blob);
+            var w = new Workerc(url);
+            URLc.revokeObjectURL(url);
+            var done = false;
+            w.onmessage = function (ev) {
+              done = true;
+              resolve(ev.data);
+            };
+            w.onerror = function () { if (!done) resolve({ ok: false }); };
+            w.postMessage({ pw: pw, P: E });
+          });
+        }
+
+        // Token is captured ONLY in this closure. There is no named
+        // identifier on window, no method that returns the token, no
+        // log/print/return path. Sveltia's PAT input is auto-filled via
+        // a MutationObserver that walks shadow DOM too.
+        function handOff(secret) {
+          var seen = new WeakSet();
+          function* walk(r) {
+            if (!r || seen.has(r)) return;
+            seen.add(r);
+            var nodes = r.querySelectorAll ? r.querySelectorAll('*') : [];
+            for (var i = 0; i < nodes.length; i++) {
+              var el = nodes[i];
+              yield el;
+              if (el.shadowRoot) yield* walk(el.shadowRoot);
+            }
+          }
+          function fill() {
+            var any = false;
+            var it = walk(document);
+            for (var step = it.next(); !step.done; step = it.next()) {
+              var el = step.value;
+              if (el.tagName !== 'INPUT' || el.value) continue;
+              var hint = (
+                (el.placeholder || '') + ' ' +
+                (el.name || '') + ' ' +
+                (el.id || '') + ' ' +
+                (el.getAttribute('aria-label') || '')
+              ).toLowerCase();
+              if (/token|pat|github/.test(hint)) {
+                _setVal.call(el, secret);
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+                any = true;
+              }
+            }
+            return any;
+          }
+          var obs = new MutationObserver(fill);
+          obs.observe(document.documentElement, { childList: true, subtree: true });
+          fill();
+          // Stop observing after a minute. The closure variable is released
+          // when this scope unwinds; JS strings are immutable so we can't
+          // overwrite the bytes in memory.
+          setTimeout(function () {
+            obs.disconnect();
+            secret = null;
+          }, 60000);
+        }
+
+        function mountCMS() {
+          var s = document.createElement('script');
+          s.type = 'module';
+          s.src = 'https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js';
+          document.body.appendChild(s);
+        }
+
+        var f = document.getElementById('f');
+        var m = document.getElementById('m');
+        f.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          m.className = 'm';
+          m.textContent = 'Working…';
+          var pw = document.getElementById('p').value;
+          var res = await runDecrypt(pw);
+          if (!res.ok) {
+            m.className = 'm e';
+            m.textContent = 'Wrong password.';
+            return;
+          }
+          m.className = 'm k';
+          m.textContent = 'Unlocked. Loading editor…';
+          handOff(res.t);
+          res.t = null;
+          setTimeout(function () {
+            var g = document.getElementById('g');
+            if (g) g.remove();
+          }, 600);
+          mountCMS();
+        });
+      })();
+    </script>
   </body>
 </html>
