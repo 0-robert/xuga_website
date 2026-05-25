@@ -38,7 +38,7 @@ collections:
     create: true
     slug: '{{garmentName | slugify}}-{{year}}{{month}}{{day}}'
     summary: '{{garmentName}} — {{towelName}}'
-    sortable_fields: [madeDate, garmentName]
+    sortable_fields: [madeDate, garmentName, featured]
     view_filters:
       - label: Featured on home
         field: featured
@@ -73,6 +73,10 @@ collections:
           required: false }
       - { name: afterPhoto, label: After photo (the garment), widget: image,
           required: false }
+      - { name: gallery, label: Extra photos (optional gallery), widget: list,
+          required: false,
+          field: { name: src, label: Photo, widget: image },
+          hint: "Optional extra photos shown on the tale page below the main story." }
       - { name: maker, label: Made by (name or initials), widget: string,
           required: false }
       - label: Eyes (where on the towel photo)
@@ -87,22 +91,59 @@ collections:
               value_type: float, min: 0, max: 100 }
           - { name: scale, label: Eye size multiplier, widget: number, default: 1,
               value_type: float, min: 0.3, max: 3, step: 0.05 }
-      - label: Eco impact (optional)
-        name: eco
-        widget: object
-        required: false
-        collapsed: true
-        fields:
-          - { name: ecoTowelWeightGrams, label: Towel weight (g), widget: number,
-              required: false, value_type: int }
-          - { name: ecoWaterSavedLitres, label: Water saved (L) override,
-              widget: number, required: false, value_type: int }
-          - { name: ecoCo2SavedKg, label: CO2 saved (kg) override,
-              widget: number, required: false, value_type: float, step: 0.1 }
-          - { name: ecoTextileSavedGrams, label: Textile saved (g) override,
-              widget: number, required: false, value_type: int }
+      # Eco impact: these are root-level fields in the markdown frontmatter
+      # (matching `src/content.config.ts`), not nested under an `eco:` object.
+      - { name: ecoTowelWeightGrams, label: 'Eco — towel weight (g)', widget: number,
+          required: false, value_type: int }
+      - { name: ecoWaterSavedLitres, label: 'Eco — water saved (L) override',
+          widget: number, required: false, value_type: int }
+      - { name: ecoCo2SavedKg, label: 'Eco — CO2 saved (kg) override',
+          widget: number, required: false, value_type: float, step: 0.1 }
+      - { name: ecoTextileSavedGrams, label: 'Eco — textile saved (g) override',
+          widget: number, required: false, value_type: int }
       - { name: body, label: Story (the towel's own voice), widget: markdown,
           hint: "Warm, sentimental, told in the towel's voice. See docs/towel-voice-guide.md before publishing." }
+
+  # -------------------------------------------------------------------
+  # The travel board: one Markdown file per place where a XUGA piece
+  # has travelled. Each entry pins a photo to the world strip on
+  # /anywhere/. mapX / mapY are percentages on that stylised world map.
+  # -------------------------------------------------------------------
+  - name: places
+    label: Places (travel-board pins)
+    label_singular: Place
+    folder: src/content/places
+    extension: md
+    format: frontmatter
+    create: true
+    slug: '{{place | slugify}}'
+    summary: '{{place}} ({{country}})'
+    sortable_fields: [order, place, country]
+    fields:
+      - { name: place, label: Place, widget: string,
+          hint: 'City or area, e.g. "Gozo" or "Cape Town".' }
+      - { name: country, label: Country, widget: string }
+      - { name: photo, label: Photo, widget: image,
+          hint: 'The artifact image shown on /anywhere/.' }
+      - { name: caption, label: Caption, widget: string }
+      - { name: credit, label: Credit line, widget: string, required: false,
+          hint: 'e.g. "Ben at Anfield" or "Sofiia in limestone-lit Victoria".' }
+      - { name: variant, label: Card style, widget: select, default: postcard,
+          options: [postcard, polaroid, snap],
+          hint: 'postcard = washi tape + caption; polaroid = square + handwritten; snap = bare pinned photo.' }
+      - { name: pin, label: Pin colour, widget: select, default: sun,
+          options: [sun, sea, shell, lime, grape] }
+      - { name: mapX, label: 'Map X (% across the world strip, 0–100)',
+          widget: number, value_type: float, min: 0, max: 100, step: 0.1,
+          hint: 'Calibrated visually against the SVG world map. Increase to move right.' }
+      - { name: mapY, label: 'Map Y (% down the world strip, 0–100)',
+          widget: number, value_type: float, min: 0, max: 100, step: 0.1,
+          hint: 'Increase to move down. Equator is roughly 50.' }
+      - { name: order, label: Order on the wall, widget: number,
+          value_type: int, default: 0,
+          hint: 'Lower numbers show first in the artifact wall.' }
+      - { name: garmentSlug, label: Linked tale slug, widget: string, required: false,
+          hint: 'Optional. Filename (without .md) of the tale this artifact is tied to.' }
 
   # -------------------------------------------------------------------
   # The pages: one JSON file per page. Each entry's schema mirrors

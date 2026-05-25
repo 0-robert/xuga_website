@@ -148,11 +148,27 @@
           });
         }
 
-        // Token is captured ONLY in this closure. There is no named
-        // identifier on window, no method that returns the token, no
-        // log/print/return path. Sveltia's PAT input is auto-filled via
-        // a MutationObserver that walks shadow DOM too.
+        // Token is captured ONLY in this closure. We hand it to Sveltia by
+        // writing the user record into localStorage BEFORE the CMS script
+        // loads — Sveltia's `signInAutomatically` reads
+        // `sveltia-cms.user` on init, sees `{ backendName, token }`, and
+        // completes sign-in by fetching the GitHub profile itself. No DOM
+        // walking, no MutationObserver, no fragile shadow-root probing.
         function handOff(secret) {
+          try {
+            localStorage.setItem(
+              'sveltia-cms.user',
+              JSON.stringify({ backendName: 'github', token: secret })
+            );
+          } catch (_) {}
+          // Best-effort fallback: also try the DOM auto-fill in case Sveltia
+          // ever changes the storage format. Token still scoped to closure.
+          autoFillDOM(secret);
+        }
+
+        // Fallback DOM auto-fill — kept only as a safety net. Walks shadow
+        // DOM, dispatches input/change so Svelte's controlled inputs update.
+        function autoFillDOM(secret) {
           var seen = new WeakSet();
           function* walk(r) {
             if (!r || seen.has(r)) return;
