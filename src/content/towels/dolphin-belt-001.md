@@ -1,21 +1,21 @@
 ---
-garmentType: Belt bag
 garmentName: The Dolphin Belt Bag
+garmentType: Pouch
 garmentPhoto: ../../assets/garments/dolphin-belt--garment.png
 towelName: Finn
-towelPersonality: fond and a little weary; remembers small kindnesses; gentle
-towelPhoto: ../../assets/garments/dolphin-belt--towel.png
-beforePhoto: ../../assets/garments/dolphin-belt--towel.png
-afterPhoto: ../../assets/garments/dolphin-belt--garment.png
 madeDate: 2026-03-14
 greeting: My name's Finn. I was a beach towel for nine summers.
+featured: true
+editionNote: 1 of 1
+accent: oklch(0.68 0.12 215)
+towelPhoto: ../../assets/garments/dolphin-belt--towel.png
+towelPersonality: fond and a little weary; remembers small kindnesses; gentle
 originPlace: Mellieħa, Malta
 originType: family
 originYearApprox: the mid-2010s
+beforePhoto: ../../assets/garments/dolphin-belt--towel.png
+afterPhoto: ../../assets/garments/dolphin-belt--garment.png
 maker: Maria
-accent: oklch(0.68 0.12 215)
-featured: true
-editionNote: 1 of 1
 ecoTowelWeightGrams: 520
 ---
 
