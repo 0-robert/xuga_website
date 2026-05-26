@@ -5,18 +5,33 @@
   "talesName": "Towel Tales",
   "talesLine": "Every XUGA piece has a tale.",
   "description": "XUGA upcycles worn-out beach towels into one-of-a-kind island wear in Malta. Every piece carries a code: scan it and the towel tells you where it has been.",
-  "defaultBaseUrl": "https://xugawear.vercel.app",
+  "defaultBaseUrl": "https://xuga.islandwear.vercel.app",
   "instagramHandle": "@xuga_mlt",
   "instagramUrl": "https://www.instagram.com/xuga_mlt/",
   "email": "xuga.islandwear@gmail.com",
   "place": "Malta",
-  "nav": [
-    { "label": "Home", "href": "/" },
-    { "label": "Gallery", "href": "/gallery/" },
-    { "label": "Tales", "href": "/tales/" },
-    { "label": "About", "href": "/about/" },
-    { "label": "Contact", "href": "/contact/" }
-  ],
   "footerTagline": "Every XUGA piece has a tale.",
-  "footerBlurb": "XUGA is a student-led island-wear brand in Malta, stitching tired beach towels into clothes worth keeping."
+  "footerBlurb": "XUGA is a student-led island-wear brand in Malta, stitching tired beach towels into clothes worth keeping.",
+  "nav": [
+    {
+      "label": "Home",
+      "href": "/"
+    },
+    {
+      "label": "Gallery",
+      "href": "/gallery/"
+    },
+    {
+      "label": "Tales",
+      "href": "/tales/"
+    },
+    {
+      "label": "About",
+      "href": "/about/"
+    },
+    {
+      "label": "Contact",
+      "href": "/contact/"
+    }
+  ]
 }
