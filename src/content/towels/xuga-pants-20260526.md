@@ -1,7 +1,7 @@
 ---
 garmentName: Xuga Pants
 garmentType: Trousers
-garmentPhoto: ../../assets/garments/xuga-pants--garment.png
+garmentPhoto: /images/Screenshot-2025-12-18-at-14.59.11.png
 towelName: Alfred
 madeDate: 2025-11-07
 greeting: ''
@@ -17,7 +17,10 @@ beforePhoto: ''
 afterPhoto: ''
 gallery: []
 maker: ''
-eyes: null
+eyes:
+  x: 50
+  y: 40
+  scale: 1
 ecoTowelWeightGrams: null
 ecoWaterSavedLitres: null
 ecoCo2SavedKg: null
@@ -28,6 +31,6 @@ I was pulled off a rack in Milan, crisp and sharp-creased, but I was meant for m
 
 I spent my first year catching espresso spills in Rome and getting grass-stained in the parks. I was thrown over scooter seats and packed into tight weekend bags. My knees stretched out, molding perfectly to the way they sat.
 
-Eventually, my deep navy softened into a slate grey, weathering the way well-loved things do. After a long summer, I was accidentally left behind at a hostel in Sicily, landing in a lost-and-found box.
+I eventually came to Malta on a holiday, my deep navy softened into a slate grey, weathering the way well-loved things do. After a long summer, I was accidentally left behind at a hostel in Malta, landing in a lost-and-found box.
 
 Then an artist dug me out. They didn't mind the faded fabric or the frayed hems. They patched my pockets with vintage flannel, rolled my cuffs, and put me right back to work in a paint-splattered studio. Still Alfred. Worn with history now.
