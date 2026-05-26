@@ -14,8 +14,14 @@ backend:
   # Cloudflare Worker and set `base_url` to its URL.
   auth_methods: [token, pat]
 
-# Editors uploading photos drop them here. The same folder is referenced
-# from Markdown frontmatter as /images/<filename>.
+# Default upload target. Used by image widgets without their own
+# media_folder/public_folder overrides — e.g. team member photos that
+# reference `/images/team/foo.jpg` via plain string fields.
+#
+# Image fields backed by Astro's `image()` (towels, places) MUST upload
+# to src/assets/<sub>/ and reference markdown-relative paths like
+# `../../assets/garments/foo.png` so Astro can optimize them. Those
+# fields set their own media_folder/public_folder below.
 media_folder: public/images
 public_folder: /images
 
@@ -47,7 +53,9 @@ collections:
       - { name: garmentName, label: Garment name, widget: string }
       - { name: garmentType, label: Garment type, widget: select,
           options: [Belt bag, Shorts, Bucket hat, Pouch, Trousers, Other] }
-      - { name: garmentPhoto, label: Garment photo, widget: image }
+      - { name: garmentPhoto, label: Garment photo, widget: image,
+          media_folder: '/src/assets/garments',
+          public_folder: '../../assets/garments' }
       - { name: towelName, label: Towel's character name, widget: string,
           hint: "What the towel calls itself. Used in headings, e.g. 'Meet Finn'." }
       - { name: madeDate, label: Date sewn, widget: datetime, format: 'YYYY-MM-DD',
@@ -60,6 +68,8 @@ collections:
       - { name: accent, label: Accent colour (OKLCH), widget: string, required: false,
           hint: "Optional. E.g. oklch(0.7 0.13 50). Tints the story page to match the towel." }
       - { name: towelPhoto, label: Original towel photo, widget: image, required: false,
+          media_folder: '/src/assets/garments',
+          public_folder: '../../assets/garments',
           hint: 'Used for the towel character with animated eyes.' }
       - { name: towelPersonality, label: Towel personality notes, widget: text,
           required: false }
@@ -70,12 +80,18 @@ collections:
       - { name: originYearApprox, label: Origin year (approximate), widget: string,
           required: false, hint: 'e.g. "around 1998" or "the mid-2010s".' }
       - { name: beforePhoto, label: Before photo (the towel), widget: image,
-          required: false }
+          required: false,
+          media_folder: '/src/assets/garments',
+          public_folder: '../../assets/garments' }
       - { name: afterPhoto, label: After photo (the garment), widget: image,
-          required: false }
+          required: false,
+          media_folder: '/src/assets/garments',
+          public_folder: '../../assets/garments' }
       - { name: gallery, label: Extra photos (optional gallery), widget: list,
           required: false,
-          field: { name: src, label: Photo, widget: image },
+          field: { name: src, label: Photo, widget: image,
+                   media_folder: '/src/assets/garments',
+                   public_folder: '../../assets/garments' },
           hint: "Optional extra photos shown on the tale page below the main story." }
       - { name: maker, label: Made by (name or initials), widget: string,
           required: false }
@@ -124,6 +140,8 @@ collections:
           hint: 'City or area, e.g. "Gozo" or "Cape Town".' }
       - { name: country, label: Country, widget: string }
       - { name: photo, label: Photo, widget: image,
+          media_folder: '/src/assets/places',
+          public_folder: '../../assets/places',
           hint: 'The artifact image shown on /anywhere/.' }
       - { name: caption, label: Caption, widget: string }
       - { name: credit, label: Credit line, widget: string, required: false,

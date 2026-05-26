@@ -2,6 +2,17 @@ import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
 /**
+ * Sveltia writes blank optional fields as `''`, `null`, or `[]` rather than
+ * omitting them from the YAML — Zod's `.optional()` only accepts `undefined`,
+ * so without this preprocessor a blank "Eco — water saved" input would fail
+ * validation with "expected number, received object" (typeof null === 'object').
+ * Wrap any optional scalar field with `blank(z.foo().optional())`.
+ */
+const isBlank = (v: unknown) => v === '' || v === null;
+const blank = <T extends z.ZodTypeAny>(schema: T) =>
+  z.preprocess((v) => (isBlank(v) ? undefined : v), schema);
+
+/**
  * One Markdown file per garment in src/content/towels/.
  * Frontmatter holds structured data; the Markdown body holds the origin story
  * in the towel's warm, sentimental voice.
@@ -31,51 +42,62 @@ const towels = defineCollection({
       towelName: z.string(),
       madeDate: z.coerce.date(),
       /** The towel's opening line, shown handwritten in the hero. */
-      greeting: z.string().optional(),
+      greeting: blank(z.string().optional()),
 
       // --- Towel character (optional; drives the tier system) ---
-      towelPersonality: z.string().optional(),
-      towelPhoto: image().optional(),
-      towelVideo: z
-        .object({ src: z.string(), poster: image().optional() })
-        .optional(),
-      towelRive: z
-        .object({ src: z.string(), stateMachine: z.string().optional() })
-        .optional(),
+      towelPersonality: blank(z.string().optional()),
+      towelPhoto: blank(image().optional()),
+      towelVideo: blank(
+        z
+          .object({ src: z.string(), poster: image().optional() })
+          .optional(),
+      ),
+      towelRive: blank(
+        z
+          .object({ src: z.string(), stateMachine: z.string().optional() })
+          .optional(),
+      ),
 
       // --- Origin / provenance (optional) ---
-      originPlace: z.string().optional(),
-      originType: z
-        .enum(['donated', 'hotel', 'thrift', 'family', 'found', 'unknown'])
-        .optional(),
-      originYearApprox: z.string().optional(),
+      originPlace: blank(z.string().optional()),
+      originType: blank(
+        z
+          .enum(['donated', 'hotel', 'thrift', 'family', 'found', 'unknown'])
+          .optional(),
+      ),
+      originYearApprox: blank(z.string().optional()),
 
       // --- Transformation (optional) ---
-      beforePhoto: image().optional(),
-      afterPhoto: image().optional(),
-      maker: z.string().optional(),
+      beforePhoto: blank(image().optional()),
+      afterPhoto: blank(image().optional()),
+      maker: blank(z.string().optional()),
 
       // --- Identity & presentation (optional) ---
       gallery: z.array(image()).optional(),
       editionNote: z.string().default('1 of 1'),
-      accent: z.string().optional(),
+      accent: blank(z.string().optional()),
       featured: z.boolean().default(false),
 
       // Where the towel-character eyes sit on the towel photo, as
-      // percentages of the photo, plus a size multiplier.
-      eyes: z
-        .object({
-          x: z.number().default(50),
-          y: z.number().default(40),
-          scale: z.number().default(1),
-        })
-        .default({ x: 50, y: 40, scale: 1 }),
+      // percentages of the photo, plus a size multiplier. Sveltia may
+      // write `null` when the group is left untouched — accept that and
+      // fall back to the default.
+      eyes: z.preprocess(
+        (v) => (v === null || v === '' ? undefined : v),
+        z
+          .object({
+            x: z.number().default(50),
+            y: z.number().default(40),
+            scale: z.number().default(1),
+          })
+          .default({ x: 50, y: 40, scale: 1 }),
+      ),
 
       // --- Eco impact (optional) ---
-      ecoTowelWeightGrams: z.number().optional(),
-      ecoWaterSavedLitres: z.number().optional(),
-      ecoCo2SavedKg: z.number().optional(),
-      ecoTextileSavedGrams: z.number().optional(),
+      ecoTowelWeightGrams: blank(z.number().optional()),
+      ecoWaterSavedLitres: blank(z.number().optional()),
+      ecoCo2SavedKg: blank(z.number().optional()),
+      ecoTextileSavedGrams: blank(z.number().optional()),
     }),
 });
 
