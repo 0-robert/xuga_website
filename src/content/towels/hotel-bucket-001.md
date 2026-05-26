@@ -10,9 +10,9 @@ editionNote: 1 of 1
 accent: oklch(0.56 0.16 25)
 towelPhoto: ../../assets/garments/hotel-bucket--towel.png
 towelPersonality: dignified and fond; proud of a long career; warm
-originPlace: a seafront hotel in Sliema, Malta
+originPlace: A seafront hotel in Sliema, Malta
 originType: hotel
-originYearApprox: around 1999
+originYearApprox: Around 1999
 beforePhoto: ../../assets/garments/hotel-bucket--towel.png
 afterPhoto: ../../assets/garments/hotel-bucket--garment.png
 maker: Yana
