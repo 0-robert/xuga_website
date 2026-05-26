@@ -4,7 +4,7 @@ garmentType: Trousers
 garmentPhoto: /images/Screenshot-2025-12-18-at-14.59.11.png
 towelName: Alfred
 madeDate: 2025-11-07
-greeting: My name's Alfred. I used to be from milan with my white look”
+greeting: '"My name''s Alfred. I used to be from milan with my white look"'
 featured: true
 editionNote: 1 of 1
 accent: ''
