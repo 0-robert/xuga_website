@@ -2,17 +2,30 @@
   "introEyebrow": "Made by hand, one towel at a time",
   "introHeading": "The collection",
   "introBody": "Every XUGA piece begins as a worn-out beach towel and ends as something you want to keep. Because no two towels are alike, no two pieces are either. When one is gone, it is gone.",
-
   "rangeEyebrow": "The range",
   "rangeHeading": "What a beach towel can become",
   "rangeItems": [
-    { "type": "Bucket hats", "doodle": "sun", "note": "Shade for long island afternoons." },
-    { "type": "Shorts", "doodle": "wave", "note": "Loose, soft, and already broken in." },
-    { "type": "Belt bags", "doodle": "shell", "note": "Hands free, phone and keys safe." },
-    { "type": "Pouches", "doodle": "starfish", "note": "For the small things you keep close." },
-    { "type": "Trousers", "doodle": "sprout", "note": "A whole towel, hip to ankle." }
+    {
+      "type": "XUGA Bucket hats",
+      "note": "Shade for long island afternoons.",
+      "doodle": "sun"
+    },
+    {
+      "type": "XUGA Shorts",
+      "note": "Loose, soft, and already broken in.",
+      "doodle": "wave"
+    },
+    {
+      "type": "XUGA Pouch",
+      "note": "Hands free, phone and keys safe.",
+      "doodle": "shell"
+    },
+    {
+      "type": "XUGA Pants",
+      "note": "A whole towel, hip to ankle.",
+      "doodle": "sprout"
+    }
   ],
-
   "closingHeading": "See something you love?",
   "closingBody": "Pieces come and go with the towels we find. Message us on Instagram or send a note, and we will tell you what is in the basket right now.",
   "closingCtaInstagramLabel": "Instagram",
