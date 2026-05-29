@@ -175,7 +175,7 @@ const team = page.teamMembers ?? [];
       >
         {page.meetBody}
       </p>
-      <div class="mt-10 grid gap-6 text-left sm:grid-cols-2 lg:grid-cols-3">
+      <div class="tales-grid mt-10 text-left">
         {featured.map((entry, i) => (
           <div data-reveal style={`--reveal-delay:${0.08 + 0.07 * i}s`}>
             <TaleCard entry={entry} />
@@ -646,6 +646,22 @@ const team = page.teamMembers ?? [];
     .team-beach {
       background-size: max(100%, 1500px) auto;
     }
+  }
+
+  /* Featured tale cards. Flex-wrap + justify-center so an orphan card
+     (e.g. a 4th tale below a 3-up row) centres itself rather than sitting
+     left-aligned — same reasoning as the team grid below. Each wrapper is
+     a flex item so the TaleCard stretches to the row's height. */
+  .tales-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+  .tales-grid > * {
+    display: flex;
+    flex: 1 1 300px;
+    max-width: 380px;
   }
 
   /* Polaroids on a corkboard. Each card sits on its own tilt and breathes

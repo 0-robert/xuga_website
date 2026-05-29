@@ -1,7 +1,7 @@
 ---
 garmentName: Xuga Pants
 garmentType: Trousers
-garmentPhoto: /images/Screenshot-2025-12-18-at-14.59.11.png
+garmentPhoto: ../../assets/garments/xuga-pants--garment.png
 towelName: Alfred
 madeDate: 2025-11-07
 greeting: My name's Alfred. I used to be from milan with my white look

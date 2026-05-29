@@ -55,6 +55,11 @@ const madeLine = d.maker
 
 const pieceCode = entry.id.toUpperCase();
 const greeting = d.greeting ?? `Hello. I'm ${d.towelName}.`;
+// The hero only overlaps the greeting card on the towel portrait when there
+// is one. Tales with no towel photo/video/rive would otherwise leave the
+// portrait box empty and collapse the absolutely-positioned card up onto the
+// intro text — so those fall back to a plain in-flow greeting card.
+const hasTowelMedia = Boolean(d.towelPhoto || d.towelVideo || d.towelRive);
 const heroGlow = `radial-gradient(120% 70% at 50% -8%, color-mix(in oklch, var(--accent) 26%, var(--color-sand)), var(--color-sand) 62%)`;
 ---
 
@@ -81,26 +86,37 @@ const heroGlow = `radial-gradient(120% 70% at 50% -8%, color-mix(in oklch, var(-
           how that happened.
         </p>
 
-        <div class="relative mt-9 mb-20 sm:mb-16">
-          <TowelCharacter
-            towelName={d.towelName}
-            photo={d.towelPhoto}
-            video={d.towelVideo}
-            rive={d.towelRive}
-            eyes={d.eyes}
-            class="aspect-[4/5] w-full rounded-[28px] shadow-[var(--shadow-lift-3)] sm:aspect-[16/11]"
-          />
-          <figure
-            class="absolute -bottom-14 left-3 right-3 rotate-[-1.6deg] rounded-2xl bg-paper p-5 shadow-[var(--shadow-lift-2)] sm:left-7 sm:right-auto sm:max-w-sm"
-          >
-            <p class="font-hand text-[1.7rem] leading-[1.15] text-ink">
-              &ldquo;{greeting}&rdquo;
-            </p>
-            <figcaption class="mt-2 text-sm text-ink-soft">
-              {d.towelName}, the towel behind this piece
-            </figcaption>
-          </figure>
-        </div>
+        {
+          hasTowelMedia ? (
+            <div class="relative mt-9 mb-20 sm:mb-16">
+              <TowelCharacter
+                towelName={d.towelName}
+                photo={d.towelPhoto}
+                video={d.towelVideo}
+                rive={d.towelRive}
+                eyes={d.eyes}
+                class="aspect-[4/5] w-full rounded-[28px] shadow-[var(--shadow-lift-3)] sm:aspect-[16/11]"
+              />
+              <figure class="absolute -bottom-14 left-3 right-3 rotate-[-1.6deg] rounded-2xl bg-paper p-5 shadow-[var(--shadow-lift-2)] sm:left-7 sm:right-auto sm:max-w-sm">
+                <p class="font-hand text-[1.7rem] leading-[1.15] text-ink">
+                  &ldquo;{greeting}&rdquo;
+                </p>
+                <figcaption class="mt-2 text-sm text-ink-soft">
+                  {d.towelName}, the towel behind this piece
+                </figcaption>
+              </figure>
+            </div>
+          ) : (
+            <figure class="mt-9 mb-10 max-w-md rotate-[-1.2deg] rounded-2xl bg-paper p-5 shadow-[var(--shadow-lift-2)]">
+              <p class="font-hand text-[1.7rem] leading-[1.15] text-ink">
+                &ldquo;{greeting}&rdquo;
+              </p>
+              <figcaption class="mt-2 text-sm text-ink-soft">
+                {d.towelName}, the towel behind this piece
+              </figcaption>
+            </figure>
+          )
+        }
 
         <p class="scroll-cue text-sm text-ink-soft">
           <span>Scroll to hear the rest</span>
