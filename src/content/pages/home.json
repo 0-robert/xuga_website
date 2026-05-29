@@ -1,31 +1,56 @@
 {
-  "heroEyebrow": "XUGA \u00b7 Island Wear Anywhere",
+  "heroEyebrow": "XUGA · Island Wear Anywhere",
   "heroHeading": "Our island wear starts life as a beach towel.",
   "heroBody": "XUGA, up-cycles retired beach towels into island wear made to last. Every piece is unique, just like you!",
   "ctaPrimaryLabel": "See the collection",
   "ctaPrimaryHref": "/gallery/",
   "ctaSecondaryLabel": "Meet the team",
   "ctaSecondaryHref": "#team",
-
+  "teamEyebrow": "The people behind the stitches",
+  "teamHeading": "Meet the team",
+  "teamBody": "XUGA is a student-led brand built in Malta. Seven of us, each running a corner of the workshop.",
+  "teamMembers": [
+    {
+      "name": "Sofiia",
+      "role": "CEO",
+      "photo": "/images/team/Sofiia.jpg"
+    },
+    {
+      "name": "Andrew",
+      "role": "COO",
+      "photo": "/images/team/Andrew.jpg"
+    },
+    {
+      "name": "Nabeel",
+      "role": "CFO",
+      "photo": "/images/team/Nabeel.jpg"
+    },
+    {
+      "name": "Charlotte",
+      "role": "Marketing",
+      "photo": "/images/team/Charlotte.jpg"
+    },
+    {
+      "name": "Daniele",
+      "role": "Sales",
+      "photo": "/images/team/Daniele.jpg"
+    },
+    {
+      "name": "Ben",
+      "role": "HR",
+      "photo": "/images/team/Ben.jpg"
+    },
+    {
+      "name": "Faustine",
+      "role": "HR",
+      "photo": "/images/team/Faustine.jpg"
+    }
+  ],
   "meetEyebrow": "One of one, every time",
   "meetHeading": "What we are making right now",
   "meetBody": "Each piece is sewn by hand from a single retired beach towel. When one is gone, it is gone.",
   "meetMoreLabel": "See the whole collection",
   "meetMoreHref": "/gallery/",
-
-  "teamEyebrow": "The people behind the stitches",
-  "teamHeading": "Meet the team",
-  "teamBody": "XUGA is a student-led brand built in Malta. Seven of us, each running a corner of the workshop.",
-  "teamMembers": [
-    { "name": "Sofiia", "role": "CEO",                 "photo": "/images/team/Sofiia.jpg" },
-    { "name": "Andrew", "role": "COO",                 "photo": "/images/team/Andrew.jpg" },
-    { "name": "Nabeel", "role": "CFO",                 "photo": "/images/team/Nabeel.jpg" },
-    { "name": "Charlotte", "role": "Marketing",        "photo": "/images/team/Charlotte.jpg" },
-    { "name": "Daniele", "role": "Sales",              "photo": "/images/team/Daniele.jpg" },
-    { "name": "Ben",    "role": "Outreach",            "photo": "/images/team/Ben.jpg" },
-    { "name": "Faustine", "role": "HR",                "photo": "/images/team/Faustine.jpg" }
-  ],
-
   "closingHeading": "Ready to find your own?",
   "closingBody": "Each XUGA piece is one of one. When you buy it, the story behind it becomes yours to carry.",
   "closingCtaLabel": "See the collection",
