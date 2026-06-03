@@ -10,7 +10,7 @@ editionNote: 1 of 1
 accent: ''
 towelPhoto: ''
 towelPersonality: ''
-originPlace: House in Rome
+originPlace: Mġarr, Malta
 originType: ''
 originYearApprox: ''
 beforePhoto: ''
@@ -31,6 +31,6 @@ I was pulled off a rack in Milan, crisp and sharp-creased, but I was meant for m
 
 I spent my first year catching espresso spills in Rome and getting grass-stained in the parks. I was thrown over scooter seats and packed into tight weekend bags. My knees stretched out, molding perfectly to the way they sat.
 
-I eventually came to Malta on a holiday, my deep navy softened into a slate grey, weathering the way well-loved things do. After a long summer, I was accidentally left behind at a hostel in Malta, landing in a lost-and-found box.
+I eventually came to Malta on a holiday, my deep navy softened into a slate grey, weathering the way well-loved things do. After a long summer, I was accidentally left behind at a hostel in Mġarr, Malta, landing in a lost-and-found box.
 
 Then an artist dug me out. They didn't mind the faded fabric or the frayed hems. They patched my pockets with vintage flannel, rolled my cuffs, and put me right back to work in a paint-splattered studio. Still Alfred. Worn with history now.
