@@ -1,5 +1,5 @@
 ---
-garmentName: The Dolphin Belt Bag
+garmentName: The Dolphin Pouch
 garmentType: Pouch
 garmentPhoto: ../../assets/garments/dolphin-belt--garment.png
 towelName: Finn
