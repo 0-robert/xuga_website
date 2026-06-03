@@ -4,19 +4,22 @@ garmentType: Pouch
 garmentPhoto: ../../assets/garments/dolphin-belt--garment.png
 towelName: Finn
 madeDate: 2026-03-14
-greeting: My name's Finn. I was a beach towel for nine summers.
+greeting: My name's Finn. I was a family beach towel for a very long time.
 featured: true
 editionNote: 1 of 1
 accent: oklch(0.68 0.12 215)
 towelPhoto: ../../assets/garments/dolphin-belt--towel.png
 towelPersonality: fond and a little weary; remembers small kindnesses; gentle
-originPlace: Mellieħa, Malta
+originPlace: Mellieħa Bay, Malta
 originType: family
-originYearApprox: the mid-2010s
+originYearApprox: the 1980s
 beforePhoto: ../../assets/garments/dolphin-belt--towel.png
 afterPhoto: ../../assets/garments/dolphin-belt--garment.png
 maker: Maria
 ecoTowelWeightGrams: 520
+ecoWaterSavedLitres: null
+ecoCo2SavedKg: null
+ecoTextileSavedGrams: null
 ---
 
 The proper kind of summers, where the sand gets everywhere and nobody minds. I remember a little girl who refused to be dried by any towel but me. I remember being forgotten at the beach one evening, and a stranger folding me up and taking me home anyway.
