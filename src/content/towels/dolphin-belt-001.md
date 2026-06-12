@@ -1,5 +1,5 @@
 ---
-garmentName: The Dolphin Pouch
+garmentName: The XUGA Pouch
 garmentType: Pouch
 garmentPhoto: ../../assets/garments/dolphin-belt--garment.png
 towelName: Finn
