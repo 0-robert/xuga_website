@@ -4,7 +4,7 @@ garmentType: Trousers
 garmentPhoto: ../../assets/garments/xuga-pants--garment.png
 towelName: Alfred
 madeDate: 2025-11-07
-greeting: My name's Alfred. I used to be from milan with my white look
+greeting: My name's Alfred. I used to be from Milan with my white look
 featured: true
 editionNote: 1 of 1
 accent: ''
@@ -27,7 +27,7 @@ ecoCo2SavedKg: null
 ecoTextileSavedGrams: null
 ---
 
-I was pulled off a rack in Milan, crisp and sharp-creased, but I was meant for moving. The person who bought me—Alfred, as my label read—took me everywhere.
+I was pulled off a rack in Milan, crisp and sharp-creased, but I was meant for moving. The person who bought me, Alfred, as my label read, took me everywhere.
 
 I spent my first year catching espresso spills in Rome and getting grass-stained in the parks. I was thrown over scooter seats and packed into tight weekend bags. My knees stretched out, molding perfectly to the way they sat.
 
