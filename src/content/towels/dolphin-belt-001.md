@@ -12,7 +12,7 @@ towelPhoto: ../../assets/garments/dolphin-belt--towel.png
 towelPersonality: fond and a little weary; remembers small kindnesses; gentle
 originPlace: Mellieħa Bay, Malta
 originType: family
-originYearApprox: the 1980s
+originYearApprox: 1980s
 beforePhoto: ../../assets/garments/dolphin-belt--towel.png
 afterPhoto: ../../assets/garments/dolphin-belt--garment.png
 maker: Maria
