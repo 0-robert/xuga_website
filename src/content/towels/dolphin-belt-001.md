@@ -1,5 +1,5 @@
 ---
-garmentName: The XUGA Pouch
+garmentName: The Dolphin Pouch
 garmentType: Pouch
 garmentPhoto: ../../assets/garments/dolphin-belt--garment.png
 towelName: Finn
@@ -22,8 +22,4 @@ ecoCo2SavedKg: null
 ecoTextileSavedGrams: null
 ---
 
-The proper kind of summers, where the sand gets everywhere and nobody minds. I remember a little girl who refused to be dried by any towel but me. I remember being forgotten at the beach one evening, and a stranger folding me up and taking me home anyway.
-
-By the end I was thin and pale and the dolphins were barely there. I thought that was it.
-
-Then someone in Malta sat down with me, kept the parts that still had life in them, and sewed me into a belt bag. Same towel. Still going to the beach. Just closer to you now.
+Started life as a family beach towel, listening to children play and the sound of the waves.  Stored away at the end of each season and teased out again when the warm summer air moved in. This retro design pops with colour and summer vibes.  One of  Xuga’s first products; lovingly handmade by Grace.
