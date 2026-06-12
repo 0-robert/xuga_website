@@ -1,21 +1,21 @@
 ---
+garmentName: XUGA Shorts
 garmentType: Shorts
-garmentName: The Rainbow Stripe Shorts
 garmentPhoto: ../../assets/garments/rainbow-shorts--garment.png
 towelName: Mabel
-towelPersonality: warm, a little vintage, unhurried; loves colour
-towelPhoto: ../../assets/garments/rainbow-shorts--towel.png
-beforePhoto: ../../assets/garments/rainbow-shorts--towel.png
-afterPhoto: ../../assets/garments/rainbow-shorts--garment.png
 madeDate: 2026-02-02
 greeting: My name's Mabel. I'm the striped one, every colour, top to bottom.
+featured: true
+editionNote: 1 of 1
+accent: oklch(0.70 0.15 32)
+towelPhoto: ../../assets/garments/rainbow-shorts--towel.png
+towelPersonality: warm, a little vintage, unhurried; loves colour
 originPlace: Valletta, Malta
 originType: thrift
 originYearApprox: the early 2000s
+beforePhoto: ../../assets/garments/rainbow-shorts--towel.png
+afterPhoto: ../../assets/garments/rainbow-shorts--garment.png
 maker: Lara
-accent: oklch(0.70 0.15 32)
-featured: true
-editionNote: 1 of 1
 ecoTowelWeightGrams: 680
 ---
 
