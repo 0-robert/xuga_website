@@ -4,7 +4,7 @@ garmentType: Pouch
 garmentPhoto: ../../assets/garments/dolphin-belt--garment.png
 towelName: Finn
 madeDate: 2026-03-14
-greeting: My name's Finn. I was a retro family beach towel.
+greeting: My name's Finn. I am a retro family beach towel.
 featured: true
 editionNote: 1 of 1
 accent: oklch(0.68 0.12 215)
