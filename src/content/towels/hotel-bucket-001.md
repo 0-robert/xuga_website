@@ -1,5 +1,5 @@
 ---
-garmentName: The Hotel Towel Bucket Hat
+garmentName: XUGA Bucket Hat
 garmentType: Bucket hat
 garmentPhoto: ../../assets/garments/hotel-bucket--garment.png
 towelName: Rosa
