@@ -1,5 +1,5 @@
 ---
-garmentName: Xuga Pants
+garmentName: XUGA Pants
 garmentType: Trousers
 garmentPhoto: ../../assets/garments/xuga-pants--garment.png
 towelName: Alfred
