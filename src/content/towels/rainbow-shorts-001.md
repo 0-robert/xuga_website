@@ -1,5 +1,5 @@
 ---
-garmentName: XUGA Shorts
+garmentName: The Rainbow Stripe Shorts
 garmentType: Shorts
 garmentPhoto: ../../assets/garments/rainbow-shorts--garment.png
 towelName: Mabel
@@ -17,10 +17,9 @@ beforePhoto: ../../assets/garments/rainbow-shorts--towel.png
 afterPhoto: ../../assets/garments/rainbow-shorts--garment.png
 maker: Lara
 ecoTowelWeightGrams: 680
+ecoWaterSavedLitres: null
+ecoCo2SavedKg: null
+ecoTextileSavedGrams: null
 ---
 
-The person who first bought me could not choose just one shade, and I have always loved that about them. I spent my summers on a roof terrace in Valletta, drying swimsuits on a line and watching the harbour. I was a picnic blanket more than once. A dog slept on me for most of one August.
-
-I faded a little more each year, the way striped things do, and nobody seemed to mind, including me. When the family moved away they left me folded on a chair at a second-hand stall, and I sat there a good while.
-
-Then a student picked me up, turned me over, and saw a pair of shorts where everyone else had seen an old towel. Still striped. Still every colour. Worn on purpose now.
+Started life as a multi-colored striped towel, enjoying summers on a roof terrace overlooking Valletta harbor. Dried swimsuits by the sea, served as a picnic blanket, and even became a favorite dog bed. This faded striped design still pops with all its original colors and sunny nostalgia. Lovingly rescued from a second-hand stall and transformed into a unique pair of shorts by a student.
