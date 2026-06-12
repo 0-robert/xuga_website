@@ -1,10 +1,10 @@
 ---
-garmentName: The Dolphin Pouch
+garmentName: XUGA Pouch
 garmentType: Pouch
 garmentPhoto: ../../assets/garments/dolphin-belt--garment.png
 towelName: Finn
 madeDate: 2026-03-14
-greeting: My name's Finn. I am a retro family beach towel.
+greeting: My name's Finn. I was a family beach towel for a very long time.
 featured: true
 editionNote: 1 of 1
 accent: oklch(0.68 0.12 215)
@@ -12,7 +12,7 @@ towelPhoto: ../../assets/garments/dolphin-belt--towel.png
 towelPersonality: fond and a little weary; remembers small kindnesses; gentle
 originPlace: Mellieħa Bay, Malta
 originType: family
-originYearApprox: 1980s
+originYearApprox: the 1980s
 beforePhoto: ../../assets/garments/dolphin-belt--towel.png
 afterPhoto: ../../assets/garments/dolphin-belt--garment.png
 maker: Maria
